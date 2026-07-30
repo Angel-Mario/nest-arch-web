@@ -1,0 +1,45 @@
+{
+  "name": "nest-arch-web",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "check-types": "turbo run check-types",
+    "dev:web": "turbo run dev -F web",
+    "dev:server": "turbo run dev -F @nest-arch-web/backend",
+    "dev:setup": "turbo run dev:setup -F @nest-arch-web/backend",
+    "deploy:setup": "vercel link",
+    "dev:vercel": "vercel dev -L",
+    "env:preview": "tsx scripts/sync-vercel-env.ts preview",
+    "env:production": "tsx scripts/sync-vercel-env.ts production",
+    "deploy": "vercel deploy",
+    "deploy:prod": "vercel deploy --prod",
+    "deploy:check": "vercel deploy --dry",
+    "check": "ultracite check",
+    "fix": "ultracite fix",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@nest-arch-web/env": "workspace:*",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@nest-arch-web/config": "workspace:*",
+    "@types/node": "^22.20.1",
+    "husky": "latest",
+    "oxfmt": "latest",
+    "oxlint": "latest",
+    "tsx": "^4.23.1",
+    "turbo": "^2.10.7",
+    "typescript": "catalog:",
+    "ultracite": "7.9.4",
+    "vercel": "^58.1.0"
+  },
+  "packageManager": "pnpm@11.9.0"
+}
