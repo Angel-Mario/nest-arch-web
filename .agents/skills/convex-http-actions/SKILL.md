@@ -80,10 +80,13 @@ http.route({
     const url = new URL(request.url);
     const queryParam = url.searchParams.get("filter");
 
-    return new Response(JSON.stringify({ received: body, filter: queryParam }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ received: body, filter: queryParam }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }),
 });
 
@@ -109,7 +112,8 @@ http.route({
   method: "POST",
   handler: httpAction(async (ctx, request) => {
     const bytes = await request.bytes();
-    const contentType = request.headers.get("Content-Type") ?? "application/octet-stream";
+    const contentType =
+      request.headers.get("Content-Type") ?? "application/octet-stream";
 
     // Store in Convex storage
     const blob = new Blob([bytes], { type: contentType });
@@ -290,7 +294,11 @@ export const verifyAndProcessWebhook = internalAction({
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
     // Verify signature
-    const event = stripe.webhooks.constructEvent(args.body, args.signature, webhookSecret);
+    const event = stripe.webhooks.constructEvent(
+      args.body,
+      args.signature,
+      webhookSecret
+    );
 
     // Process based on event type
     switch (event.type) {
@@ -368,10 +376,13 @@ http.route({
     const authHeader = request.headers.get("Authorization");
 
     if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Missing or invalid Authorization header" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ error: "Missing or invalid Authorization header" }),
+        {
+          status: 401,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     const token = authHeader.slice(7);
@@ -617,7 +628,9 @@ export const verifyAndProcess = internalAction({
       case "user.created":
         await ctx.runMutation(internal.users.create, {
           clerkId: event.data.id as string,
-          email: (event.data.email_addresses as Array<{ email_address: string }>)[0]?.email_address,
+          email: (
+            event.data.email_addresses as Array<{ email_address: string }>
+          )[0]?.email_address,
           name: `${event.data.first_name} ${event.data.last_name}`,
         });
         break;
@@ -625,7 +638,9 @@ export const verifyAndProcess = internalAction({
       case "user.updated":
         await ctx.runMutation(internal.users.update, {
           clerkId: event.data.id as string,
-          email: (event.data.email_addresses as Array<{ email_address: string }>)[0]?.email_address,
+          email: (
+            event.data.email_addresses as Array<{ email_address: string }>
+          )[0]?.email_address,
           name: `${event.data.first_name} ${event.data.last_name}`,
         });
         break;

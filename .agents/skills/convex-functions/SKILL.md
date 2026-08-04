@@ -36,12 +36,12 @@ Before implementing, do not assume; fetch the latest documentation:
 
 ### Function Types Overview
 
-| Type        | Database Access          | External APIs | Caching       | Use Case              |
-| ----------- | ------------------------ | ------------- | ------------- | --------------------- |
-| Query       | Read-only                | No            | Yes, reactive | Fetching data         |
-| Mutation    | Read/Write               | No            | No            | Modifying data        |
-| Action      | Via runQuery/runMutation | Yes           | No            | External integrations |
-| HTTP Action | Via runQuery/runMutation | Yes           | No            | Webhooks, APIs        |
+| Type | Database Access | External APIs | Caching | Use Case |
+| --- | --- | --- | --- | --- |
+| Query | Read-only | No | Yes, reactive | Fetching data |
+| Mutation | Read/Write | No | No | Modifying data |
+| Action | Via runQuery/runMutation | Yes | No | External integrations |
+| HTTP Action | Via runQuery/runMutation | Yes | No | Webhooks, APIs |
 
 ### Queries
 
@@ -60,7 +60,7 @@ export const getUser = query({
       name: v.string(),
       email: v.string(),
     }),
-    v.null(),
+    v.null()
   ),
   handler: async (ctx, args) => {
     return await ctx.db.get("users", args.userId);
@@ -76,7 +76,7 @@ export const listUserTasks = query({
       _creationTime: v.number(),
       title: v.string(),
       completed: v.boolean(),
-    }),
+    })
   ),
   handler: async (ctx, args) => {
     return await ctx.db
@@ -250,7 +250,11 @@ export default http;
 Use internal functions for sensitive operations:
 
 ```typescript
-import { internalMutation, internalQuery, internalAction } from "./_generated/server";
+import {
+  internalMutation,
+  internalQuery,
+  internalAction,
+} from "./_generated/server";
 import { v } from "convex/values";
 
 // Only callable from other Convex functions
@@ -307,10 +311,14 @@ export const scheduleReminder = mutation({
   },
   returns: v.id("_scheduled_functions"),
   handler: async (ctx, args) => {
-    return await ctx.scheduler.runAfter(args.delayMs, internal.notifications.sendReminder, {
-      userId: args.userId,
-      message: args.message,
-    });
+    return await ctx.scheduler.runAfter(
+      args.delayMs,
+      internal.notifications.sendReminder,
+      {
+        userId: args.userId,
+        message: args.message,
+      }
+    );
   },
 });
 

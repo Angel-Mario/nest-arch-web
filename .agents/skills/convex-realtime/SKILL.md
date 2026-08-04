@@ -153,23 +153,28 @@ import { useMutation } from "convex/react";
 import { api } from "../convex/_generated/api";
 
 function useCreateTask(userId: Id<"users">) {
-  return useMutation(api.tasks.create).withOptimisticUpdate((localStore, args) => {
-    const { title, userId } = args;
-    const currentTasks = localStore.getQuery(api.tasks.list, { userId });
+  return useMutation(api.tasks.create).withOptimisticUpdate(
+    (localStore, args) => {
+      const { title, userId } = args;
+      const currentTasks = localStore.getQuery(api.tasks.list, { userId });
 
-    if (currentTasks !== undefined) {
-      // Add optimistic task to the list
-      const optimisticTask = {
-        _id: crypto.randomUUID() as Id<"tasks">,
-        _creationTime: Date.now(),
-        title,
-        userId,
-        completed: false,
-      };
+      if (currentTasks !== undefined) {
+        // Add optimistic task to the list
+        const optimisticTask = {
+          _id: crypto.randomUUID() as Id<"tasks">,
+          _creationTime: Date.now(),
+          title,
+          userId,
+          completed: false,
+        };
 
-      localStore.setQuery(api.tasks.list, { userId }, [optimisticTask, ...currentTasks]);
+        localStore.setQuery(api.tasks.list, { userId }, [
+          optimisticTask,
+          ...currentTasks,
+        ]);
+      }
     }
-  });
+  );
 }
 ```
 
@@ -321,7 +326,7 @@ export const list = query({
       content: v.string(),
       authorId: v.id("users"),
       authorName: v.string(),
-    }),
+    })
   ),
   handler: async (ctx, args) => {
     const messages = await ctx.db
@@ -338,7 +343,7 @@ export const list = query({
           ...msg,
           authorName: author?.name ?? "Unknown",
         };
-      }),
+      })
     );
   },
 });

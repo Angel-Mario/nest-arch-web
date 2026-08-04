@@ -10,9 +10,9 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_CONVEX_URL: convexUrlSchema("example.convex.cloud"),
   },
+  emptyStringAsUndefined: true,
   runtimeEnv: {
     NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
-  emptyStringAsUndefined: true,
 });
