@@ -9,9 +9,8 @@ import {
 } from "@nest-arch-web/ui/components/dropdown-menu";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import * as React from "react";
 
-export function ModeToggle() {
+export const ModeToggle = () => {
   const { setTheme } = useTheme();
 
   return (
@@ -34,4 +33,4 @@ export function ModeToggle() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+};

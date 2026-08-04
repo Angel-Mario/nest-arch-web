@@ -154,7 +154,12 @@ export function ArchitectureInteractive({
                   : "border-white/10 bg-white/5 text-zinc-400"
               )}
             >
-              <Globe className="h-3.5 w-3.5 text-rose-400" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/icons/nextjs_icon_dark.svg"
+                alt="Next.js"
+                className="h-3.5 w-3.5"
+              />
               <span>Web Frontend</span>
             </div>
             <div
@@ -165,7 +170,12 @@ export function ArchitectureInteractive({
                   : "border-white/10 bg-white/5 text-zinc-400"
               )}
             >
-              <Server className="h-3.5 w-3.5 text-purple-400" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/icons/nestjs.svg"
+                alt="NestJS"
+                className="h-3.5 w-3.5"
+              />
               <span>APIs & Backends</span>
             </div>
             <div
@@ -176,7 +186,12 @@ export function ArchitectureInteractive({
                   : "border-white/10 bg-white/5 text-zinc-400"
               )}
             >
-              <Cpu className="h-3.5 w-3.5 text-indigo-400" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/icons/docker.svg"
+                alt="Docker"
+                className="h-3.5 w-3.5"
+              />
               <span>Microservices</span>
             </div>
             <div
@@ -187,7 +202,12 @@ export function ArchitectureInteractive({
                   : "border-white/10 bg-white/5 text-zinc-400"
               )}
             >
-              <Database className="h-3.5 w-3.5 text-pink-400" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/icons/postgresql.svg"
+                alt="PostgreSQL"
+                className="h-3.5 w-3.5"
+              />
               <span>Databases</span>
             </div>
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Terminal, Minus, Square, X } from "lucide-react";
+import { Terminal } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "../lib/utils";
@@ -24,23 +24,17 @@ export function TerminalWindow({
       )}
     >
       {/* Title bar */}
-      <div className="flex items-center justify-between border-b border-white/10 bg-[#12131c] px-4 py-2.5">
+      <div className="relative flex items-center justify-between border-b border-white/10 bg-[#12131c] px-4 py-2.5">
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5">
-            <span className="h-3 w-3 rounded-full bg-rose-500/80 inline-block" />
-            <span className="h-3 w-3 rounded-full bg-amber-500/80 inline-block" />
-            <span className="h-3 w-3 rounded-full bg-emerald-500/80 inline-block" />
-          </div>
-          <div className="ml-3 flex items-center gap-1.5 text-xs font-mono text-zinc-400">
-            <Terminal className="h-3.5 w-3.5 text-rose-400" />
-            <span>{title}</span>
-          </div>
+          <span className="h-3 w-3 rounded-full bg-[#ff5f56] inline-block border border-black/20" />
+          <span className="h-3 w-3 rounded-full bg-[#ffbd2e] inline-block border border-black/20" />
+          <span className="h-3 w-3 rounded-full bg-[#27c93f] inline-block border border-black/20" />
         </div>
-        <div className="flex items-center gap-2 text-zinc-500">
-          <Minus className="h-3 w-3" />
-          <Square className="h-2.5 w-2.5" />
-          <X className="h-3 w-3" />
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-1.5 text-xs font-mono text-zinc-400">
+          <Terminal className="h-3.5 w-3.5 text-rose-400" />
+          <span>{title}</span>
         </div>
+        <div className="w-12" />
       </div>
 
       {/* Terminal content */}

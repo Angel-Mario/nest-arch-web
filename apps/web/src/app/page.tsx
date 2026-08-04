@@ -11,7 +11,6 @@ import {
   Puzzle,
   Quote,
   Code2,
-  CheckCircle2,
   Server,
   Infinity as InfinityIcon,
   Check,
@@ -107,24 +106,37 @@ export default function Home() {
 
             {/* Tech Badges Row */}
             <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-4 text-xs font-mono text-zinc-400 border-t border-white/10 w-full">
-              <div className="flex items-center gap-1.5 hover:text-rose-400 transition-colors">
-                <Code2 className="h-4 w-4 text-blue-400" />
+              <div className="flex items-center gap-2 hover:text-rose-400 transition-colors">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/icons/typescript.svg"
+                  alt="TypeScript"
+                  className="h-4 w-4"
+                />
                 <span>TypeScript</span>
               </div>
-              <div className="flex items-center gap-1.5 hover:text-rose-400 transition-colors">
-                <Server className="h-4 w-4 text-rose-500" />
+              <div className="flex items-center gap-2 hover:text-rose-400 transition-colors">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/icons/nestjs.svg" alt="NestJS" className="h-4 w-4" />
                 <span>NestJS</span>
               </div>
-              <div className="flex items-center gap-1.5 hover:text-rose-400 transition-colors">
-                <Layers className="h-4 w-4 text-purple-400" />
+              <div className="flex items-center gap-2 hover:text-rose-400 transition-colors">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/icons/turborepo-icon-dark.svg"
+                  alt="Turborepo"
+                  className="h-4 w-4"
+                />
                 <span>Turborepo</span>
               </div>
-              <div className="flex items-center gap-1.5 hover:text-rose-400 transition-colors">
-                <Box className="h-4 w-4 text-cyan-400" />
+              <div className="flex items-center gap-2 hover:text-rose-400 transition-colors">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/icons/docker.svg" alt="Docker" className="h-4 w-4" />
                 <span>Docker</span>
               </div>
-              <div className="flex items-center gap-1.5 hover:text-rose-400 transition-colors">
-                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+              <div className="flex items-center gap-2 hover:text-rose-400 transition-colors">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/icons/zod.svg" alt="Zod" className="h-4 w-4" />
                 <span>Zod</span>
               </div>
             </div>
