@@ -7,46 +7,47 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.08 0.015 270);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.12 0.02 270 / 0.6);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.12 0.02 270);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.62 0.24 290);
+  /* Light mode */
+  --background: oklch(0.98 0 0);
+  --foreground: oklch(0.13 0.01 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.13 0.01 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.13 0.01 260);
+  --primary: oklch(0.55 0.22 15);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.18 0.02 270);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.18 0.02 270);
-  --muted-foreground: oklch(0.7 0.02 270);
-  --accent: oklch(0.22 0.03 270);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.65 0.2 25);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.65 0.22 290);
+  --secondary: oklch(0.94 0.005 260);
+  --secondary-foreground: oklch(0.25 0.01 260);
+  --muted: oklch(0.94 0.005 260);
+  --muted-foreground: oklch(0.5 0.01 260);
+  --accent: oklch(0.92 0.01 15);
+  --accent-foreground: oklch(0.25 0.01 260);
+  --destructive: oklch(0.55 0.22 25);
+  --border: oklch(0 0 0 / 10%);
+  --input: oklch(0 0 0 / 12%);
+  --ring: oklch(0.55 0.22 15);
   --radius: 0.75rem;
 }
 
 .dark {
-  --background: oklch(0.08 0.015 270);
+  --background: oklch(0.08 0.008 260);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.12 0.02 270 / 0.6);
+  --card: oklch(0.12 0.01 260 / 0.6);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.12 0.02 270);
+  --popover: oklch(0.12 0.01 260);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.62 0.24 290);
+  --primary: oklch(0.62 0.22 15);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.18 0.02 270);
+  --secondary: oklch(0.18 0.01 260);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.18 0.02 270);
-  --muted-foreground: oklch(0.7 0.02 270);
-  --accent: oklch(0.22 0.03 270);
+  --muted: oklch(0.18 0.01 260);
+  --muted-foreground: oklch(0.7 0.01 260);
+  --accent: oklch(0.22 0.02 260);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.65 0.2 25);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.65 0.22 290);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 13%);
+  --ring: oklch(0.62 0.22 15);
 }
 
 @theme inline {
@@ -80,21 +81,19 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply font-sans bg-[#090a0f] text-foreground antialiased selection:bg-rose-500/30 selection:text-rose-200;
+    @apply font-sans bg-background text-foreground antialiased selection:bg-rose-500/30 selection:text-rose-200;
+    background-attachment: fixed;
+  }
+  /* Dark mode ambient background glow — applied when html has .dark class */
+  html.dark body {
     background-image:
-      radial-gradient(at 0% 0%, rgba(225, 29, 72, 0.07) 0px, transparent 50%),
-      radial-gradient(
-        at 100% 0%,
-        rgba(147, 51, 234, 0.12) 0px,
-        transparent 50%
-      ),
-      radial-gradient(at 50% 50%, rgba(79, 70, 229, 0.06) 0px, transparent 70%),
+      radial-gradient(at 0% 0%, rgba(225, 29, 72, 0.08) 0px, transparent 55%),
+      radial-gradient(at 100% 0%, rgba(225, 29, 72, 0.06) 0px, transparent 50%),
       radial-gradient(
         at 100% 100%,
-        rgba(236, 72, 153, 0.08) 0px,
+        rgba(236, 72, 153, 0.06) 0px,
         transparent 50%
       );
-    background-attachment: fixed;
   }
 }
 
@@ -112,26 +111,32 @@
   animation: cursor-blink 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* Feature cards */
 .glow-card {
   position: relative;
-  background: rgba(18, 19, 26, 0.7);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.07);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html.dark .glow-card {
+  background: rgba(18, 19, 26, 0.7);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .glow-card:hover {
   border-color: rgba(236, 72, 153, 0.3);
   box-shadow:
-    0 0 25px -5px rgba(168, 85, 247, 0.2),
-    0 0 10px -5px rgba(236, 72, 153, 0.2);
+    0 0 25px -5px rgba(236, 72, 153, 0.15),
+    0 0 10px -5px rgba(225, 29, 72, 0.15);
   transform: translateY(-2px);
 }
 
 .glow-pink-gradient {
   background: linear-gradient(
     135deg,
-    rgba(225, 29, 72, 0.15),
-    rgba(147, 51, 234, 0.15)
+    rgba(225, 29, 72, 0.12),
+    rgba(236, 72, 153, 0.08)
   );
 }

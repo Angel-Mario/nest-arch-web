@@ -80,9 +80,9 @@ const CATEGORIES = [
   },
 ];
 
-export function ArchitectureInteractive({
+export const ArchitectureInteractive = ({
   className,
-}: ArchitectureInteractiveProps) {
+}: ArchitectureInteractiveProps) => {
   const [selectedId, setSelectedId] = React.useState("web");
 
   const selectedCategory =
@@ -91,7 +91,7 @@ export function ArchitectureInteractive({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-white/10 bg-[#0d0e16]/80 p-4 sm:p-6 backdrop-blur-xl shadow-[0_0_50px_rgba(168,85,247,0.1)]",
+        "rounded-2xl border border-white/10 bg-white/60 dark:bg-[#0d0e16]/80 p-4 sm:p-6 backdrop-blur-xl shadow-[0_0_50px_rgba(236,72,153,0.08)]",
         className
       )}
     >
@@ -109,7 +109,7 @@ export function ArchitectureInteractive({
                 className={cn(
                   "flex items-center gap-3 rounded-xl px-4 py-3 text-left font-medium text-sm transition-all",
                   isSelected
-                    ? "bg-gradient-to-r from-rose-500/20 to-purple-500/20 border border-pink-500/40 text-white shadow-[0_0_15px_rgba(236,72,153,0.2)]"
+                    ? "bg-rose-500/15 border border-rose-500/40 text-white shadow-[0_0_15px_rgba(236,72,153,0.2)]"
                     : "border border-transparent text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
                 )}
               >
@@ -135,8 +135,8 @@ export function ArchitectureInteractive({
         {/* Center Node Visual Diagram */}
         <div className="lg:col-span-4 flex flex-col items-center justify-center py-6 px-2 relative">
           {/* Central Logo Node */}
-          <div className="relative z-10 flex flex-col items-center justify-center h-28 w-28 rounded-2xl border border-pink-500/50 bg-[#161724] shadow-[0_0_30px_rgba(236,72,153,0.3)]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-purple-600 text-white font-mono font-bold text-xs">
+          <div className="relative z-10 flex flex-col items-center justify-center h-28 w-28 rounded-2xl border border-pink-500/40 bg-white/5 dark:bg-[#161724] shadow-[0_0_30px_rgba(236,72,153,0.25)]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 text-white font-mono font-bold text-xs">
               NA
             </div>
             <span className="mt-2 font-mono text-xs font-semibold text-rose-300">
@@ -214,11 +214,11 @@ export function ArchitectureInteractive({
         </div>
 
         {/* Right Output / Feature List */}
-        <div className="lg:col-span-4 flex flex-col justify-center rounded-xl border border-white/10 bg-[#090a10] p-5">
+        <div className="lg:col-span-4 flex flex-col justify-center rounded-xl border border-white/10 bg-black/40 dark:bg-[#090a10] p-5">
           <div className="flex items-center gap-2 border-b border-white/10 pb-3 mb-4">
             <Terminal className="h-4 w-4 text-pink-400" />
             <span className="font-mono text-xs font-semibold text-rose-300">
-              $ npx nest-arch --type={selectedCategory.id}
+              $ npx @nest-arch/tui --type={selectedCategory.id}
             </span>
           </div>
 
@@ -241,4 +241,4 @@ export function ArchitectureInteractive({
       </div>
     </div>
   );
-}
+};

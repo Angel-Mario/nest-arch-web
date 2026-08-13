@@ -1,7 +1,8 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import * as React from "react";
 
 import { ModeToggle } from "./mode-toggle";
 
@@ -20,61 +21,172 @@ const GithubIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const NAV_LINKS = [
+  { href: "#features", id: "features", label: "Features" },
+  { href: "#cli", id: "cli", label: "CLI" },
+  { href: "#architecture", id: "architecture", label: "Architecture" },
+  { href: "#docs", id: "docs", label: "Docs" },
+] as const;
+
+const SECTION_IDS = NAV_LINKS.map((l) => l.id);
+
+const useActiveSection = () => {
+  const [active, setActive] = React.useState<string>("");
+
+  React.useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+
+    const handleIntersect =
+      (id: string) => (entries: IntersectionObserverEntry[]) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActive(id);
+          }
+        }
+      };
+
+    for (const id of SECTION_IDS) {
+      const el = document.querySelector(`#${id}`);
+      if (!el) {
+        continue;
+      }
+      const obs = new IntersectionObserver(handleIntersect(id), {
+        rootMargin: "-20% 0px -70% 0px",
+        threshold: 0,
+      });
+      obs.observe(el);
+      observers.push(obs);
+    }
+
+    return () => {
+      for (const obs of observers) {
+        obs.disconnect();
+      }
+    };
+  }, []);
+
+  return active;
+};
+
 export default function Header() {
-  const navLinks = [
-    { href: "#features", label: "Features" },
-    { href: "#architecture", label: "Architecture" },
-    { href: "#cli", label: "CLI" },
-    { href: "#docs", label: "Docs" },
-    { href: "#community", label: "Community" },
-  ];
+  const activeSection = useActiveSection();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#08090e]/80 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 h-16">
-        {/* Brand */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 via-purple-600 to-indigo-600 font-mono font-bold text-xs text-white shadow-[0_0_15px_rgba(236,72,153,0.3)] transition-transform group-hover:scale-105">
-            NA
-          </div>
-          <span className="font-mono font-bold text-base tracking-tight text-white group-hover:text-rose-300 transition-colors">
-            Nest Arch
-          </span>
+    <header className="sticky top-0 z-50 w-full border-b border-black/8 dark:border-white/8 bg-white/90 dark:bg-[#08090e]/90 backdrop-blur-md">
+      <div className="mx-auto flex max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8 h-14">
+        {/* Brand — logo image + ascii name */}
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 shrink-0 opacity-90 hover:opacity-100 transition-opacity"
+          aria-label="Nest Arch home"
+        >
+          {/* Cat ASCII logo — visible on dark, swap on light */}
+          <Image
+            src="/photos/ascii-art-image_nobackground.png"
+            alt="Nest Arch"
+            width={458}
+            height={393}
+            className="block h-auto w-7 dark:hidden opacity-80"
+          />
+          <Image
+            src="/photos/ascii-art-image_nobackground.png"
+            alt="Nest Arch"
+            width={458}
+            height={393}
+            className="hidden h-auto w-7 dark:block opacity-90"
+          />
+          {/* ASCII wordmark */}
+          <Image
+            src="/photos/nest-arch-ascii.png"
+            alt="Nest Arch"
+            width={630}
+            height={192}
+            className="block h-auto w-[90px] -mb-0.5 dark:hidden opacity-70"
+          />
+          <Image
+            src="/photos/nest-arch-ascii-white.png"
+            alt="Nest Arch"
+            width={630}
+            height={192}
+            className="hidden h-auto w-[90px] -mb-0.5 dark:block opacity-80"
+          />
         </Link>
 
-        {/* Navigation Links */}
-        <nav className="hidden md:flex items-center gap-6 font-mono text-xs text-zinc-400">
-          {navLinks.map(({ href, label }) => (
-            <a
-              key={href}
-              href={href}
-              className="hover:text-white transition-colors"
-            >
-              {label}
-            </a>
-          ))}
+        {/* Nav links — centered, flush like tRPC */}
+        <nav
+          className="hidden md:flex items-center gap-1 flex-1"
+          aria-label="Main navigation"
+        >
+          {NAV_LINKS.map(({ href, id, label }) => {
+            const isActive = activeSection === id;
+            return (
+              <a
+                key={href}
+                href={href}
+                className={[
+                  "relative px-3 py-1.5 text-sm font-medium transition-colors rounded-md",
+                  isActive
+                    ? "text-zinc-900 dark:text-white"
+                    : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200",
+                ].join(" ")}
+              >
+                {label}
+                {isActive && (
+                  <span className="absolute inset-x-2 -bottom-[9px] h-px bg-rose-500" />
+                )}
+              </a>
+            );
+          })}
         </nav>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-3">
+        {/* Right side — icons + version badge + theme toggle */}
+        <div className="flex items-center gap-1 ml-auto">
+          {/* npm version badge */}
+          <Link
+            href="https://www.npmjs.com/package/@nest-arch/tui"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-mono text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+          >
+            <Image
+              src="/icons/npm-wordmark.svg"
+              alt="npm"
+              width={128}
+              height={128}
+              className="h-3 w-auto opacity-60"
+            />
+            <span className="text-zinc-400 dark:text-zinc-500 select-none">
+              v0.2.2
+            </span>
+          </Link>
+
+          {/* Divider */}
+          <span className="hidden sm:block w-px h-4 bg-black/10 dark:bg-white/10 mx-1" />
+
+          {/* GitHub icon */}
           <Link
             href="https://github.com"
             target="_blank"
-            className="hidden sm:flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 font-mono text-xs text-zinc-300 transition-all hover:bg-white/10 hover:border-white/20 hover:text-white"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
           >
-            <GithubIcon className="h-3.5 w-3.5" />
-            <span>Star on GitHub</span>
+            <GithubIcon className="h-4 w-4" />
           </Link>
 
+          {/* Theme toggle */}
+          <ModeToggle />
+
+          {/* Divider */}
+          <span className="hidden sm:block w-px h-4 bg-black/10 dark:bg-white/10 mx-1" />
+
+          {/* Get Started CTA */}
           <Link
             href="#get-started"
-            className="flex items-center gap-1.5 rounded-lg bg-gradient-to-r from-rose-500 via-purple-600 to-indigo-600 px-3.5 py-1.5 font-mono text-xs font-semibold text-white shadow-[0_0_20px_rgba(236,72,153,0.4)] transition-all hover:shadow-[0_0_25px_rgba(236,72,153,0.6)] hover:scale-[1.02]"
+            className="hidden sm:flex items-center gap-1.5 rounded-md bg-rose-500 hover:bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors"
           >
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Get Started</span>
+            Get Started
           </Link>
-
-          <ModeToggle />
         </div>
       </div>
     </header>
