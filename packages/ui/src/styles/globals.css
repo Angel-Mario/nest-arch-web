@@ -6,6 +6,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
 :root {
   /* Light mode */
   --background: oklch(0.98 0 0);
