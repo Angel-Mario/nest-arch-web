@@ -27,12 +27,12 @@ export function CodeBlock({ code, className, prefix = "$ " }: CodeBlockProps) {
   return (
     <div
       className={cn(
-        "group relative flex items-center justify-between gap-3 rounded-lg border border-pink-500/30 bg-[#0d0e15] px-4 py-2.5 font-mono text-sm shadow-[0_0_20px_-5px_rgba(236,72,153,0.25)] transition-all hover:border-pink-500/50",
+        "group relative flex items-center justify-between gap-3 rounded-lg border border-red-500/30 bg-[#0d0e15] px-4 py-2.5 font-mono text-sm transition-all hover:border-red-500/50",
         className
       )}
     >
       <div className="flex items-center gap-2 overflow-x-auto">
-        <Terminal className="h-4 w-4 shrink-0 text-pink-500" />
+        {/* <Terminal className="h-4 w-4 shrink-0 text-pink-500" /> */}
         <span className="text-rose-400 select-none">{prefix}</span>
         <span className="text-zinc-100 font-medium">{code}</span>
       </div>

@@ -22,8 +22,9 @@ const GithubIcon = ({ className }: { className?: string }) => (
 );
 
 const NAV_LINKS = [
-  { href: "#features", id: "features", label: "Features" },
+  { href: "#intro", id: "intro", label: "Intro" },
   { href: "#cli", id: "cli", label: "CLI" },
+  { href: "#features", id: "features", label: "Features" },
   { href: "#architecture", id: "architecture", label: "Architecture" },
   { href: "#docs", id: "docs", label: "Docs" },
 ] as const;
@@ -77,31 +78,32 @@ export default function Header() {
         {/* Brand — logo image + ascii name */}
         <Link
           href="/"
+          onClick={() => window.scrollTo({ top: 0, left: 0 })}
           className="flex items-center gap-2.5 shrink-0 opacity-90 hover:opacity-100 transition-opacity"
           aria-label="Nest Arch home"
         >
           {/* Cat ASCII logo */}
           <Image
-            src="/photos/ascii-art-image_nobackground.png"
+            src="/photos/logo.png"
             alt="Nest Arch"
             width={458}
             height={393}
-            className="h-auto w-7 opacity-80"
+            className="h-auto w-7"
           />
           {/* ASCII wordmark */}
           <Image
-            src="/photos/nest-arch-ascii-black.png"
-            alt="Nest Arch"
-            width={630}
-            height={192}
-            className="-mb-0.5 h-auto w-22.5 opacity-70 dark:hidden"
+            src="/photos/nest.png"
+            alt="Nest"
+            width={421}
+            height={110}
+            className="-mb-0.5 h-auto w-22.5"
           />
           <Image
-            src="/photos/nest-arch-ascii-white.png"
-            alt="Nest Arch"
-            width={630}
-            height={192}
-            className="-mb-0.5 hidden h-auto w-22.5 opacity-80 dark:block"
+            src="/photos/arch.png"
+            alt="Arch"
+            width={421}
+            height={110}
+            className="-mb-0.5 -ml-2 h-auto w-22.5"
           />
         </Link>
 
@@ -176,7 +178,7 @@ export default function Header() {
           {/* Get Started CTA */}
           <Link
             href="#get-started"
-            className="hidden sm:flex items-center gap-1.5 rounded-md bg-red-500 hover:bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors"
+            className="hidden sm:flex items-center gap-1.5 rounded-md bg-[--nest-red] hover:bg-[#A8302E] px-3 py-1.5 text-xs font-semibold text-white transition-colors"
           >
             Get Started
           </Link>
