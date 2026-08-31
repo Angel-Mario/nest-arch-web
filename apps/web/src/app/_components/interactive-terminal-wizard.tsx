@@ -1373,10 +1373,10 @@ export function InteractiveTerminalWizard({
   return (
     <div
       ref={terminalRef}
-      className="relative flex w-full flex-col overflow-hidden rounded-xl border border-red-500/25 bg-[#0a0a0f]/95 shadow-[0_28px_90px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all"
+      className="relative flex h-full w-full flex-col overflow-hidden rounded-xl border border-red-500/25 bg-[#0a0a0f]/95 shadow-[0_28px_90px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all"
     >
       {/* Terminal Title Bar */}
-      <div className="relative flex items-center justify-between border-b border-white/10 bg-[#12131c] px-4 py-2.5">
+      <div className="relative shrink-0 flex items-center justify-between border-b border-white/10 bg-[#12131c] px-4 py-1.5">
         <div className="flex items-center gap-2">
           <span className="inline-block size-3 rounded-full border border-black/20 bg-[#ff5f56]" />
           <span className="inline-block size-3 rounded-full border border-black/20 bg-[#ffbd2e]" />
@@ -1385,8 +1385,7 @@ export function InteractiveTerminalWizard({
 
         {/* Center Title */}
         <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2 font-mono text-xs text-zinc-400">
-          {/* <span className="text-red-400">✦</span> */}
-          <span>nest-arch — interactive wizard</span>
+          <span className="contents sm:flex">nest-arch</span>
         </div>
 
         {/* Right Corner Badge and Actions */}
@@ -1409,10 +1408,10 @@ export function InteractiveTerminalWizard({
       </div>
 
       {/* Terminal Inner Body */}
-      <div className="flex min-h-[460px] flex-col p-5 font-mono text-xs leading-relaxed text-zinc-300 sm:min-h-[500px] sm:p-6 sm:text-sm">
+      <div className="flex flex-1 min-h-0 flex-col p-4 sm:p-5 font-mono text-xs leading-relaxed text-zinc-300 sm:text-sm overflow-hidden">
         {/* Context Bar & Header (Hidden during install / done) */}
         {stepId !== "installing" && stepId !== "done" && (
-          <div className="mb-4 space-y-2 border-b border-white/10 pb-3.5">
+          <div className="shrink-0 mb-3 space-y-1.5 border-b border-white/10 pb-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 font-semibold text-red-400">
                 <span>◆</span>
@@ -1433,7 +1432,7 @@ export function InteractiveTerminalWizard({
             {stepId !== "projectName" &&
               stepId !== "summary" &&
               state.projectName.trim() !== "" && (
-                <div className="rounded border border-white/10 bg-white/[0.02] px-3 py-2 text-[11px] text-zinc-400 sm:text-xs">
+                <div className="rounded border border-white/10 bg-white/[0.02] px-2.5 py-1.5 text-[11px] text-zinc-400 sm:text-xs">
                   <span>Project Name: </span>
                   <span className="font-semibold text-red-400">
                     {resolveProjectName(state.projectName)}
@@ -1450,7 +1449,7 @@ export function InteractiveTerminalWizard({
               )}
 
             {/* Step Title */}
-            <div className="pt-1 text-xs sm:text-sm">
+            <div className="pt-0.5 text-xs sm:text-sm">
               <span className="font-medium text-zinc-200">Create project</span>
               <span className="text-zinc-400">{` — step ${displayStep}/${totalSteps}`}</span>
               {subProgress ? (
@@ -1466,8 +1465,8 @@ export function InteractiveTerminalWizard({
           </div>
         )}
 
-        {/* Step Contents */}
-        <div className="flex-1">
+        {/* Step Contents Container */}
+        <div className="flex-1 min-h-0 overflow-y-auto pr-1 flex flex-col justify-start">
           {/* STEP 1: PROJECT NAME */}
           {stepId === "projectName" && (
             <div className="space-y-4">
@@ -1509,8 +1508,8 @@ export function InteractiveTerminalWizard({
 
           {/* SINGLE / MULTI SELECT STEPS */}
           {currentStepConfig && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
+            <div className="flex flex-1 min-h-0 flex-col gap-2">
+              <div className="shrink-0 flex items-center justify-between">
                 <p className="text-sm font-medium text-zinc-300 sm:text-base">
                   {currentStepConfig.prompt}
                 </p>
@@ -1521,7 +1520,7 @@ export function InteractiveTerminalWizard({
                 )}
               </div>
 
-              <div className="grid max-h-[300px] gap-1.5 overflow-y-auto pr-1 sm:max-h-[340px]">
+              <div className="flex-1 min-h-0 overflow-y-auto space-y-1.5 pr-1">
                 {currentStepConfig.options.map((opt, idx) => {
                   const isSelected = currentStepConfig.isMulti
                     ? isMultiSelected(opt.value)
@@ -1538,7 +1537,7 @@ export function InteractiveTerminalWizard({
               </div>
 
               {currentStepConfig.isMulti && (
-                <div className="pt-2">
+                <div className="shrink-0 pt-2">
                   <button
                     type="button"
                     onClick={goToNextStep}
@@ -1559,15 +1558,15 @@ export function InteractiveTerminalWizard({
 
           {/* SUMMARY STEP */}
           {stepId === "summary" && (
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-1 min-h-0 flex-col gap-2">
+              <div className="shrink-0 flex items-center gap-2">
                 <span className="text-red-400">✦</span>
                 <span className="font-semibold text-[#61AFEF]">
                   Review your selections
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 gap-1.5 rounded-lg border border-white/10 bg-white/[0.02] p-3 text-xs sm:grid-cols-2">
+              <div className="flex-1 min-h-0 overflow-y-auto grid grid-cols-1 gap-1.5 rounded-lg border border-white/10 bg-white/[0.02] p-3 text-xs sm:grid-cols-2">
                 <div>
                   <span className="text-[#e96142ff]">Project: </span>
                   <span className="font-semibold text-[#E8C468]">
@@ -1654,7 +1653,7 @@ export function InteractiveTerminalWizard({
                 </div>
               </div>
 
-              <div className="pt-2">
+              <div className="shrink-0 pt-1">
                 <button
                   type="button"
                   onClick={() => setStepId("installing")}
@@ -1669,9 +1668,9 @@ export function InteractiveTerminalWizard({
 
           {/* INSTALLING STEP (Simulated scaffolding) */}
           {stepId === "installing" && (
-            <div className="space-y-4 py-2">
+            <div className="flex flex-1 min-h-0 flex-col gap-3">
               {/* ASCII Bouncing Cat */}
-              <div className="flex items-start gap-4">
+              <div className="shrink-0 flex items-start gap-4">
                 <pre className="font-mono text-xs leading-none text-red-400">
                   {NESTJS_ASCII_CAT}
                 </pre>
@@ -1687,7 +1686,7 @@ export function InteractiveTerminalWizard({
               </div>
 
               {/* Sequential Stages Progress */}
-              <div className="space-y-1.5 rounded-lg border border-white/10 bg-white/[0.02] p-3 text-xs">
+              <div className="flex-1 min-h-0 overflow-y-auto space-y-1.5 rounded-lg border border-white/10 bg-white/[0.02] p-3 text-xs">
                 {SCAFFOLD_STAGES.map((stage, idx) => {
                   const isDone = idx < installStageIndex;
                   const isCurrent = idx === installStageIndex;
@@ -1742,49 +1741,51 @@ export function InteractiveTerminalWizard({
 
           {/* DONE STEP */}
           {stepId === "done" && (
-            <div className="space-y-3 py-1">
-              <div className="flex items-center gap-2 text-sm font-bold text-[#7FD99A]">
+            <div className="flex flex-1 min-h-0 flex-col gap-2.5">
+              <div className="shrink-0 flex items-center gap-2 text-sm font-bold text-[#7FD99A]">
                 <Check className="size-4" />
                 <span>Project scaffold completed successfully!</span>
               </div>
 
-              <div className="space-y-1 text-xs text-zinc-300">
-                <p>
-                  Project:{" "}
-                  <span className="font-bold text-[#61AFEF]">
-                    {resolveProjectName(state.projectName)}
-                  </span>
-                </p>
-                <p>
-                  Architecture:{" "}
-                  <span className="font-bold text-[#61AFEF]">
-                    {state.architecture}
-                  </span>
-                </p>
-                <p>
-                  Package Manager:{" "}
-                  <span className="font-bold text-[#61AFEF]">
-                    {state.packageManager}
-                  </span>
-                </p>
-              </div>
+              <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-1">
+                <div className="space-y-1 text-xs text-zinc-300">
+                  <p>
+                    Project:{" "}
+                    <span className="font-bold text-[#61AFEF]">
+                      {resolveProjectName(state.projectName)}
+                    </span>
+                  </p>
+                  <p>
+                    Architecture:{" "}
+                    <span className="font-bold text-[#61AFEF]">
+                      {state.architecture}
+                    </span>
+                  </p>
+                  <p>
+                    Package Manager:{" "}
+                    <span className="font-bold text-[#61AFEF]">
+                      {state.packageManager}
+                    </span>
+                  </p>
+                </div>
 
-              {/* Next steps card */}
-              <div className="rounded-lg border border-red-500/40 bg-red-500/[0.05] p-3 text-xs">
-                <p className="font-bold text-zinc-100">🚀 NEXT STEPS</p>
-                <div className="mt-2 space-y-1.5 text-zinc-300">
-                  <p>1. Move into the project directory:</p>
-                  <p className="pl-3 font-bold text-[#61AFEF]">
-                    cd {resolveProjectName(state.projectName)}
-                  </p>
-                  <p>2. Start development server:</p>
-                  <p className="pl-3 font-bold text-[#61AFEF]">
-                    {state.packageManager || "pnpm"} run dev
-                  </p>
+                {/* Next steps card */}
+                <div className="rounded-lg border border-red-500/40 bg-red-500/[0.05] p-3 text-xs">
+                  <p className="font-bold text-zinc-100">🚀 NEXT STEPS</p>
+                  <div className="mt-2 space-y-1.5 text-zinc-300">
+                    <p>1. Move into the project directory:</p>
+                    <p className="pl-3 font-bold text-[#61AFEF]">
+                      cd {resolveProjectName(state.projectName)}
+                    </p>
+                    <p>2. Start development server:</p>
+                    <p className="pl-3 font-bold text-[#61AFEF]">
+                      {state.packageManager || "pnpm"} run dev
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 pt-1">
+              <div className="shrink-0 flex items-center gap-3 pt-1">
                 <button
                   type="button"
                   onClick={handleRestart}
@@ -1799,7 +1800,7 @@ export function InteractiveTerminalWizard({
 
         {/* Terminal Footer Status Bar */}
         {stepId !== "installing" && stepId !== "done" && (
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 pt-3 text-[11px] text-zinc-500">
+          <div className="shrink-0 mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-white/10 pt-2.5 text-[11px] text-zinc-500">
             <div className="flex items-center gap-2">
               <span>
                 Use <span className="font-semibold text-zinc-300">↑/↓</span>,{" "}

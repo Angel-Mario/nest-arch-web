@@ -19,12 +19,12 @@ export function TerminalWindow({
   return (
     <div
       className={cn(
-        "relative rounded-xl border border-white/10 bg-[#0c0d14]/90 backdrop-blur-xl shadow-[0_0_40px_rgba(168,85,247,0.15)] overflow-hidden",
+        "relative flex flex-col rounded-xl border border-white/10 bg-[#0c0d14]/90 backdrop-blur-xl shadow-[0_0_40px_rgba(168,85,247,0.15)] overflow-hidden",
         className
       )}
     >
       {/* Title bar */}
-      <div className="relative flex items-center justify-between border-b border-white/10 bg-[#12131c] px-4 py-2.5">
+      <div className="relative shrink-0 flex items-center justify-between border-b border-white/10 bg-[#12131c] px-4 py-2.5">
         <div className="flex items-center gap-2">
           <span className="h-3 w-3 rounded-full bg-[#ff5f56] inline-block border border-black/20" />
           <span className="h-3 w-3 rounded-full bg-[#ffbd2e] inline-block border border-black/20" />
@@ -38,7 +38,7 @@ export function TerminalWindow({
       </div>
 
       {/* Terminal content */}
-      <div className="p-5 font-mono text-xs sm:text-sm leading-relaxed text-zinc-300">
+      <div className="flex-1 min-h-0 p-4 sm:p-5 font-mono text-xs sm:text-sm leading-relaxed text-zinc-300 flex flex-col">
         {children}
       </div>
     </div>

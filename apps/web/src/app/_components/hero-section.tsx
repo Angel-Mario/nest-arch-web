@@ -33,13 +33,13 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative isolate grid grid-cols-1 items-start gap-10 pt-2 pb-6 lg:grid-cols-12 lg:gap-8 lg:pt-4 lg:pb-10"
+      className="relative isolate grid grid-cols-1 items-start gap-10 pt-2 pb-6 md:grid-cols-2 md:items-center md:gap-6 lg:grid-cols-12 lg:gap-8 lg:pt-4 lg:pb-10"
       id="home"
     >
       <div className="pointer-events-none absolute -inset-x-24 -top-24 -bottom-24 -z-10 bg-[radial-gradient(ellipse_at_14%_40%,rgba(220,38,38,0.16),transparent_50%),radial-gradient(ellipse_at_84%_46%,rgba(220,38,38,0.08),transparent_46%)]" />
 
       {/* Left Column: Hero Copy & Value Proposition (Fixed 6 columns to prevent layout shift) */}
-      <div className="flex flex-col items-start lg:col-span-6 xl:col-span-6">
+      <div className="flex flex-col items-start md:col-span-1 lg:col-span-6 xl:col-span-6">
         <Badge
           variant="outline"
           className="gap-2 rounded-md border-red-500/35 bg-red-500/5 px-2.5 font-mono text-[11px] font-medium tracking-wide text-red-300"
@@ -52,11 +52,11 @@ export function HeroSection() {
           Your architecture, made explicit
         </p>
 
-        <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.06em] text-balance leading-[0.96] sm:text-5xl lg:text-6xl">
+        <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.06em] text-balance leading-[0.96] sm:text-5xl md:max-w-[12ch] md:text-[3.25rem] lg:max-w-3xl lg:text-6xl">
           Build the NestJS project you actually meant to build.
         </h1>
 
-        <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+        <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base md:max-w-lg">
           A guided terminal flow for choosing the runtime, data layer and
           tooling before your first file exists. Clear decisions in, a
           production-ready foundation out.
@@ -107,19 +107,19 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Right Column: Terminal Preview / Live Wizard (Fixed 6 columns to prevent layout shift) */}
-      <div className="relative w-full lg:col-span-6 xl:col-span-6">
+      {/* Right Column: Terminal Preview / Live Wizard (Fixed 6 columns and fixed height to prevent layout shift) */}
+      <div className="relative h-[420px] w-full sm:h-[500px] md:h-[460px] md:max-w-[560px] md:justify-self-end lg:col-span-6 lg:h-[540px] xl:col-span-6">
         {isLiveDemo ? (
-          <div className="animate-in fade-in zoom-in-95 duration-300">
+          <div className="h-full w-full animate-in fade-in zoom-in-95 duration-300">
             <InteractiveTerminalWizard onClose={() => setIsLiveDemo(false)} />
           </div>
         ) : (
-          <div className="group relative overflow-hidden rounded-xl">
+          <div className="group relative h-full w-full overflow-hidden rounded-xl">
             <TerminalWindow
               title="Administrator: PowerShell"
-              className="overflow-hidden rounded-xl border-red-500/25 bg-[#090a10]/95 shadow-[0_28px_90px_rgba(0,0,0,0.48)]"
+              className="h-full w-full overflow-hidden rounded-xl border-red-500/25 bg-[#090a10]/95 shadow-[0_28px_90px_rgba(0,0,0,0.48)]"
             >
-              <div className="space-y-4 font-mono text-xs leading-relaxed select-none sm:text-sm">
+              <div className="flex h-full flex-col justify-between space-y-3 font-mono text-xs leading-relaxed select-none sm:text-sm">
                 {/* Header: ASCII Cat & NEST ARCH Banner */}
                 <div className="flex flex-col gap-4 overflow-x-auto pb-1 text-red-500 sm:flex-row sm:items-start sm:justify-start sm:gap-6">
                   {/* Cat ASCII */}
