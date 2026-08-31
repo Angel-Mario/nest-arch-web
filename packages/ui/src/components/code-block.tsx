@@ -31,9 +31,9 @@ export function CodeBlock({ code, className, prefix = "$ " }: CodeBlockProps) {
         className
       )}
     >
-      <div className="flex items-center gap-2 overflow-x-auto">
-        {/* <Terminal className="h-4 w-4 shrink-0 text-pink-500" /> */}
-        <span className="text-rose-400 select-none">{prefix}</span>
+      <div className="flex items-center  gap-2 overflow-x-auto">
+        <Terminal className="h-4 w-4 shrink-0 text-red-500" />
+        <span className="-ml-2 text-rose-400 select-none">{prefix}</span>
         <span className="text-zinc-100 font-medium">{code}</span>
       </div>
       <button

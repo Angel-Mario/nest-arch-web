@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   Check,
   ChevronRight,
+  Minimize2,
   RotateCcw,
   Sparkles,
 } from "lucide-react";
@@ -718,11 +719,13 @@ const INITIAL_STATE: CreateProjectWizardState = {
   ultraciteInstallSkill: null,
 };
 
-// ==========================================
-// Main Component
-// ==========================================
+interface InteractiveTerminalWizardProps {
+  onClose?: () => void;
+}
 
-export function InteractiveTerminalWizard() {
+export function InteractiveTerminalWizard({
+  onClose,
+}: InteractiveTerminalWizardProps) {
   const [state, setState] =
     React.useState<CreateProjectWizardState>(INITIAL_STATE);
   const [stepId, setStepId] = React.useState<WizardStepId>("projectName");
@@ -1124,6 +1127,12 @@ export function InteractiveTerminalWizard() {
         return;
       }
 
+      if (e.key === "Escape" && onClose) {
+        e.preventDefault();
+        onClose();
+        return;
+      }
+
       if (
         (e.ctrlKey && e.key.toLowerCase() === "b") ||
         (e.key === "Backspace" && stepId !== "installing" && stepId !== "done")
@@ -1289,8 +1298,8 @@ export function InteractiveTerminalWizard() {
               isFocused
                 ? "font-semibold text-red-400"
                 : isSelected
-                ? "text-zinc-100"
-                : "text-zinc-400"
+                  ? "text-zinc-100"
+                  : "text-zinc-400"
             }`}
           >
             {option.label}
@@ -1376,16 +1385,26 @@ export function InteractiveTerminalWizard() {
 
         {/* Center Title */}
         <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2 font-mono text-xs text-zinc-400">
-          <span className="text-red-400">✦</span>
+          {/* <span className="text-red-400">✦</span> */}
           <span>nest-arch — interactive wizard</span>
         </div>
 
-        {/* DEMO Corner Badge */}
+        {/* Right Corner Badge and Actions */}
         <div className="flex items-center gap-2">
           <span className="inline-flex items-center gap-1.5 rounded border border-red-500/30 bg-red-500/10 px-2 py-0.5 font-mono text-[10px] font-semibold tracking-wider text-red-400">
             <span className="size-1.5 animate-pulse rounded-full bg-red-400" />
-            DEMO
+            LIVE DEMO
           </span>
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="cursor-pointer flex items-center h-auto gap-1 rounded border border-white/10 bg-white/5 px-2 py-0.5 font-mono text-[10px] text-zinc-300 transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white"
+              title="Close demo mode (Esc)"
+            >
+              <Minimize2 className="size-3.5 text-zinc-400" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -1607,24 +1626,18 @@ export function InteractiveTerminalWizard() {
                 </div>
                 <div>
                   <span className="text-[#e96142ff]">Auth: </span>
-                  <span className="text-[#E8C468]">
-                    {state.auth ?? "None"}
-                  </span>
+                  <span className="text-[#E8C468]">{state.auth ?? "None"}</span>
                 </div>
                 <div>
                   <span className="text-[#e96142ff]">Extras: </span>
                   <span className="text-[#E8C468]">
-                    {state.extras.length > 0
-                      ? state.extras.join(", ")
-                      : "None"}
+                    {state.extras.length > 0 ? state.extras.join(", ") : "None"}
                   </span>
                 </div>
                 <div>
                   <span className="text-[#e96142ff]">Addons: </span>
                   <span className="text-[#E8C468]">
-                    {state.addons.length > 0
-                      ? state.addons.join(", ")
-                      : "None"}
+                    {state.addons.length > 0 ? state.addons.join(", ") : "None"}
                   </span>
                 </div>
                 <div>
@@ -1788,7 +1801,14 @@ export function InteractiveTerminalWizard() {
         {stepId !== "installing" && stepId !== "done" && (
           <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-white/10 pt-3 text-[11px] text-zinc-500">
             <div className="flex items-center gap-2">
-              <span>Use ↑/↓ or click to select • Enter to confirm</span>
+              <span>
+                Use <span className="font-semibold text-zinc-300">↑/↓</span>,{" "}
+                <span className="font-semibold text-zinc-300">Mouse Click</span>{" "}
+                or <span className="font-semibold text-zinc-300">Tab</span> to
+                select •{" "}
+                <span className="font-semibold text-zinc-300">Enter</span> to
+                confirm
+              </span>
             </div>
 
             {visibleSteps.indexOf(stepId) > 0 && (
@@ -1803,14 +1823,6 @@ export function InteractiveTerminalWizard() {
             )}
           </div>
         )}
-      </div>
-
-      {/* Floating Step Badge in corner */}
-      <div className="absolute -bottom-3 -left-2 hidden rounded-md border border-white/10 bg-[#12131c] px-2.5 py-1 font-mono text-[10px] text-zinc-400 shadow-xl sm:block">
-        <span className="text-red-400">
-          {String(displayStep).padStart(2, "0")}
-        </span>{" "}
-        / {STEP_LABELS[stepId] || "interactive flow"}
       </div>
     </div>
   );
