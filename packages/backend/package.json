@@ -9,6 +9,8 @@
     "dev:setup": "convex dev --configure --until-success"
   },
   "dependencies": {
+    "@convex-dev/crons": "^0.2.2",
+    "@erquhart/convex-oss-stats": "^0.8.2",
     "convex": "catalog:",
     "dotenv": "catalog:",
     "zod": "catalog:"

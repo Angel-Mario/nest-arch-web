@@ -8,7 +8,10 @@
  * @module
  */
 
+import type * as crons from "../crons.js";
 import type * as healthCheck from "../healthCheck.js";
+import type * as http from "../http.js";
+import type * as ossStats from "../ossStats.js";
 
 import type {
   ApiFromModules,
@@ -17,7 +20,10 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  crons: typeof crons;
   healthCheck: typeof healthCheck;
+  http: typeof http;
+  ossStats: typeof ossStats;
 }>;
 
 /**
@@ -46,4 +52,6 @@ export declare const internal: FilterApi<
   FunctionReference<any, "internal">
 >;
 
-export declare const components: {};
+export declare const components: {
+  ossStats: import("@erquhart/convex-oss-stats/_generated/component.js").ComponentApi<"ossStats">;
+};

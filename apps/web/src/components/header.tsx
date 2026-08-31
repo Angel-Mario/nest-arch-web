@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { href: "/#home", id: "home", label: "Home" },
   { href: "/#workflow", id: "workflow", label: "Workflow" },
   { href: "/#features", id: "features", label: "Features" },
+  { href: undefined, id: "undefined", label: "|" },
   { href: "/roadmap", id: "roadmap", label: "Roadmap" },
   {
     href: "https://angelmario-portfolio.vercel.app/en",
@@ -75,8 +76,13 @@ const GithubIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+import { api } from "@nest-arch-web/backend/convex/_generated/api";
+import { useQuery } from "convex/react";
+
 export default function Header() {
   const activeSection = useActiveSection();
+
+  const packageVersion = useQuery(api.crons.getLatestNpmPackageVersion, {});
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/85 backdrop-blur-xl">
@@ -106,7 +112,12 @@ export default function Header() {
         >
           {NAV_LINKS.map(({ href, id, label }) => {
             const isActive = activeSection === id;
-            return (
+
+            return id === "undefined" ? (
+              <span key={href} className="opacity-80 text-red-500 mb-1">
+                |
+              </span>
+            ) : (
               <a
                 key={href}
                 href={href}
@@ -122,9 +133,16 @@ export default function Header() {
             href="https://www.npmjs.com/package/@nest-arch/tui"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden rounded-lg border border-border px-2.5 py-1.5 font-mono text-[11px] text-foreground/60 transition-colors hover:border-red-500/40 hover:text-foreground dark:text-muted-foreground sm:block"
+            className="rounded-lg border border-border px-2.5 py-1.5 font-mono text-[11px] text-foreground/60 transition-colors hover:border-red-500/40 hover:text-foreground dark:text-muted-foreground flex flex-row items-center gap-1.5"
           >
-            npm <span className="text-red-600 dark:text-red-400">v0.2.2</span>
+            <Image
+              src="/icons/npm-wordmark.svg"
+              alt="npm"
+              width={38}
+              height={26}
+              className="h-4 w-auto grayscale mt-0.5"
+            />
+            <span className="">v{packageVersion?.version || "..."}</span>
           </Link>
           <Link
             href="https://github.com/Angel-Mario/nest-arch"
