@@ -1,7 +1,16 @@
 "use client";
 
-import { Check, ChevronRight, Terminal } from "lucide-react";
+import Image from "next/image";
+import {
+  Check,
+  ChevronRight,
+  Expand,
+  Terminal,
+} from "lucide-react";
 import * as React from "react";
+
+import { Lightbox } from "./lightbox";
+import type { LightboxItem } from "./lightbox/types";
 
 const GALLERY_SCREENSHOTS = [
   {
@@ -34,7 +43,7 @@ const GALLERY_SCREENSHOTS = [
     tag: "05 / Done",
     title: "Leave with a real project",
   },
-] as const;
+] as const satisfies readonly LightboxItem[];
 
 const HIGHLIGHTS = [
   "Pure terminal interface with zero heavy dependencies",
@@ -43,6 +52,7 @@ const HIGHLIGHTS = [
 
 export function WorkflowGallery() {
   const [activeGalleryTab, setActiveGalleryTab] = React.useState(0);
+  const [lightboxIndex, setLightboxIndex] = React.useState<number | null>(null);
 
   const active = GALLERY_SCREENSHOTS[activeGalleryTab];
 
@@ -136,7 +146,7 @@ export function WorkflowGallery() {
 
         {/* Screenshot */}
         <div className="order-2 lg:order-1 lg:col-span-7">
-          <div className="overflow-hidden border border-border rounded-xl bg-background shadow-[0_24px_70px_rgba(0,0,0,0.22)]">
+          <div className="overflow-hidden rounded-xl border border-border bg-background shadow-[0_24px_70px_rgba(0,0,0,0.22)]">
             {/* Terminal title bar */}
             <div className="flex items-center gap-2 border-b border-border bg-muted/60 px-4 py-2.5">
               <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
@@ -147,14 +157,39 @@ export function WorkflowGallery() {
                 {active.tag}
               </span>
             </div>
-            <img
-              src={active.src}
-              alt={active.title}
-              className="h-auto w-full object-cover"
-            />
+            <button
+              type="button"
+              onClick={() => setLightboxIndex(activeGalleryTab)}
+              aria-label={`Expand: ${active.title}`}
+              className="group relative block w-full cursor-zoom-in"
+            >
+              <Image
+                src={active.src}
+                alt={active.title}
+                width={1400}
+                height={1400}
+                className="h-auto w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                sizes="(max-width: 1024px) 100vw, 60vw"
+                priority
+              />
+              {/* Expand hint overlay */}
+              <span className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-md bg-black/65 px-2 py-1 font-mono text-[10px] text-white opacity-0 backdrop-blur-sm transition-opacity duration-200 group-hover:opacity-100">
+                <Expand className="size-3" />
+                expand
+              </span>
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Lightbox */}
+      {lightboxIndex !== null && (
+        <Lightbox
+          images={GALLERY_SCREENSHOTS}
+          initialIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
     </section>
   );
 }

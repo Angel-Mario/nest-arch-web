@@ -1,4 +1,4 @@
-import { CtaBanner } from "@/app/_components/cta-banner";
+// import { CtaBanner } from "@/app/_components/cta-banner";
 import { FeaturesGrid } from "@/app/_components/features-grid";
 import { HeroSection } from "@/app/_components/hero-section";
 import { WorkflowGallery } from "@/app/_components/workflow-gallery";
@@ -10,7 +10,7 @@ export default function Home() {
         <HeroSection />
         <WorkflowGallery />
         <FeaturesGrid />
-        <CtaBanner />
+        {/* <CtaBanner /> */}
       </main>
     </div>
   );
