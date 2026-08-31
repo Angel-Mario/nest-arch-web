@@ -8,7 +8,7 @@ import { ModeToggle } from "./mode-toggle";
 
 const NAV_LINKS = [
   { href: "#home", id: "home", label: "Home" },
-  { href: "#cli", id: "cli", label: "Workflow" },
+  { href: "#workflow", id: "workflow", label: "Workflow" },
   { href: "#features", id: "features", label: "Features" },
 ] as const;
 
@@ -62,7 +62,7 @@ export default function Header() {
             className="h-auto w-7"
           />
           <span className="font-mono text-sm font-semibold tracking-[-0.08em] text-foreground">
-            nest<span className="text-red-400">/</span>arch
+            nest<span className="text-red-600 dark:text-red-400">/</span>arch
           </span>
         </Link>
         <nav
@@ -75,7 +75,7 @@ export default function Header() {
               <a
                 key={href}
                 href={href}
-                className={`rounded-lg border px-3 py-1.5 font-mono text-xs transition-colors ${isActive ? "border-red-500/40 bg-red-500/10 text-red-300" : "border-transparent text-muted-foreground hover:border-border hover:bg-muted/50 hover:text-foreground"}`}
+                className={`rounded-lg border px-3 py-1.5 font-mono text-xs transition-colors ${isActive ? "border-red-500/40 bg-red-500/10 text-red-600 dark:text-red-300" : "border-transparent text-foreground/60 hover:border-border hover:bg-muted/50 hover:text-foreground dark:text-muted-foreground"}`}
               >
                 {label}
               </a>
@@ -87,9 +87,9 @@ export default function Header() {
             href="https://www.npmjs.com/package/@nest-arch/tui"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden rounded-lg border border-border px-2.5 py-1.5 font-mono text-[11px] text-muted-foreground transition-colors hover:border-red-500/40 hover:text-foreground sm:block"
+            className="hidden rounded-lg border border-border px-2.5 py-1.5 font-mono text-[11px] text-foreground/60 transition-colors hover:border-red-500/40 hover:text-foreground dark:text-muted-foreground sm:block"
           >
-            npm <span className="text-red-400">v0.2.2</span>
+            npm <span className="text-red-600 dark:text-red-400">v0.2.2</span>
           </Link>
           <ModeToggle />
           <Link

@@ -18,16 +18,17 @@ const GALLERY_SCREENSHOTS = [
     title: "Configure the stack",
   },
   {
-    desc: "Follow the generator as templates resolve and the project tree is created, without leaving the terminal.",
-    src: "/projects/nest-arch/generating-in-progress.png",
-    tag: "Generate / Progress",
-    title: "See what is being created",
-  },
-  {
     desc: "Review architecture, dependencies and selected options before files are written to disk.",
     src: "/projects/nest-arch/summary.png",
     tag: "Review / Summary",
     title: "Confirm before writing",
+  },
+
+  {
+    desc: "Follow the generator as templates resolve and the project tree is created, without leaving the terminal.",
+    src: "/projects/nest-arch/generating-in-progress.png",
+    tag: "Generate / Progress",
+    title: "See what is being created",
   },
   {
     desc: "Finish with a usable project structure, git initialization and the tooling selected in the wizard.",
@@ -41,7 +42,7 @@ export function WorkflowGallery() {
   const [activeGalleryTab, setActiveGalleryTab] = React.useState(0);
 
   return (
-    <section id="cli" className="space-y-8">
+    <section id="workflow" className="space-y-8">
       <div className="mx-auto max-w-3xl space-y-3 text-center">
         <p className="font-mono text-xs font-medium tracking-[0.18em] text-red-400 uppercase">
           The workflow

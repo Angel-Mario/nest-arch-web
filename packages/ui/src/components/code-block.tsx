@@ -39,7 +39,7 @@ export function CodeBlock({ code, className, prefix = "$ " }: CodeBlockProps) {
       <button
         onClick={handleCopy}
         type="button"
-        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/5 text-zinc-400 transition-colors hover:bg-white/10 hover:text-white"
+        className="cursor-pointer flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/5 text-zinc-400 transition-colors hover:bg-white/10 hover:text-white"
         aria-label="Copy command"
       >
         {copied ? (

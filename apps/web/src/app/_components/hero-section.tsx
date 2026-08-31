@@ -42,21 +42,21 @@ export function HeroSection() {
       <div className="flex flex-col items-start md:col-span-1 lg:col-span-6 xl:col-span-6">
         <Badge
           variant="outline"
-          className="gap-2 rounded-md border-red-500/35 bg-red-500/5 px-2.5 font-mono text-[11px] font-medium tracking-wide text-red-300"
+          className="gap-2 rounded-md border-red-500/50 bg-red-500/8 px-2.5 font-mono text-[11px] font-medium tracking-wide text-red-600 dark:border-red-500/35 dark:bg-red-500/5 dark:text-red-300"
         >
           <span className="size-1.5 animate-pulse rounded-full bg-red-400" />
           <span>v0.2.2 is available</span>
         </Badge>
 
-        <p className="mt-5 font-mono text-xs font-medium tracking-[0.18em] text-red-400 uppercase">
+        <p className="mt-5 font-mono text-xs font-medium tracking-[0.18em] text-red-600 uppercase dark:text-red-400">
           Your architecture, made explicit
         </p>
 
-        <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-[-0.06em] text-balance leading-[0.96] sm:text-5xl md:max-w-[12ch] md:text-[3.25rem] lg:max-w-3xl lg:text-6xl">
+        <h1 className="mt-4 max-w-3xl text-4xl font-bold tracking-[-0.06em] text-balance leading-[0.96] text-foreground sm:text-5xl md:max-w-[12ch] md:text-[3.25rem] lg:max-w-3xl lg:text-6xl">
           Build the NestJS project you actually meant to build.
         </h1>
 
-        <p className="mt-5 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base md:max-w-lg">
+        <p className="mt-5 max-w-xl text-sm leading-relaxed text-foreground/65 dark:text-muted-foreground sm:text-base md:max-w-lg">
           A guided terminal flow for choosing the runtime, data layer and
           tooling before your first file exists. Clear decisions in, a
           production-ready foundation out.
@@ -68,7 +68,7 @@ export function HeroSection() {
             prefix=""
             className="w-full rounded-md shadow-[0_18px_50px_rgba(0,0,0,0.22)]"
           />
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs text-foreground/60 dark:text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <Check className="size-3.5 text-red-400" /> No config files
             </span>
@@ -82,25 +82,25 @@ export function HeroSection() {
           <button
             type="button"
             onClick={() => setIsLiveDemo((prev) => !prev)}
-            className="inline-flex items-center gap-2 rounded-lg border border-red-500/60 bg-red-500/15 px-3.5 py-2 font-mono text-xs font-semibold text-red-200 shadow-[0_0_25px_rgba(239,68,68,0.2)] transition-all hover:scale-[1.02] hover:bg-red-500/25 sm:text-sm"
+            className="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-red-600/70 bg-red-50 px-3.5 py-2 font-mono text-xs font-semibold text-red-700 shadow-[0_0_25px_rgba(239,68,68,0.12)] transition-all hover:scale-[1.02] hover:bg-red-100 dark:border-red-500/60 dark:bg-red-500/15 dark:text-red-200 dark:shadow-[0_0_25px_rgba(239,68,68,0.2)] dark:hover:bg-red-500/25 sm:text-sm"
           >
             {isLiveDemo ? (
               <>
-                <Terminal className="size-4 text-red-400" />
+                <Terminal className="size-4 text-red-600 dark:text-red-400" />
                 <span>Exit Interactive Demo</span>
               </>
             ) : (
               <>
-                <Play className="size-3.5 fill-red-400 text-red-400" />
+                <Play className="size-3.5 fill-red-600 text-red-600 dark:fill-red-400 dark:text-red-400" />
                 <span>Try Live Demo</span>
-                <span className="size-1.5 animate-pulse rounded-full bg-red-400" />
+                <span className="size-1.5 animate-pulse rounded-full bg-red-500 dark:bg-red-400" />
               </>
             )}
           </button>
 
           <Link
-            href="#cli"
-            className="inline-flex items-center gap-2 border-b border-red-500/50 pb-1 font-mono text-sm font-medium text-foreground transition-colors hover:border-red-400 hover:text-red-400"
+            href="#workflow"
+            className="inline-flex items-center gap-2 border-b border-red-600/60 pb-1 font-mono text-sm font-medium text-foreground transition-colors hover:border-red-500 hover:text-red-600 dark:border-red-500/50 dark:hover:border-red-400 dark:hover:text-red-400"
           >
             Explore workflow <ArrowRight className="size-4" />
           </Link>
