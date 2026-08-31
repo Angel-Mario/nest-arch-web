@@ -123,13 +123,13 @@ export function HeroSection() {
                 {/* Header: ASCII Cat & NEST ARCH Banner */}
                 <div className="flex flex-col gap-4 overflow-x-auto pb-1 text-red-500 sm:flex-row sm:items-start sm:justify-start sm:gap-6">
                   {/* Cat ASCII */}
-                  <pre className="font-mono text-[10px] leading-[1.15] text-red-500 sm:text-[11px] md:text-xs">
+                  <pre className="font-mono text-[10px] leading-[1.15] text-red-500 sm:text-[8.5px] md:text-[9.5px]">
                     {ASCII_CAT}
                   </pre>
 
                   {/* Banner + Subtitle + Version */}
                   <div className="flex flex-col justify-start pt-1">
-                    <pre className="font-mono text-[9px] font-bold leading-[1.15] text-red-500 sm:text-[10px] md:text-[11px]">
+                    <pre className="font-mono text-[9px] font-bold leading-[1.15] text-red-500 sm:text-[8.5px] md:text-[9.5px]">
                       {ASCII_BANNER}
                     </pre>
                     <p className="mt-2 font-mono text-[11px] text-zinc-300 sm:text-xs">
