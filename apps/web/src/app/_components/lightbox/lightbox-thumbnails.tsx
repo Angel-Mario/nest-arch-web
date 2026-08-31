@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+
 import type { LightboxItem } from "./types";
 
 interface ThumbnailsProps {
@@ -27,7 +28,13 @@ export function Thumbnails({ images, current, onSelect }: ThumbnailsProps) {
               : "border-transparent opacity-50 hover:opacity-80"
           }`}
         >
-          <Image src={image.src} alt="" fill className="object-cover" sizes="60px" />
+          <Image
+            src={image.src}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="60px"
+          />
         </button>
       ))}
     </div>

@@ -2,22 +2,40 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import * as React from "react";
 
 import { ModeToggle } from "./mode-toggle";
 
 const NAV_LINKS = [
-  { href: "#home", id: "home", label: "Home" },
-  { href: "#workflow", id: "workflow", label: "Workflow" },
-  { href: "#features", id: "features", label: "Features" },
+  { href: "/#home", id: "home", label: "Home" },
+  { href: "/#workflow", id: "workflow", label: "Workflow" },
+  { href: "/#features", id: "features", label: "Features" },
+  { href: "/roadmap", id: "roadmap", label: "Roadmap" },
+  {
+    href: "https://angelmario-portfolio.vercel.app/en",
+    id: "about",
+    label: "About Me",
+  },
 ] as const;
 
 const SECTION_IDS = NAV_LINKS.map(({ id }) => id);
 
 const useActiveSection = () => {
+  const pathname = usePathname();
   const [active, setActive] = React.useState<string>("");
 
   React.useEffect(() => {
+    if (pathname === "/roadmap") {
+      setActive("roadmap");
+      return;
+    }
+
+    if (pathname !== "/") {
+      setActive("");
+      return;
+    }
+
     const observers = SECTION_IDS.flatMap((id) => {
       const section = document.querySelector(`#${id}`);
       if (!section) return [];
@@ -32,10 +50,12 @@ const useActiveSection = () => {
       return [observer];
     });
 
+    setActive((current) => current || "home");
+
     return () => {
       for (const observer of observers) observer.disconnect();
     };
-  }, []);
+  }, [pathname]);
 
   return active;
 };

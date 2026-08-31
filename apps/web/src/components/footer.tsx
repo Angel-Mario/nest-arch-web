@@ -31,18 +31,21 @@ const TwitterIcon = ({ className }: { className?: string }) => (
 );
 
 const PRODUCT_LINKS = [
-  { href: "#features", label: "Features" },
-  // { href: "#templates", label: "Templates" },
-  { href: "#workflow", label: "Workflow" },
+  { href: "/#features", label: "Features" },
+  // { href: "/#templates", label: "Templates" },
+  { href: "/#workflow", label: "Workflow" },
   { href: "/roadmap", label: "Roadmap" },
-] as const;
+];
 
 const RESOURCE_LINKS = [
-  { href: "#docs", label: "Documentation" },
-  // { href: "#guide", label: "Guide" },
-  // { href: "#examples", label: "Examples" },
-  { href: "https://github.com/Angel-Mario/nest-arch/tags", label: "Changelog" },
-] as const;
+  { href: "/#docs", label: "Documentation" },
+  // { href: "/#guide", label: "Guide" },
+  // { href: "/#examples", label: "Examples" },
+  {
+    href: "https://github.com/Angel-Mario/nest-arch/tags",
+    label: "Changelog",
+  },
+];
 
 export default function Footer() {
   return (
@@ -88,7 +91,7 @@ export default function Footer() {
                 <span>@nest-arch/tui</span>
               </Link>
               <Link
-                href="https://github.com"
+                href="https://github.com/Angel-Mario/nest-arch"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex size-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:border-red-500/50 hover:text-foreground"
@@ -96,7 +99,7 @@ export default function Footer() {
               >
                 <GithubIcon className="size-4" />
               </Link>
-              <Link
+              {/* <Link
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -113,7 +116,7 @@ export default function Footer() {
                 aria-label="Discord"
               >
                 <MessageSquare className="size-4" />
-              </Link>
+              </Link> */}
             </div>
           </div>
 
@@ -124,12 +127,12 @@ export default function Footer() {
             <ul className="space-y-2.5">
               {PRODUCT_LINKS.map(({ href, label }) => (
                 <li key={href}>
-                  <Link
+                  <a
                     href={href}
                     className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {label}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -142,12 +145,14 @@ export default function Footer() {
             <ul className="space-y-2.5">
               {RESOURCE_LINKS.map(({ href, label }) => (
                 <li key={href}>
-                  <Link
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
                     href={href}
                     className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {label}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>

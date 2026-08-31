@@ -1,12 +1,7 @@
 "use client";
 
+import { Check, ChevronRight, Expand, Terminal } from "lucide-react";
 import Image from "next/image";
-import {
-  Check,
-  ChevronRight,
-  Expand,
-  Terminal,
-} from "lucide-react";
 import * as React from "react";
 
 import { Lightbox } from "./lightbox";

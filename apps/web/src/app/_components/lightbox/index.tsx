@@ -12,8 +12,17 @@ import { useLightboxKeyboard } from "./use-lightbox-keyboard";
 import { useScrollLock } from "./use-scroll-lock";
 
 export function Lightbox({ images, initialIndex, onClose }: LightboxProps) {
-  const { current, zoom, isZoomed, prev, next, zoomIn, zoomOut, goTo, setZoom } =
-    useLightbox(images.length, initialIndex);
+  const {
+    current,
+    zoom,
+    isZoomed,
+    prev,
+    next,
+    zoomIn,
+    zoomOut,
+    goTo,
+    setZoom,
+  } = useLightbox(images.length, initialIndex);
 
   useLightboxKeyboard({ onClose, onPrev: prev, onNext: next, setZoom });
   useScrollLock();
@@ -49,7 +58,12 @@ export function Lightbox({ images, initialIndex, onClose }: LightboxProps) {
             if (!isZoomed) zoomIn();
           }}
         >
-          <NavArrows total={images.length} isZoomed={isZoomed} onPrev={prev} onNext={next} />
+          <NavArrows
+            total={images.length}
+            isZoomed={isZoomed}
+            onPrev={prev}
+            onNext={next}
+          />
           <div
             className={`relative select-none transition-transform duration-300 ${
               isZoomed ? "max-h-[85vh] max-w-[95vw]" : "cursor-zoom-in"

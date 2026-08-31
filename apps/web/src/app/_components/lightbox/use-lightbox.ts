@@ -33,7 +33,7 @@ export function useLightbox(imagesLength: number, initialIndex: number) {
       setCurrent(index);
       reset();
     },
-    [reset],
+    [reset]
   );
 
   return {
