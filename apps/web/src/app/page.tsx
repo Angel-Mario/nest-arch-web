@@ -3,18 +3,7 @@
 import { Badge } from "@nest-arch-web/ui/components/badge";
 import { CodeBlock } from "@nest-arch-web/ui/components/code-block";
 import { TerminalWindow } from "@nest-arch-web/ui/components/terminal-window";
-import {
-  Terminal,
-  Zap,
-  Box,
-  Layers,
-  Puzzle,
-  Quote,
-  Code2,
-  Server,
-  Infinity as InfinityIcon,
-  Check,
-} from "lucide-react";
+import { Terminal, Box, Layers, Puzzle, Server, Check } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -35,98 +24,64 @@ const GithubIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const TESTIMONIAL =
-  "“Nest Arch helped us standardize our architecture and ship features 3x faster. It's now our go-to starter for every new microservice.”";
+const GALLERY_SCREENSHOTS = [
+  {
+    desc: "Start from a clear menu instead of a wall of flags. The wizard keeps the available paths visible from the first prompt.",
+    src: "/projects/nest-arch/main-menu.png",
+    tag: "00 / Entry point",
+    title: "Choose a starting point",
+  },
+  {
+    desc: "Select project type, package manager, data layer, transport and add-ons in a deliberate sequence.",
+    src: "/projects/nest-arch/step-14-example.png",
+    tag: "14 / Configuration",
+    title: "Configure the stack",
+  },
+  {
+    desc: "Follow the generator as templates resolve and the project tree is created, without leaving the terminal.",
+    src: "/projects/nest-arch/generating-in-progress.png",
+    tag: "Generate / Progress",
+    title: "See what is being created",
+  },
+  {
+    desc: "Review architecture, dependencies and selected options before files are written to disk.",
+    src: "/projects/nest-arch/summary.png",
+    tag: "Review / Summary",
+    title: "Confirm before writing",
+  },
+  {
+    desc: "Finish with a usable project structure, git initialization and the tooling selected in the wizard.",
+    src: "/projects/nest-arch/project-generated.png",
+    tag: "Done / Output",
+    title: "Leave with a real project",
+  },
+] as const;
 
 export default function Home() {
-  const [activeStep, setActiveStep] = React.useState(0);
   const [activeGalleryTab, setActiveGalleryTab] = React.useState(0);
 
-  const steps = [
-    {
-      desc: "Single NestJS API / Gateway or Turborepo Monorepo",
-      label: "Architecture",
-    },
-    {
-      desc: "Express or Fastify engine configuration",
-      label: "HTTP Provider",
-    },
-    {
-      desc: "Prisma, TypeORM or Drizzle ORM setup",
-      label: "ORM & Databases",
-    },
-    {
-      desc: "Ultracite, Husky, NestJS Zod & Scalar UI",
-      label: "Addons & Extras",
-    },
-  ];
-
-  const galleryScreenshots = [
-    {
-      desc: "Interactive CLI wizard powered by @nest-arch/tui allowing seamless project setup.",
-      src: "/projects/nest-arch/main-menu.png",
-      tag: "Step 0: Welcome Menu",
-      title: "Main Interactive Menu",
-    },
-    {
-      desc: "Select project type, package manager, ORMs, microservices transport & addons.",
-      src: "/projects/nest-arch/step-14-example.png",
-      tag: "Step 14: Wizard Config",
-      title: "Step-by-Step Selection",
-    },
-    {
-      desc: "Handlebars engine generates files, resolves template groups, and builds project tree.",
-      src: "/projects/nest-arch/generating-in-progress.png",
-      tag: "Scaffolding Engine",
-      title: "Real-time Scaffolding",
-    },
-    {
-      desc: "Comprehensive review of chosen architecture, dependencies, and options before writing.",
-      src: "/projects/nest-arch/summary.png",
-      tag: "Preset Summary",
-      title: "Configuration Summary",
-    },
-    {
-      desc: "Complete project directory created with automated git init, zero-config linting & env core.",
-      src: "/projects/nest-arch/project-generated.png",
-      tag: "Project Generated",
-      title: "Production Ready Output",
-    },
-  ];
-
   return (
-    <div className="relative min-h-screen bg-background text-foreground selection:bg-rose-500/30 selection:text-rose-200 overflow-hidden">
-      {/* Background ambient lighting effects — dark mode only */}
-      <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[600px] w-full max-w-7xl -translate-x-1/2 bg-gradient-to-b from-rose-500/8 to-transparent blur-3xl dark:from-rose-500/10" />
-      <div className="pointer-events-none absolute right-0 top-1/3 -z-10 h-[500px] w-[500px] rounded-full bg-rose-500/5 blur-[120px] dark:bg-rose-600/8" />
-      <div className="pointer-events-none absolute left-0 top-2/3 -z-10 h-[500px] w-[500px] rounded-full bg-rose-400/5 blur-[120px] dark:bg-pink-600/8" />
-
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-24 space-y-28">
+    <div className="min-h-screen overflow-hidden bg-background text-foreground selection:bg-red-500/30 selection:text-red-100">
+      <main className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-8 lg:pt-16 space-y-28">
         {/* HERO SECTION */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-4">
           <div className="lg:col-span-7 flex flex-col items-start gap-6">
-            <Badge variant="glow">
-              <span className="h-1.5 w-1.5 rounded-full bg-pink-400 animate-pulse" />
-              <span>STABLE RELEASE</span>
-              <span className="text-zinc-500">|</span>
-              <span className="text-pink-300">v0.2.2</span>
+            <Badge
+              variant="outline"
+              className="gap-2 rounded-sm border-red-500/35 bg-red-500/5 px-2.5 font-mono text-[11px] font-medium tracking-wide text-red-300"
+            >
+              <span className="size-1.5 rounded-full bg-red-400" />
+              <span>v0.2.2 is available</span>
             </Badge>
 
-            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.1]">
-              Scaffold smarter. <br />
-              Ship{" "}
-              <span className="bg-gradient-to-r from-rose-500 to-pink-400 bg-clip-text text-transparent">
-                faster.
-              </span>
-              <span className="inline-block w-2.5 h-10 ml-2 bg-pink-500 align-middle animate-cursor" />
+            <h1 className="max-w-3xl text-4xl font-semibold tracking-[-0.055em] text-balance sm:text-6xl lg:text-7xl leading-[0.98]">
+              A NestJS foundation that starts with your architecture.
             </h1>
 
-            <p className="text-base sm:text-lg text-zinc-400 max-w-2xl leading-relaxed font-mono">
-              Nest Arch is a powerful CLI and interactive TUI generator for
-              building opinionated, production-ready{" "}
-              <span className="text-rose-400 font-semibold">NestJS</span>{" "}
-              applications and microservices — the right way, from the very
-              first command.
+            <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              Choose the runtime, data layer and project shape in an interactive
+              terminal flow. Nest Arch generates the starting point; you keep
+              the decisions.
             </p>
 
             {/* CTA Command & Buttons */}
@@ -139,7 +94,8 @@ export default function Home() {
               <Link
                 href="https://www.npmjs.com/package/@nest-arch/tui"
                 target="_blank"
-                className="flex items-center justify-center gap-2 rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-2.5 font-mono text-sm font-medium text-rose-300 transition-all hover:bg-rose-500/20 hover:border-rose-500/50"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 rounded-md border border-border bg-muted/40 px-4 py-2.5 font-mono text-sm font-medium text-foreground transition-colors hover:border-red-500/50 hover:bg-red-500/10"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -152,8 +108,8 @@ export default function Home() {
             </div>
 
             {/* Tech Badges Row */}
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-4 text-xs font-mono text-zinc-400 border-t border-white/10 w-full">
-              <div className="flex items-center gap-2 hover:text-rose-400 transition-colors">
+            <div className="flex w-full flex-wrap items-center gap-x-5 gap-y-3 border-t border-border pt-4 font-mono text-xs text-muted-foreground">
+              <div className="flex items-center gap-2 hover:text-red-400 transition-colors">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/icons/typescript.svg"
@@ -162,12 +118,12 @@ export default function Home() {
                 />
                 <span>TypeScript</span>
               </div>
-              <div className="flex items-center gap-2 hover:text-rose-400 transition-colors">
+              <div className="flex items-center gap-2 hover:text-red-400 transition-colors">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/icons/nestjs.svg" alt="NestJS" className="h-4 w-4" />
                 <span>NestJS</span>
               </div>
-              <div className="flex items-center gap-2 hover:text-rose-400 transition-colors">
+              <div className="flex items-center gap-2 hover:text-red-400 transition-colors">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/icons/turborepo-icon-dark.svg"
@@ -176,12 +132,12 @@ export default function Home() {
                 />
                 <span>Turborepo</span>
               </div>
-              <div className="flex items-center gap-2 hover:text-rose-400 transition-colors">
+              <div className="flex items-center gap-2 hover:text-red-400 transition-colors">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/icons/docker.svg" alt="Docker" className="h-4 w-4" />
                 <span>Docker</span>
               </div>
-              <div className="flex items-center gap-2 hover:text-rose-400 transition-colors">
+              <div className="flex items-center gap-2 hover:text-red-400 transition-colors">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/icons/zod.svg" alt="Zod" className="h-4 w-4" />
                 <span>Zod</span>
@@ -192,63 +148,50 @@ export default function Home() {
           {/* Hero Right Interactive Terminal Window */}
           <div className="lg:col-span-5">
             <TerminalWindow title="@nest-arch/tui v0.2.2">
-              <div className="space-y-4">
-                {/* ASCII Art */}
-                <pre className="text-[10px] sm:text-xs leading-none font-bold text-rose-500/90 selection:bg-none overflow-x-auto">
-                  {`  _  _ ___ ___ _____   _   ___  ___ _  _ 
- | \\| | __/ __|_   _| /_\\ | _ \\/ __| || |
- | .\` | _|\\__ \\ | |  / _ \\|   / (__| __ |
- |_|\\_|___|___/ |_| /_/ \\_\\_|_\\___|_||_|`}
-                </pre>
-
-                <div className="border-b border-white/10 pb-3 text-zinc-400">
-                  <p className="text-pink-400 font-semibold">
-                    &gt; Welcome to Nest Arch TUI
-                  </p>
-                  <p className="text-zinc-500">
-                    Interactive project generator setup.
-                  </p>
-                </div>
-
-                <div>
-                  <p className="text-zinc-400 mb-2 font-mono text-xs">
-                    Wizard Steps:
-                  </p>
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2 text-rose-400 font-semibold bg-rose-500/10 border border-rose-500/30 rounded px-2.5 py-1">
-                      <span>&gt;</span>
-                      <span>1. Create a new NestJS project</span>
+              <div className="flex min-h-91.25 flex-col font-mono text-[11px] leading-relaxed sm:text-xs">
+                <div className="border-b border-white/15 pb-5">
+                  <div className="flex items-start gap-3 text-red-400">
+                    <pre className="shrink-0 text-[7px] leading-[0.8] sm:text-[8px]">{` /\\_/\\
+( o.o )
+ > ^ <`}</pre>
+                    <div className="min-w-0 pt-1">
+                      <pre className="overflow-hidden text-[9px] leading-none font-semibold tracking-[-0.08em] sm:text-[11px]">{` _   _ _____ ____ _____      _    ____   ____ _   _
+|  | | ____/ ___|_   _|    /   |  _ \\ / ___| | | |
+|  \\| |  _| \\___ \\ | |     / _ \\ | |_) | |   | |_| |
+| |\\  | |___ ___) || |    / ___ \\|  _ <| |___|  _  |
+|_| \\_|_____|____/ |_|   /_/   \\_\\_| \\_\\____|_| |_|`}</pre>
+                      <p className="mt-1 text-zinc-300">
+                        Build production-ready NestJS projects.
+                      </p>
+                      <p className="text-sky-400">v0.2.2</p>
                     </div>
-
-                    {steps.map((step, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setActiveStep(idx)}
-                        type="button"
-                        className={`w-full flex items-center justify-between text-left px-2.5 py-1 rounded transition-colors ${
-                          activeStep === idx
-                            ? "text-rose-300 bg-rose-500/10 font-semibold"
-                            : "text-zinc-500 hover:text-zinc-300"
-                        }`}
-                      >
-                        <span className="font-mono text-xs">
-                          {idx + 2}. {step.label}
-                        </span>
-                        <span className="text-[10px] text-zinc-500 font-mono">
-                          {step.desc}
-                        </span>
-                      </button>
-                    ))}
                   </div>
                 </div>
 
-                <div className="border-t border-white/10 pt-3 text-[11px] text-zinc-500 flex items-center justify-between font-mono">
-                  <span>Use ↑/↓ to navigate</span>
-                  <span className="text-rose-400 font-semibold">
-                    Enter to select
-                  </span>
-                  <span>Ctrl+C to exit</span>
+                <div className="flex-1 py-5">
+                  <p className="font-semibold text-zinc-100">
+                    <span className="mr-2 text-red-400">✧</span>
+                    Welcome to <span className="text-red-400">Nest Arch</span>—
+                    Let's build something amazing.
+                  </p>
+                  <p className="mt-6 text-zinc-400">
+                    What would you like to do?
+                  </p>
+                  <ul className="mt-3 flex flex-col gap-2 text-zinc-500">
+                    <li className="font-semibold text-red-400">
+                      &gt; Create a new NestJS project
+                    </li>
+                    <li className="pl-3">Starter templates</li>
+                    <li className="pl-3">Documentation</li>
+                    <li className="pl-3">Exit</li>
+                  </ul>
                 </div>
+
+                <p className="border-t border-white/15 pt-4 text-zinc-400">
+                  Use <span className="text-zinc-100">↑/↓</span> to navigate{" "}
+                  <span className="text-zinc-100">• Enter</span> to select{" "}
+                  <span className="text-zinc-100">• Ctrl+C</span> to exit
+                </p>
               </div>
             </TerminalWindow>
           </div>
@@ -257,33 +200,30 @@ export default function Home() {
         {/* TUI GALLERY SHOWCASE SECTION */}
         <section id="cli" className="space-y-8">
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <Badge variant="glow">
-              <span className="h-1.5 w-1.5 rounded-full bg-rose-400 animate-pulse" />
-              <span>TERMINAL INTERFACE</span>
-            </Badge>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              An Interactive TUI designed for{" "}
-              <span className="bg-gradient-to-r from-rose-500 to-pink-400 bg-clip-text text-transparent">
-                Developer Joy.
-              </span>
+            <p className="font-mono text-xs font-medium tracking-[0.18em] text-red-400 uppercase">
+              The workflow
+            </p>
+            <h2 className="text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
+              A generator you can inspect as it works.
             </h2>
             <p className="text-sm font-mono text-zinc-400">
-              Explore step-by-step screenshots of our terminal wizard in action.
+              Each stage stays explicit, so configuration never feels like a
+              black box.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-zinc-950/90 dark:bg-[#0d0e16]/90 p-4 sm:p-8 backdrop-blur-xl shadow-[0_0_50px_rgba(236,72,153,0.08)]">
+          <div className="border border-border bg-card p-4 sm:p-8">
             {/* Gallery Tabs */}
             <div className="flex flex-wrap items-center justify-center gap-2 border-b border-white/10 pb-6 mb-8">
-              {galleryScreenshots.map((item, idx) => (
+              {GALLERY_SCREENSHOTS.map((item, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveGalleryTab(idx)}
                   type="button"
-                  className={`px-4 py-2 rounded-xl text-xs font-mono font-medium transition-all ${
+                  className={`rounded-sm border px-3 py-2 text-xs font-mono font-medium transition-colors ${
                     activeGalleryTab === idx
-                      ? "bg-rose-500/15 border border-rose-500/40 text-white shadow-[0_0_15px_rgba(236,72,153,0.25)]"
-                      : "border border-white/5 bg-white/5 text-zinc-400 hover:text-zinc-200 hover:bg-white/10"
+                      ? "border-red-500/50 bg-red-500/10 text-foreground"
+                      : "border-transparent text-muted-foreground hover:border-border hover:bg-muted/60 hover:text-foreground"
                   }`}
                 >
                   {item.title}
@@ -297,8 +237,8 @@ export default function Home() {
                 <div className="relative overflow-hidden rounded-xl border border-white/15 bg-black p-2 shadow-2xl group w-full">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={galleryScreenshots[activeGalleryTab].src}
-                    alt={galleryScreenshots[activeGalleryTab].title}
+                    src={GALLERY_SCREENSHOTS[activeGalleryTab].src}
+                    alt={GALLERY_SCREENSHOTS[activeGalleryTab].title}
                     className="w-full h-auto rounded-lg object-cover transition-transform duration-300 group-hover:scale-[1.01]"
                   />
                 </div>
@@ -306,24 +246,24 @@ export default function Home() {
 
               <div className="lg:col-span-5 flex flex-col justify-center space-y-4">
                 <Badge variant="secondary" className="w-fit font-mono">
-                  {galleryScreenshots[activeGalleryTab].tag}
+                  {GALLERY_SCREENSHOTS[activeGalleryTab].tag}
                 </Badge>
                 <h3 className="text-2xl font-bold text-white font-mono">
-                  {galleryScreenshots[activeGalleryTab].title}
+                  {GALLERY_SCREENSHOTS[activeGalleryTab].title}
                 </h3>
                 <p className="text-sm text-zinc-400 leading-relaxed font-mono">
-                  {galleryScreenshots[activeGalleryTab].desc}
+                  {GALLERY_SCREENSHOTS[activeGalleryTab].desc}
                 </p>
 
                 <div className="pt-4 border-t border-white/10 space-y-2 text-xs font-mono text-zinc-500">
                   <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-emerald-400" />
+                    <Check className="h-4 w-4 text-sky-400" />
                     <span>
                       Pure terminal interface with zero heavy dependencies
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-emerald-400" />
+                    <Check className="h-4 w-4 text-sky-400" />
                     <span>Instant input validation & condition checks</span>
                   </div>
                 </div>
@@ -334,69 +274,61 @@ export default function Home() {
 
         {/* FEATURES GRID ("WHY NEST ARCH?") */}
         <section id="features" className="space-y-10">
-          <div className="text-center max-w-2xl mx-auto space-y-3">
-            <p className="font-mono text-xs font-bold text-rose-400 tracking-widest uppercase">
-              WHY NEST ARCH?
+          <div className="max-w-2xl space-y-3">
+            <p className="font-mono text-xs font-medium tracking-[0.18em] text-red-400 uppercase">
+              Designed around choices
             </p>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              Built for developers. Designed for{" "}
-              <span className="bg-gradient-to-r from-rose-500 to-pink-400 bg-clip-text text-transparent">
-                velocity.
-              </span>
+            <h2 className="text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
+              The pieces that shape a real project.
             </h2>
-            <p className="text-sm font-mono text-zinc-400">
-              We remove complexity from project setup so you can focus on
-              building features, not boilerplate.
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Start with the decisions that are difficult to retrofit later, not
+              a generic starter and a long cleanup.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 border-y border-border sm:grid-cols-2 lg:grid-cols-5">
             {[
               {
                 desc: "Guided, intuitive, and beautiful terminal experience with smart prompts.",
-                glow: "from-rose-500/20 to-pink-500/5",
                 icon: Terminal,
-                title: "Interactive TUI",
+                title: "A guided CLI",
               },
               {
                 desc: "Handlebars templates with smart resolution and dynamic scaffolding options.",
-                glow: "from-rose-500/20 to-pink-500/5",
                 icon: Box,
-                title: "Modular Engine",
+                title: "Composable templates",
               },
               {
                 desc: "ORMs, auth, Docker, testing, linting, and modern tooling out of the box.",
-                glow: "from-pink-500/20 to-rose-500/5",
                 icon: Server,
-                title: "Full-Stack Ready",
+                title: "Production defaults",
               },
               {
                 desc: "TurboRepo powered workspaces for scalable architectures and shared packages.",
-                glow: "from-rose-400/20 to-pink-500/5",
                 icon: Layers,
-                title: "Monorepo First",
+                title: "Monorepo-ready",
               },
               {
                 desc: "Pluggable engine, custom templates, and limitless architecture possibilities.",
-                glow: "from-rose-500/20 to-pink-500/5",
                 icon: Puzzle,
-                title: "Extensible",
+                title: "Room to adapt",
               },
-            ].map((feature, idx) => {
+            ].map((feature) => {
               const Icon = feature.icon;
               return (
                 <div
-                  key={idx}
-                  className="glow-card rounded-2xl p-6 flex flex-col justify-between space-y-4 group"
+                  key={feature.title}
+                  className="group flex min-h-56 flex-col justify-between border-border p-6 transition-colors hover:bg-muted/35 sm:border-r lg:last:border-r-0"
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/0 group-hover:border-pink-500/40 group-hover:bg-pink-500/10 transition-all">
-                    <Icon className="h-6 w-6 text-rose-400 group-hover:scale-110 transition-transform" />
+                  <div className="flex size-10 items-center justify-center border border-border bg-background text-red-400 transition-colors group-hover:border-red-500/50 group-hover:bg-red-500/10">
+                    <Icon className="size-5" />
                   </div>
                   <div>
-                    <h3 className="font-mono text-base font-bold text-white mb-2 group-hover:text-rose-300 transition-colors">
+                    <h3 className="mb-2 font-mono text-sm font-semibold text-foreground">
                       {feature.title}
                     </h3>
-                    <p className="font-mono text-xs text-zinc-400 leading-relaxed">
+                    <p className="text-sm leading-relaxed text-muted-foreground">
                       {feature.desc}
                     </p>
                   </div>
@@ -408,140 +340,67 @@ export default function Home() {
 
         {/* INTERACTIVE ARCHITECTURE SECTION */}
         <section id="architecture" className="space-y-8">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <p className="font-mono text-xs font-bold text-rose-400 tracking-widest uppercase">
-              ONE COMMAND. INFINITE POSSIBILITIES.
+          <div className="max-w-2xl space-y-2">
+            <p className="font-mono text-xs font-medium tracking-[0.18em] text-red-400 uppercase">
+              Project map
             </p>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-              From idea to production,{" "}
-              <span className="bg-gradient-to-r from-rose-500 to-pink-400 bg-clip-text text-transparent">
-                effortlessly.
-              </span>
+            <h2 className="text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
+              One starting point. Several deliberate paths.
             </h2>
           </div>
 
           <ArchitectureInteractive />
         </section>
 
-        {/* METRICS HIGHLIGHTS ("MADE FOR PRODUCTION") */}
-        <section className="rounded-2xl border border-white/10 dark:border-white/8 bg-white/60 dark:bg-[#0c0d15]/80 p-8 sm:p-12 backdrop-blur-xl">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-5 space-y-3">
-              <p className="font-mono text-xs font-bold text-rose-400 tracking-widest uppercase">
-                MADE FOR PRODUCTION
+        <section className="grid border-y border-border md:grid-cols-3">
+          {[
+            [
+              "Runtime",
+              "NestJS with Express or Fastify, selected before the first file is generated.",
+            ],
+            [
+              "Data layer",
+              "Prisma, TypeORM or Drizzle with the project structure prepared for it.",
+            ],
+            [
+              "Tooling",
+              "Linting, tests, Docker and workspace conventions added only when you choose them.",
+            ],
+          ].map(([label, description]) => (
+            <div
+              key={label}
+              className="border-border px-0 py-7 md:border-r md:px-7 md:first:pl-0 md:last:border-r-0"
+            >
+              <p className="font-mono text-xs font-medium text-red-400">
+                {label}
               </p>
-              <h2 className="text-3xl font-extrabold tracking-tight">
-                From day zero.
-              </h2>
-              <p className="font-mono text-xs text-zinc-400 leading-relaxed">
-                Every project scaffolded with Nest Arch is structured using
-                industry best practices, security considerations, automated
-                tests, and scalable modular architecture.
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                {description}
               </p>
             </div>
-
-            <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {[
-                {
-                  color: "text-blue-400",
-                  icon: Code2,
-                  label: "TypeScript",
-                  metric: "100%",
-                },
-                {
-                  color: "text-rose-400",
-                  icon: Zap,
-                  label: "Boilerplate",
-                  metric: "0",
-                },
-                {
-                  color: "text-pink-400",
-                  icon: InfinityIcon,
-                  label: "Possibilities",
-                  metric: "∞",
-                },
-                {
-                  color: "text-emerald-400",
-                  icon: Terminal,
-                  label: "Command",
-                  metric: "1",
-                },
-              ].map((stat, idx) => {
-                const Icon = stat.icon;
-                return (
-                  <div
-                    key={idx}
-                    className="flex flex-col items-center justify-center p-5 rounded-xl border border-white/10 bg-white/5 text-center space-y-2 hover:border-pink-500/30 transition-colors"
-                  >
-                    <Icon className={`h-5 w-5 ${stat.color}`} />
-                    <span className="font-mono text-2xl font-bold text-white">
-                      {stat.metric}
-                    </span>
-                    <span className="font-mono text-xs text-zinc-400">
-                      {stat.label}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* TESTIMONIAL CARD */}
-        <section className="glow-card rounded-2xl p-8 sm:p-10 border border-white/10 relative overflow-hidden">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="space-y-4 max-w-2xl">
-              <div className="flex items-center gap-2">
-                <Quote className="h-6 w-6 text-rose-500 rotate-180" />
-                <Badge variant="secondary">TRUSTED BY DEVELOPERS</Badge>
-              </div>
-              <p className="font-mono text-base sm:text-lg text-zinc-200 leading-relaxed italic">
-                {TESTIMONIAL}
-              </p>
-              <div>
-                <p className="font-mono text-xs font-semibold text-rose-300">
-                  Developer, Indie Founder
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 border-t md:border-t-0 md:border-l border-white/10 pt-4 md:pt-0 md:pl-8 text-xs font-mono text-zinc-400 space-y-1">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-emerald-400" />
-                  <span>Standardized Codebase</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-emerald-400" />
-                  <span>Zero Tech Debt Setup</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          ))}
         </section>
 
         {/* READY TO BUILD CTA BANNER */}
         <section
           id="get-started"
-          className="rounded-2xl border border-rose-500/20 bg-gradient-to-r from-rose-950/40 to-rose-900/20 p-8 sm:p-12 shadow-[0_0_50px_rgba(236,72,153,0.12)] flex flex-col md:flex-row items-center justify-between gap-8"
+          className="flex flex-col items-center justify-between gap-8 border-y border-red-500/30 bg-red-500/5 px-6 py-10 md:flex-row md:px-10"
         >
           <div className="space-y-2 text-center md:text-left">
-            <p className="font-mono text-xs font-bold text-rose-400 uppercase tracking-wider">
-              READY TO BUILD?
+            <p className="font-mono text-xs font-bold text-red-400 uppercase tracking-wider">
+              Start here
             </p>
-            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
-              Start your next idea <br className="hidden sm:inline" />
-              the{" "}
-              <span className="bg-gradient-to-r from-rose-400 to-pink-400 bg-clip-text text-transparent">
-                right way.
-              </span>
+            <h2 className="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">
+              Generate a project you will recognize tomorrow.
             </h2>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
             <Link
-              href="#get-started"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-rose-500 to-rose-600 px-6 py-3.5 font-mono text-sm font-semibold text-white shadow-[0_0_25px_rgba(236,72,153,0.5)] transition-all hover:scale-105"
+              href="https://www.npmjs.com/package/@nest-arch/tui"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center justify-center gap-2 rounded-md bg-red-500 px-5 py-3 font-mono text-sm font-semibold text-white transition-colors hover:bg-red-600 sm:w-auto"
             >
               <span>&gt;_ Get Started Now</span>
             </Link>
@@ -549,7 +408,8 @@ export default function Home() {
             <Link
               href="https://github.com"
               target="_blank"
-              className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 py-3.5 font-mono text-sm font-medium text-zinc-200 transition-all hover:bg-white/10 hover:border-white/25 hover:text-white"
+              rel="noopener noreferrer"
+              className="flex w-full items-center justify-center gap-2 rounded-md border border-border bg-background px-5 py-3 font-mono text-sm font-medium text-foreground transition-colors hover:border-red-500/50 sm:w-auto"
             >
               <GithubIcon className="h-4 w-4" />
               <span>Star on GitHub</span>

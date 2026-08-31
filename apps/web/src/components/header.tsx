@@ -80,35 +80,28 @@ export default function Header() {
           className="flex items-center gap-2.5 shrink-0 opacity-90 hover:opacity-100 transition-opacity"
           aria-label="Nest Arch home"
         >
-          {/* Cat ASCII logo — visible on dark, swap on light */}
+          {/* Cat ASCII logo */}
           <Image
             src="/photos/ascii-art-image_nobackground.png"
             alt="Nest Arch"
             width={458}
             height={393}
-            className="block h-auto w-7 dark:hidden opacity-80"
-          />
-          <Image
-            src="/photos/ascii-art-image_nobackground.png"
-            alt="Nest Arch"
-            width={458}
-            height={393}
-            className="hidden h-auto w-7 dark:block opacity-90"
+            className="h-auto w-7 opacity-80"
           />
           {/* ASCII wordmark */}
           <Image
-            src="/photos/nest-arch-ascii.png"
+            src="/photos/nest-arch-ascii-black.png"
             alt="Nest Arch"
             width={630}
             height={192}
-            className="block h-auto w-[90px] -mb-0.5 dark:hidden opacity-70"
+            className="-mb-0.5 h-auto w-22.5 opacity-70 dark:hidden"
           />
           <Image
             src="/photos/nest-arch-ascii-white.png"
             alt="Nest Arch"
             width={630}
             height={192}
-            className="hidden h-auto w-[90px] -mb-0.5 dark:block opacity-80"
+            className="-mb-0.5 hidden h-auto w-22.5 opacity-80 dark:block"
           />
         </Link>
 
@@ -132,7 +125,7 @@ export default function Header() {
               >
                 {label}
                 {isActive && (
-                  <span className="absolute inset-x-2 -bottom-[9px] h-px bg-rose-500" />
+                  <span className="absolute inset-x-2 -bottom-2.25 h-px bg-red-500" />
                 )}
               </a>
             );
@@ -183,7 +176,7 @@ export default function Header() {
           {/* Get Started CTA */}
           <Link
             href="#get-started"
-            className="hidden sm:flex items-center gap-1.5 rounded-md bg-rose-500 hover:bg-rose-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors"
+            className="hidden sm:flex items-center gap-1.5 rounded-md bg-red-500 hover:bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors"
           >
             Get Started
           </Link>

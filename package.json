@@ -39,7 +39,7 @@
     "turbo": "^2.10.7",
     "typescript": "catalog:",
     "ultracite": "7.9.4",
-    "vercel": "^58.1.0"
+    "vercel": "^59.10.0"
   },
   "packageManager": "pnpm@11.9.0"
 }

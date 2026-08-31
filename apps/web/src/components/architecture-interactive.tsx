@@ -109,7 +109,7 @@ export const ArchitectureInteractive = ({
                 className={cn(
                   "flex items-center gap-3 rounded-xl px-4 py-3 text-left font-medium text-sm transition-all",
                   isSelected
-                    ? "bg-rose-500/15 border border-rose-500/40 text-white shadow-[0_0_15px_rgba(236,72,153,0.2)]"
+                    ? "border border-red-500/40 bg-red-500/15 text-white shadow-[0_0_15px_rgba(239,68,68,0.18)]"
                     : "border border-transparent text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
                 )}
               >
@@ -117,7 +117,7 @@ export const ArchitectureInteractive = ({
                   className={cn(
                     "flex h-8 w-8 items-center justify-center rounded-lg border",
                     isSelected
-                      ? "border-pink-500/50 bg-pink-500/20 text-rose-300"
+                      ? "border-red-500/50 bg-red-500/20 text-red-300"
                       : "border-white/10 bg-white/5 text-zinc-400"
                   )}
                 >
@@ -126,7 +126,7 @@ export const ArchitectureInteractive = ({
                 <span className="flex-1 font-mono text-xs sm:text-sm">
                   {cat.label}
                 </span>
-                {isSelected && <ArrowRight className="h-4 w-4 text-pink-400" />}
+                {isSelected && <ArrowRight className="h-4 w-4 text-red-400" />}
               </button>
             );
           })}
@@ -135,11 +135,11 @@ export const ArchitectureInteractive = ({
         {/* Center Node Visual Diagram */}
         <div className="lg:col-span-4 flex flex-col items-center justify-center py-6 px-2 relative">
           {/* Central Logo Node */}
-          <div className="relative z-10 flex flex-col items-center justify-center h-28 w-28 rounded-2xl border border-pink-500/40 bg-white/5 dark:bg-[#161724] shadow-[0_0_30px_rgba(236,72,153,0.25)]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 text-white font-mono font-bold text-xs">
+          <div className="relative z-10 flex flex-col items-center justify-center h-28 w-28 rounded-2xl border border-red-500/40 bg-white/5 dark:bg-[#161724] shadow-[0_0_30px_rgba(239,68,68,0.2)]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-red-500 to-red-600 text-white font-mono font-bold text-xs">
               NA
             </div>
-            <span className="mt-2 font-mono text-xs font-semibold text-rose-300">
+            <span className="mt-2 font-mono text-xs font-semibold text-red-300">
               nest arch
             </span>
           </div>
@@ -150,7 +150,7 @@ export const ArchitectureInteractive = ({
               className={cn(
                 "flex items-center gap-2 rounded-lg border p-2 text-xs font-mono transition-all",
                 selectedId === "web"
-                  ? "border-pink-500/60 bg-pink-500/10 text-white"
+                  ? "border-red-500/60 bg-red-500/10 text-white"
                   : "border-white/10 bg-white/5 text-zinc-400"
               )}
             >
@@ -166,7 +166,7 @@ export const ArchitectureInteractive = ({
               className={cn(
                 "flex items-center gap-2 rounded-lg border p-2 text-xs font-mono transition-all",
                 selectedId === "backend"
-                  ? "border-pink-500/60 bg-pink-500/10 text-white"
+                  ? "border-red-500/60 bg-red-500/10 text-white"
                   : "border-white/10 bg-white/5 text-zinc-400"
               )}
             >
@@ -182,7 +182,7 @@ export const ArchitectureInteractive = ({
               className={cn(
                 "flex items-center gap-2 rounded-lg border p-2 text-xs font-mono transition-all",
                 selectedId === "microservices"
-                  ? "border-pink-500/60 bg-pink-500/10 text-white"
+                  ? "border-red-500/60 bg-red-500/10 text-white"
                   : "border-white/10 bg-white/5 text-zinc-400"
               )}
             >
@@ -198,7 +198,7 @@ export const ArchitectureInteractive = ({
               className={cn(
                 "flex items-center gap-2 rounded-lg border p-2 text-xs font-mono transition-all",
                 selectedId === "database"
-                  ? "border-pink-500/60 bg-pink-500/10 text-white"
+                  ? "border-red-500/60 bg-red-500/10 text-white"
                   : "border-white/10 bg-white/5 text-zinc-400"
               )}
             >
@@ -216,8 +216,8 @@ export const ArchitectureInteractive = ({
         {/* Right Output / Feature List */}
         <div className="lg:col-span-4 flex flex-col justify-center rounded-xl border border-white/10 bg-black/40 dark:bg-[#090a10] p-5">
           <div className="flex items-center gap-2 border-b border-white/10 pb-3 mb-4">
-            <Terminal className="h-4 w-4 text-pink-400" />
-            <span className="font-mono text-xs font-semibold text-rose-300">
+            <Terminal className="h-4 w-4 text-red-400" />
+            <span className="font-mono text-xs font-semibold text-red-300">
               $ npx @nest-arch/tui --type={selectedCategory.id}
             </span>
           </div>
@@ -232,7 +232,7 @@ export const ArchitectureInteractive = ({
                 key={idx}
                 className="flex items-start gap-2.5 text-xs text-zinc-300"
               >
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-rose-400 mt-0.5" />
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-red-400 mt-0.5" />
                 <span>{detail}</span>
               </div>
             ))}

@@ -37,7 +37,7 @@ export default function Footer() {
           {/* Brand Col */}
           <div className="md:col-span-5 flex flex-col gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-rose-600 font-mono font-bold text-white shadow-[0_0_15px_rgba(236,72,153,0.3)]">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-red-500 to-red-600 font-mono font-bold text-white shadow-[0_0_15px_rgba(239,68,68,0.25)]">
                 NA
               </div>
               <span className="font-mono font-bold text-lg text-white">
@@ -52,7 +52,7 @@ export default function Footer() {
               <Link
                 href="https://www.npmjs.com/package/@nest-arch/tui"
                 target="_blank"
-                className="flex h-8 px-2.5 items-center justify-center gap-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 text-xs font-mono transition-colors"
+                className="flex h-8 px-2.5 items-center justify-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 text-red-300 hover:bg-red-500/20 text-xs font-mono transition-colors"
                 aria-label="npm package"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -92,7 +92,7 @@ export default function Footer() {
 
           {/* Links Cols */}
           <div className="md:col-span-2">
-            <h4 className="font-mono text-xs font-semibold text-rose-400 uppercase tracking-wider mb-4">
+            <h4 className="font-mono text-xs font-semibold text-red-400 uppercase tracking-wider mb-4">
               Product
             </h4>
             <ul className="space-y-2.5 font-mono text-xs text-zinc-400">
@@ -132,7 +132,7 @@ export default function Footer() {
           </div>
 
           <div className="md:col-span-2">
-            <h4 className="font-mono text-xs font-semibold text-rose-400 uppercase tracking-wider mb-4">
+            <h4 className="font-mono text-xs font-semibold text-red-400 uppercase tracking-wider mb-4">
               Resources
             </h4>
             <ul className="space-y-2.5 font-mono text-xs text-zinc-400">
@@ -173,9 +173,9 @@ export default function Footer() {
 
           <div className="md:col-span-3">
             <div className="rounded-lg border border-white/10 bg-[#0b0c12] p-3 font-mono text-xs text-zinc-400 space-y-1">
-              <p className="text-emerald-400">&gt; build with nest-arch</p>
-              <p className="text-rose-400">&gt; ship with confidence</p>
-              <p className="text-rose-400">&gt; scale without limits</p>
+              <p className="text-sky-400">&gt; build with nest-arch</p>
+              <p className="text-red-400">&gt; ship with confidence</p>
+              <p className="text-red-400">&gt; scale without limits</p>
               <p className="text-zinc-600">&gt; _</p>
             </div>
           </div>
@@ -184,7 +184,7 @@ export default function Footer() {
         <div className="border-t border-black/8 dark:border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-zinc-400 dark:text-zinc-500">
           <p>© 2026 Nest Arch. MIT License.</p>
           <p className="flex items-center gap-1">
-            Built with <Heart className="h-3 w-3 text-rose-500 fill-rose-500" />{" "}
+            Built with <Heart className="h-3 w-3 text-red-500 fill-red-500" />{" "}
             for developers.
           </p>
         </div>
