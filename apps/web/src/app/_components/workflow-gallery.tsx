@@ -1,113 +1,157 @@
 "use client";
 
-import { Badge } from "@nest-arch-web/ui/components/badge";
-import { Check } from "lucide-react";
+import { Check, ChevronRight, Terminal } from "lucide-react";
 import * as React from "react";
 
 const GALLERY_SCREENSHOTS = [
   {
     desc: "Start from a clear menu instead of a wall of flags. The wizard keeps the available paths visible from the first prompt.",
     src: "/projects/nest-arch/main-menu.png",
-    tag: "00 / Entry point",
+    tag: "01 / Start",
     title: "Choose a starting point",
   },
   {
     desc: "Select project type, package manager, data layer, transport and add-ons in a deliberate sequence.",
     src: "/projects/nest-arch/step-14-example.png",
-    tag: "14 / Configuration",
+    tag: "02 / Configure",
     title: "Configure the stack",
   },
   {
     desc: "Review architecture, dependencies and selected options before files are written to disk.",
     src: "/projects/nest-arch/summary.png",
-    tag: "Review / Summary",
+    tag: "03 / Confirm",
     title: "Confirm before writing",
   },
-
   {
     desc: "Follow the generator as templates resolve and the project tree is created, without leaving the terminal.",
     src: "/projects/nest-arch/generating-in-progress.png",
-    tag: "Generate / Progress",
+    tag: "04 / Generate",
     title: "See what is being created",
   },
   {
     desc: "Finish with a usable project structure, git initialization and the tooling selected in the wizard.",
     src: "/projects/nest-arch/project-generated.png",
-    tag: "Done / Output",
+    tag: "05 / Done",
     title: "Leave with a real project",
   },
+] as const;
+
+const HIGHLIGHTS = [
+  "Pure terminal interface with zero heavy dependencies",
+  "Instant input validation & condition checks",
 ] as const;
 
 export function WorkflowGallery() {
   const [activeGalleryTab, setActiveGalleryTab] = React.useState(0);
 
+  const active = GALLERY_SCREENSHOTS[activeGalleryTab];
+
   return (
-    <section id="workflow" className="space-y-8">
-      <div className="mx-auto max-w-3xl space-y-3 text-center">
-        <p className="font-mono text-xs font-medium tracking-[0.18em] text-red-400 uppercase">
+    <section id="workflow" className="space-y-10">
+      {/* Header */}
+      <div className="max-w-2xl space-y-3">
+        <p className="font-mono text-xs font-medium tracking-[0.18em] text-red-600 uppercase dark:text-red-400">
           The workflow
         </p>
         <h2 className="text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
           A generator you can inspect as it works.
         </h2>
-        <p className="text-sm font-mono text-zinc-400">
+        <p className="text-sm leading-relaxed text-muted-foreground">
           Each stage stays explicit, so configuration never feels like a black
           box.
         </p>
       </div>
 
-      <div className="border border-border bg-card p-4 sm:p-8">
-        <div className="mb-8 flex flex-wrap items-center justify-center gap-2 border-b border-white/10 pb-6">
-          {GALLERY_SCREENSHOTS.map((item, idx) => (
-            <button
-              key={idx}
-              onClick={() => setActiveGalleryTab(idx)}
-              type="button"
-              className={`rounded-sm border px-3 py-2 text-xs font-mono font-medium transition-colors ${
-                activeGalleryTab === idx
-                  ? "border-red-500/50 bg-red-500/10 text-foreground"
-                  : "border-transparent text-muted-foreground hover:border-border hover:bg-muted/60 hover:text-foreground"
-              }`}
-            >
-              {item.title}
-            </button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
-          <div className="flex justify-center lg:col-span-7">
-            <div className="group relative w-full overflow-hidden rounded-xl border border-white/15 bg-black p-2 shadow-2xl">
-              <img
-                src={GALLERY_SCREENSHOTS[activeGalleryTab].src}
-                alt={GALLERY_SCREENSHOTS[activeGalleryTab].title}
-                className="h-auto w-full rounded-lg object-cover transition-transform duration-300 group-hover:scale-[1.01]"
-              />
+      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12">
+        {/* Description / steps list */}
+        <div className="order-1 flex flex-col gap-6 lg:order-2 lg:sticky lg:top-24 lg:col-span-5">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2.5">
+              <span className="font-mono text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                {active.tag}
+              </span>
             </div>
+            <h3 className="border-l-2 border-red-500 pl-3 font-mono text-xl font-semibold tracking-[-0.03em] text-foreground sm:text-2xl">
+              {active.title}
+            </h3>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {active.desc}
+            </p>
           </div>
 
-          <div className="flex flex-col justify-center space-y-4 lg:col-span-5">
-            <Badge variant="secondary" className="w-fit font-mono">
-              {GALLERY_SCREENSHOTS[activeGalleryTab].tag}
-            </Badge>
-            <h3 className="font-mono text-2xl font-bold text-white">
-              {GALLERY_SCREENSHOTS[activeGalleryTab].title}
-            </h3>
-            <p className="font-mono text-sm leading-relaxed text-zinc-400">
-              {GALLERY_SCREENSHOTS[activeGalleryTab].desc}
-            </p>
-
-            <div className="space-y-2 border-t border-white/10 pt-4 text-xs font-mono text-zinc-500">
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-sky-400" />
-                <span>
-                  Pure terminal interface with zero heavy dependencies
+          <div className="space-y-2.5 border-t border-border pt-5">
+            {HIGHLIGHTS.map((highlight) => (
+              <div key={highlight} className="flex items-start gap-2.5">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-red-500 dark:text-red-400" />
+                <span className="font-mono text-xs leading-relaxed text-foreground/70 dark:text-muted-foreground">
+                  {highlight}
                 </span>
               </div>
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-sky-400" />
-                <span>Instant input validation & condition checks</span>
-              </div>
+            ))}
+          </div>
+
+          {/* Step navigation */}
+          <nav className="flex flex-col gap-1" aria-label="Workflow steps">
+            {GALLERY_SCREENSHOTS.map((item, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveGalleryTab(idx)}
+                type="button"
+                aria-current={activeGalleryTab === idx ? "step" : undefined}
+                className={`group flex items-center gap-3 rounded-md border px-3 py-2.5 text-left transition-colors ${
+                  activeGalleryTab === idx
+                    ? "border-red-500/40 bg-red-500/10"
+                    : "border-transparent hover:border-border hover:bg-muted/40 cursor-pointer"
+                }`}
+              >
+                <span
+                  className={`flex h-6 w-6 shrink-0 items-center justify-center font-mono text-[10px] font-bold transition-colors ${
+                    activeGalleryTab === idx
+                      ? "bg-red-500 text-white"
+                      : "bg-zinc-200 text-zinc-500 group-hover:bg-zinc-300 dark:bg-zinc-800 dark:text-zinc-500 dark:group-hover:bg-zinc-700"
+                  }`}
+                >
+                  {idx + 1}
+                </span>
+                <span
+                  className={`font-mono text-xs font-medium transition-colors ${
+                    activeGalleryTab === idx
+                      ? "text-red-600 dark:text-red-300"
+                      : "text-foreground/70 group-hover:text-foreground dark:text-muted-foreground dark:group-hover:text-foreground"
+                  }`}
+                >
+                  {item.title}
+                </span>
+                <ChevronRight
+                  className={`ml-auto h-4 w-4 transition-all ${
+                    activeGalleryTab === idx
+                      ? "translate-x-0 text-red-500 opacity-100"
+                      : "-translate-x-1 text-zinc-600 opacity-0 group-hover:translate-x-0 group-hover:opacity-60"
+                  }`}
+                />
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        {/* Screenshot */}
+        <div className="order-2 lg:order-1 lg:col-span-7">
+          <div className="overflow-hidden border border-border rounded-xl bg-background shadow-[0_24px_70px_rgba(0,0,0,0.22)]">
+            {/* Terminal title bar */}
+            <div className="flex items-center gap-2 border-b border-border bg-muted/60 px-4 py-2.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
+              <span className="h-2.5 w-2.5 rounded-full bg-amber-500/80" />
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
+              <span className="ml-2 flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
+                <Terminal className="h-3.5 w-3.5 text-red-500 dark:text-red-400" />
+                {active.tag}
+              </span>
             </div>
+            <img
+              src={active.src}
+              alt={active.title}
+              className="h-auto w-full object-cover"
+            />
           </div>
         </div>
       </div>

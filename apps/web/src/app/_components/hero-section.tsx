@@ -102,13 +102,13 @@ export function HeroSection() {
             href="#workflow"
             className="inline-flex items-center gap-2 border-b border-red-600/60 pb-1 font-mono text-sm font-medium text-foreground transition-colors hover:border-red-500 hover:text-red-600 dark:border-red-500/50 dark:hover:border-red-400 dark:hover:text-red-400"
           >
-            Explore workflow <ArrowRight className="size-4" />
+            Explore docs <ArrowRight className="size-4" />
           </Link>
         </div>
       </div>
 
       {/* Right Column: Terminal Preview / Live Wizard (Fixed 6 columns and fixed height to prevent layout shift) */}
-      <div className="relative h-[420px] w-full sm:h-[500px] md:h-[460px] md:max-w-[560px] md:justify-self-end lg:col-span-6 lg:h-[540px] xl:col-span-6">
+      <div className="relative h-105 w-full sm:h-125 md:h-115 md:max-w-140 md:justify-self-end lg:col-span-6 lg:h-135 xl:col-span-6">
         {isLiveDemo ? (
           <div className="h-full w-full animate-in fade-in zoom-in-95 duration-300">
             <InteractiveTerminalWizard onClose={() => setIsLiveDemo(false)} />
