@@ -83,12 +83,12 @@ const ROADMAP: {
     accent: "border-amber-500/40 text-amber-500",
     icon: Clock,
     items: [
-      {
-        description:
-          "Pending the official stable release before upgrading the generator's baseline.",
-        icon: Package,
-        title: "Wait for NestJS 12",
-      },
+      // {
+      //   description:
+      //     "Pending the official stable release before upgrading the generator's baseline.",
+      //   icon: Package,
+      //   title: "Wait for NestJS 12",
+      // },
     ],
     subtitle: "Waiting on releases.",
     title: "On hold",
@@ -97,12 +97,12 @@ const ROADMAP: {
     accent: "border-rose-500/40 text-rose-500",
     icon: AlertTriangle,
     items: [
-      {
-        description:
-          "Still pending for @nestjs/graphql v14 — currently on dev, not prepared for ESM compatibility.",
-        icon: CircleDashed,
-        title: "NestJS GraphQL support",
-      },
+      // {
+      //   description:
+      //     "Still pending for @nestjs/graphql v14 — currently on dev, not prepared for ESM compatibility.",
+      //   icon: CircleDashed,
+      //   title: "NestJS GraphQL support",
+      // },
       {
         description:
           "Prisma v7 doesn't support Mongo yet. 6.19 is the last supported version, and the next Prisma release will add Mongo support.",
