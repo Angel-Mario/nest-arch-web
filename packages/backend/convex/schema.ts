@@ -4,7 +4,7 @@ import { v } from "convex/values";
 export default defineSchema({
   npmPackageVersions: defineTable({
     name: v.string(),
-    version: v.string(),
     updatedAt: v.number(),
+    version: v.string(),
   }).index("name", ["name"]),
 });

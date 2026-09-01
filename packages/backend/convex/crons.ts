@@ -24,16 +24,16 @@ export const writePackageVersion = internalMutation({
 
     if (existing) {
       await ctx.db.patch(existing._id, {
-        version: args.version,
         updatedAt: Date.now(),
+        version: args.version,
       });
       return;
     }
 
     await ctx.db.insert("npmPackageVersions", {
       name: args.name,
-      version: args.version,
       updatedAt: Date.now(),
+      version: args.version,
     });
   },
 });
@@ -72,14 +72,6 @@ export const syncPackageVersion = internalAction({
 
 export const getLatestNpmPackageVersion = query({
   args: {},
-  returns: v.union(
-    v.null(),
-    v.object({
-      name: v.string(),
-      version: v.string(),
-      updatedAt: v.number(),
-    })
-  ),
   handler: async (ctx) => {
     const record = await ctx.db
       .query("npmPackageVersions")
@@ -92,10 +84,18 @@ export const getLatestNpmPackageVersion = query({
 
     return {
       name: record.name,
-      version: record.version,
       updatedAt: record.updatedAt,
+      version: record.version,
     };
   },
+  returns: v.union(
+    v.null(),
+    v.object({
+      name: v.string(),
+      updatedAt: v.number(),
+      version: v.string(),
+    })
+  ),
 });
 
 const crons = cronJobs();

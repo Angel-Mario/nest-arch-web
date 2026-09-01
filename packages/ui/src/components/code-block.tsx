@@ -31,15 +31,15 @@ export function CodeBlock({ code, className, prefix = "$ " }: CodeBlockProps) {
         className
       )}
     >
-      <div className="flex items-center  gap-2 overflow-x-auto">
+      <div className="flex items-center gap-2 overflow-x-auto">
         <Terminal className="h-4 w-4 shrink-0 text-red-500" />
         <span className="-ml-2 text-rose-400 select-none">{prefix}</span>
-        <span className="text-zinc-100 font-medium">{code}</span>
+        <span className="font-medium text-zinc-100">{code}</span>
       </div>
       <button
         onClick={handleCopy}
         type="button"
-        className="cursor-pointer flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/5 text-zinc-400 transition-colors hover:bg-white/10 hover:text-white"
+        className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-md border border-white/10 bg-white/5 text-zinc-400 transition-colors hover:bg-white/10 hover:text-white"
         aria-label="Copy command"
       >
         {copied ? (

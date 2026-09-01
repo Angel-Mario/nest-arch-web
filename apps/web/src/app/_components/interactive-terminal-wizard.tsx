@@ -723,9 +723,9 @@ interface InteractiveTerminalWizardProps {
   onClose?: () => void;
 }
 
-export function InteractiveTerminalWizard({
+export const InteractiveTerminalWizard = ({
   onClose,
-}: InteractiveTerminalWizardProps) {
+}: InteractiveTerminalWizardProps) => {
   const [state, setState] =
     React.useState<CreateProjectWizardState>(INITIAL_STATE);
   const [stepId, setStepId] = React.useState<WizardStepId>("projectName");
@@ -1376,7 +1376,7 @@ export function InteractiveTerminalWizard({
       className="relative flex h-full w-full flex-col overflow-hidden rounded-xl border border-red-500/25 bg-[#0a0a0f]/95 shadow-[0_28px_90px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all"
     >
       {/* Terminal Title Bar */}
-      <div className="relative shrink-0 flex items-center justify-between border-b border-white/10 bg-[#12131c] px-4 py-1.5">
+      <div className="relative flex shrink-0 items-center justify-between border-b border-white/10 bg-[#12131c] px-4 py-1.5">
         <div className="flex items-center gap-2">
           <span className="inline-block size-3 rounded-full border border-black/20 bg-[#ff5f56]" />
           <span className="inline-block size-3 rounded-full border border-black/20 bg-[#ffbd2e]" />
@@ -1398,7 +1398,7 @@ export function InteractiveTerminalWizard({
             <button
               type="button"
               onClick={onClose}
-              className="cursor-pointer flex items-center h-auto gap-1 rounded border border-white/10 bg-white/5 px-2 py-0.5 font-mono text-[10px] text-zinc-300 transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white"
+              className="flex h-auto cursor-pointer items-center gap-1 rounded border border-white/10 bg-white/5 px-2 py-0.5 font-mono text-[10px] text-zinc-300 transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white"
               title="Close demo mode (Esc)"
             >
               <Minimize2 className="size-3.5 text-zinc-400" />
@@ -1408,10 +1408,10 @@ export function InteractiveTerminalWizard({
       </div>
 
       {/* Terminal Inner Body */}
-      <div className="flex flex-1 min-h-0 flex-col p-4 sm:p-5 font-mono text-xs leading-relaxed text-zinc-300 sm:text-sm overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-4 font-mono text-xs leading-relaxed text-zinc-300 sm:p-5 sm:text-sm">
         {/* Context Bar & Header (Hidden during install / done) */}
         {stepId !== "installing" && stepId !== "done" && (
-          <div className="shrink-0 mb-3 space-y-1.5 border-b border-white/10 pb-2.5">
+          <div className="mb-3 shrink-0 space-y-1.5 border-b border-white/10 pb-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 font-semibold text-red-400">
                 <span>◆</span>
@@ -1466,7 +1466,7 @@ export function InteractiveTerminalWizard({
         )}
 
         {/* Step Contents Container */}
-        <div className="flex-1 min-h-0 overflow-y-auto pr-1 flex flex-col justify-start">
+        <div className="flex min-h-0 flex-1 flex-col justify-start overflow-y-auto pr-1">
           {/* STEP 1: PROJECT NAME */}
           {stepId === "projectName" && (
             <div className="space-y-4">
@@ -1508,8 +1508,8 @@ export function InteractiveTerminalWizard({
 
           {/* SINGLE / MULTI SELECT STEPS */}
           {currentStepConfig && (
-            <div className="flex flex-1 min-h-0 flex-col gap-2">
-              <div className="shrink-0 flex items-center justify-between">
+            <div className="flex min-h-0 flex-1 flex-col gap-2">
+              <div className="flex shrink-0 items-center justify-between">
                 <p className="text-sm font-medium text-zinc-300 sm:text-base">
                   {currentStepConfig.prompt}
                 </p>
@@ -1520,7 +1520,7 @@ export function InteractiveTerminalWizard({
                 )}
               </div>
 
-              <div className="flex-1 min-h-0 overflow-y-auto space-y-1.5 pr-1">
+              <div className="min-h-0 flex-1 space-y-1.5 overflow-y-auto pr-1">
                 {currentStepConfig.options.map((opt, idx) => {
                   const isSelected = currentStepConfig.isMulti
                     ? isMultiSelected(opt.value)
@@ -1558,15 +1558,15 @@ export function InteractiveTerminalWizard({
 
           {/* SUMMARY STEP */}
           {stepId === "summary" && (
-            <div className="flex flex-1 min-h-0 flex-col gap-2">
-              <div className="shrink-0 flex items-center gap-2">
+            <div className="flex min-h-0 flex-1 flex-col gap-2">
+              <div className="flex shrink-0 items-center gap-2">
                 <span className="text-red-400">✦</span>
                 <span className="font-semibold text-[#61AFEF]">
                   Review your selections
                 </span>
               </div>
 
-              <div className="flex-1 min-h-0 overflow-y-auto grid grid-cols-1 gap-1.5 rounded-lg border border-white/10 bg-white/[0.02] p-3 text-xs sm:grid-cols-2">
+              <div className="grid min-h-0 flex-1 grid-cols-1 gap-1.5 overflow-y-auto rounded-lg border border-white/10 bg-white/[0.02] p-3 text-xs sm:grid-cols-2">
                 <div>
                   <span className="text-[#e96142ff]">Project: </span>
                   <span className="font-semibold text-[#E8C468]">
@@ -1668,9 +1668,9 @@ export function InteractiveTerminalWizard({
 
           {/* INSTALLING STEP (Simulated scaffolding) */}
           {stepId === "installing" && (
-            <div className="flex flex-1 min-h-0 flex-col gap-3">
+            <div className="flex min-h-0 flex-1 flex-col gap-3">
               {/* ASCII Bouncing Cat */}
-              <div className="shrink-0 flex items-start gap-4">
+              <div className="flex shrink-0 items-start gap-4">
                 <pre className="font-mono text-xs leading-none text-red-400">
                   {NESTJS_ASCII_CAT}
                 </pre>
@@ -1686,7 +1686,7 @@ export function InteractiveTerminalWizard({
               </div>
 
               {/* Sequential Stages Progress */}
-              <div className="flex-1 min-h-0 overflow-y-auto space-y-1.5 rounded-lg border border-white/10 bg-white/[0.02] p-3 text-xs">
+              <div className="min-h-0 flex-1 space-y-1.5 overflow-y-auto rounded-lg border border-white/10 bg-white/[0.02] p-3 text-xs">
                 {SCAFFOLD_STAGES.map((stage, idx) => {
                   const isDone = idx < installStageIndex;
                   const isCurrent = idx === installStageIndex;
@@ -1741,13 +1741,13 @@ export function InteractiveTerminalWizard({
 
           {/* DONE STEP */}
           {stepId === "done" && (
-            <div className="flex flex-1 min-h-0 flex-col gap-2.5">
-              <div className="shrink-0 flex items-center gap-2 text-sm font-bold text-[#7FD99A]">
+            <div className="flex min-h-0 flex-1 flex-col gap-2.5">
+              <div className="flex shrink-0 items-center gap-2 text-sm font-bold text-[#7FD99A]">
                 <Check className="size-4" />
                 <span>Project scaffold completed successfully!</span>
               </div>
 
-              <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-1">
+              <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
                 <div className="space-y-1 text-xs text-zinc-300">
                   <p>
                     Project:{" "}
@@ -1785,7 +1785,7 @@ export function InteractiveTerminalWizard({
                 </div>
               </div>
 
-              <div className="shrink-0 flex items-center gap-3 pt-1">
+              <div className="flex shrink-0 items-center gap-3 pt-1">
                 <button
                   type="button"
                   onClick={handleRestart}
@@ -1800,7 +1800,7 @@ export function InteractiveTerminalWizard({
 
         {/* Terminal Footer Status Bar */}
         {stepId !== "installing" && stepId !== "done" && (
-          <div className="shrink-0 mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-white/10 pt-2.5 text-[11px] text-zinc-500">
+          <div className="mt-auto flex shrink-0 flex-wrap items-center justify-between gap-2 border-t border-white/10 pt-2.5 text-[11px] text-zinc-500">
             <div className="flex items-center gap-2">
               <span>
                 Use <span className="font-semibold text-zinc-300">↑/↓</span>,{" "}
@@ -1827,4 +1827,4 @@ export function InteractiveTerminalWizard({
       </div>
     </div>
   );
-}
+};
