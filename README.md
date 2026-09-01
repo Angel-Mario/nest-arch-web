@@ -1,116 +1,146 @@
-# nest-arch-web
+<div align="center">
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines Next.js, Convex, and more.
+<img src="apps/web/public/photos/logo.png" alt="Nest Arch logo" width="96" />
 
-## Features
+# Nest Arch — Web
 
-- **TypeScript** - For type safety and improved developer experience
-- **Next.js** - Full-stack React framework
-- **TailwindCSS** - Utility-first CSS for rapid UI development
-- **Shared UI package** - shadcn/ui primitives live in `packages/ui`
-- **Convex** - Reactive backend-as-a-service platform
-- **Husky** - Git hooks for code quality
-- **Oxlint** - Oxlint + Oxfmt (linting & formatting)
-- **Turborepo** - Optimized monorepo build system
+**Your architecture, made explicit.**
 
-## Getting Started
+The official landing page for [**nest-arch**](https://github.com/Angel-Mario/nest-arch), a powerful CLI and interactive TUI generator for building opinionated, production-ready NestJS applications and microservices.
 
-First, install the dependencies:
+<br/>
+
+[![npm version](https://img.shields.io/npm/v/%40nest-arch%2Ftui?color=dc2626&label=%40nest-arch%2Ftui&logo=npm)](https://www.npmjs.com/package/@nest-arch/tui)
+[![GitHub](https://img.shields.io/badge/GitHub-Angel_Mario%2Fnest--arch-dc2626?logo=github&logoColor=white)](https://github.com/Angel-Mario/nest-arch)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Convex](https://img.shields.io/badge/backend-Convex-de7868)](https://www.convex.dev/)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+`npx @nest-arch/tui@latest`
+
+</div>
+
+---
+
+## What is nest-arch?
+
+A guided terminal flow for choosing the runtime, data layer, and tooling for your NestJS project **before your first file exists**. Clear decisions in, a production-ready foundation out.
+
+- Guided, intuitive, and beautiful terminal experience with smart prompts
+- Handlebars templates with smart resolution and dynamic scaffolding options
+- ORMs, auth, Docker, testing, linting, and modern tooling out of the box
+- TurboRepo-powered workspaces for scalable architectures and shared packages
+- Pluggable engine, custom templates, and limitless architecture possibilities
+
+> **Status:** pre-alpha for NestJS 12.
+
+## What is this repository?
+
+This repository contains the **marketing and promotional website** for the nest-arch product. It does not contain the CLI tool itself — that lives in the [nest-arch](https://github.com/Angel-Mario/nest-arch) repository and is distributed via npm as `@nest-arch/tui`.
+
+The site includes:
+
+- **Hero section** with a live `@nest-arch/tui` version badge (fetched from npm via Convex) and the `npx @nest-arch/tui@latest` install command
+- **Interactive terminal wizard** — a fully interactive, in-browser recreation of the real CLI scaffolding flow (keyboard + mouse, all steps, validation and a simulated generate animation)
+- **Workflow gallery** — a 5-step screenshot walkthrough (Start → Configure → Confirm → Generate → Done) with an expandable lightbox (zoom, thumbnails, keyboard navigation)
+- **Features grid** — the core value propositions of nest-arch
+- **Architecture explorer** — an interactive node graph covering Web, Microservices, Monorepos, APIs & Backends, and Databases, with per-category `--type=` usage examples
+- **Roadmap page** — a living view of what is planned, waiting, and intentionally unsupported
+- **Dark/light theme**, sticky navigation, and responsive layout throughout
+
+## Tech stack
+
+| Layer | Technology |
+| --- | --- |
+| Framework | [Next.js 16](https://nextjs.org/) (App Router, React Compiler, typed routes) |
+| Language | [TypeScript](https://www.typescriptlang.org/) (strict) |
+| Styling | [Tailwind CSS v4](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/) |
+| Backend | [Convex](https://www.convex.dev/) — npm version cron, GitHub/npm OSS stats, webhooks |
+| Docs | [Fumadocs](https://fumadocs.vercel.app/) (scaffolded in `apps/fumadocs`) |
+| Orchestration | [Turborepo](https://turbo.build/) + [pnpm](https://pnpm.io/) workspaces |
+| Quality | [Ultracite](https://github.com/AmanVarshney01/ultracite) (Oxlint + Oxfmt), [Husky](https://typicode.github.io/husky/) |
+| Deployment | [Vercel](https://vercel.com/) via `vercel.json` services |
+
+## Getting started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) 20+
+- [pnpm](https://pnpm.io/) 9+
+
+### Install
 
 ```bash
 pnpm install
 ```
 
-## Convex Setup
+### Configure Convex
 
-This project uses Convex as a backend. You'll need to set up Convex before running the app:
+The site reads live package versions from Convex, so a backend project is required:
 
 ```bash
 pnpm run dev:setup
 ```
 
-Follow the prompts to create a new Convex project and connect it to your application.
+Follow the prompts to link/create a Convex project, then copy the environment variables generated in `packages/backend/.env.local` into `apps/*/.env`.
 
-Copy environment variables from `packages/backend/.env.local` to `apps/*/.env`.
-
-Then, run the development server:
+### Run
 
 ```bash
 pnpm run dev
 ```
 
-Open [http://localhost:3001](http://localhost:3001) in your browser to see the web application. Your app will connect to the Convex cloud backend automatically.
+- Web app: http://localhost:3001
+- Documentation: http://localhost:4000
 
-## UI Customization
-
-React web apps in this stack share shadcn/ui primitives through `packages/ui`.
-
-- Change design tokens and global styles in `packages/ui/src/styles/globals.css`
-- Update shared primitives in `packages/ui/src/components/*`
-- Adjust shadcn aliases or style config in `packages/ui/components.json` and `apps/web/components.json`
-
-### Add more shared components
-
-Run this from the project root to add more primitives to the shared UI package:
+To run only the web app:
 
 ```bash
-npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
+pnpm run dev:web
 ```
 
-Import shared components like this:
-
-```tsx
-import { Button } from "@nest-arch-web/ui/components/button";
-```
-
-### Add app-specific blocks
-
-If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from `apps/web`.
-
-## Deployment
-
-### Vercel Services
-
-- Target: web
-- Config: `vercel.json`
-- Link the project first: pnpm run deploy:setup
-- Local Vercel dev: pnpm run dev:vercel
-- Sync preview env: pnpm run env:preview
-- Sync production env: pnpm run env:production
-- Dry-run check (no upload): pnpm run deploy:check
-- Preview deploy: pnpm run deploy
-- Production deploy: pnpm run deploy:prod Vercel Services share project environment variables, but deploys do not upload local `.env` files automatically. Link the project with `vercel link`, then run the env sync command before your first deploy (otherwise the deployment starts with no env vars), or pass one-off envs with `vercel deploy -e KEY=value`. Pass Vercel CLI flags to the env sync command directly, for example: `pnpm run env:production --scope your-team`.
-
-For more details, see the guide on [Deploying to Vercel](https://www.better-t-stack.dev/docs/guides/vercel).
-
-## Git Hooks and Formatting
-
-- Initialize hooks: `pnpm run prepare`
-- Run checks: `pnpm run check`
-
-## Project Structure
+## Project structure
 
 ```
 nest-arch-web/
 ├── apps/
-│   ├── web/         # Frontend application (Next.js)
+│   ├── web/                     # Marketing site (Next.js 16, App Router)
+│   │   └── src/app/
+│   │       ├── _components/     # Page sections (hero, workflow, features, CTA, wizard)
+│   │       ├── roadmap/         # Roadmap page
+│   │       └── components/      # Header, footer, providers, architecture explorer
+│   └── fumadocs/                # Documentation site (Fumadocs, MDX)
 ├── packages/
-│   ├── ui/          # Shared shadcn/ui components and styles
-│   ├── backend/     # Convex backend functions and schema
+│   ├── backend/                 # Convex backend (schema, crons, OSS stats, HTTP actions)
+│   ├── ui/                      # Shared shadcn/ui primitives and global styles
+│   ├── env/                     # Type-safe environment schema (zod + @t3-oss/env)
+│   └── config/                  # Shared TypeScript config
+├── scripts/                     # Utility scripts (e.g. sync-vercel-env)
+├── turbo.json
+├── vercel.json
+└── pnpm-workspace.yaml
 ```
 
-## Available Scripts
+## Available scripts
 
-- `pnpm run dev`: Start all applications in development mode
-- `pnpm run build`: Build all applications
-- `pnpm run dev:web`: Start only the web application
-- `pnpm run dev:setup`: Setup and configure your Convex project
-- `pnpm run check-types`: Check TypeScript types across all apps
-- `pnpm run check`: Run Oxlint and Oxfmt
-- `pnpm run deploy:setup`: Link this repo to a Vercel project (first-time setup)
-- `pnpm run dev:vercel`: Run the Vercel Services dev environment locally
-- `pnpm run env:preview`: Sync local env files to the Vercel preview environment
-- `pnpm run env:production`: Sync local env files to the Vercel production environment
-- `pnpm run deploy`: Create a Vercel preview deployment
-- `pnpm run deploy:prod`: Deploy to Vercel production
-- `pnpm run deploy:check`: Dry-run a deploy to preview framework detection and included files without uploading
+| Command | Description |
+| --- | --- |
+| `pnpm run dev` | Start all applications in development mode |
+| `pnpm run dev:web` | Start only the web application (port 3001) |
+| `pnpm run dev:setup` | Configure and link the Convex project |
+| `pnpm run build` | Build all applications |
+| `pnpm run check-types` | Type-check all apps and packages |
+| `pnpm run check` | Run Ultracite linting + formatting checks |
+| `pnpm run fix` | Auto-fix lint and formatting issues |
+| `pnpm run deploy` | Create a Vercel preview deployment |
+| `pnpm run deploy:prod` | Deploy to Vercel production |
+
+## Contributing
+
+The site is built with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack). Pull requests are welcome — for bugs, typo fixes, or improvements, please open an issue or PR.
+
+## License
+
+[MIT](LICENSE) © 2026 Nest Arch. Built with ❤️ for developers.
