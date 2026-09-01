@@ -38,7 +38,7 @@ export const HeroSection = () => {
       className="relative isolate grid grid-cols-1 items-start gap-10 pt-2 pb-6 md:grid-cols-2 md:items-center md:gap-6 lg:grid-cols-12 lg:gap-8 lg:pt-4 lg:pb-10"
       id="home"
     >
-      <div className="pointer-events-none absolute -inset-x-24 -top-24 -bottom-24 -z-10 bg-[radial-gradient(ellipse_at_14%_40%,rgba(220,38,38,0.16),transparent_50%),radial-gradient(ellipse_at_84%_46%,rgba(220,38,38,0.08),transparent_46%)]" />
+      <div className="pointer-events-none absolute -inset-x-96 -top-24 -bottom-24 -z-10 bg-[radial-gradient(ellipse_at_14%_40%,rgba(220,38,38,0.16),transparent_50%),radial-gradient(ellipse_at_84%_46%,rgba(220,38,38,0.08),transparent_46%)]" />
 
       {/* Left Column: Hero Copy & Value Proposition (Fixed 6 columns to prevent layout shift) */}
       <div className="flex flex-col items-start md:col-span-1 lg:col-span-6 xl:col-span-6">
