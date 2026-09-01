@@ -11,22 +11,32 @@ interface UseLightboxKeyboardOptions {
   setZoom: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export function useLightboxKeyboard({
+export const useLightboxKeyboard = ({
   onClose,
   onPrev,
   onNext,
   setZoom,
-}: UseLightboxKeyboardOptions) {
+}: UseLightboxKeyboardOptions) => {
   React.useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft") onPrev();
-      if (e.key === "ArrowRight") onNext();
-      if (e.key === "+" || e.key === "=")
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+      if (e.key === "ArrowLeft") {
+        onPrev();
+      }
+      if (e.key === "ArrowRight") {
+        onNext();
+      }
+      if (e.key === "+" || e.key === "=") {
         setZoom((z) => Math.min(z + ZOOM_STEP, MAX_ZOOM));
-      if (e.key === "-") setZoom((z) => Math.max(z - ZOOM_STEP, MIN_ZOOM));
-    }
+      }
+      if (e.key === "-") {
+        setZoom((z) => Math.max(z - ZOOM_STEP, MIN_ZOOM));
+      }
+    };
+
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose, onPrev, onNext, setZoom]);
-}
+};

@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from "./constants";
 
-export function useLightbox(imagesLength: number, initialIndex: number) {
+export const useLightbox = (imagesLength: number, initialIndex: number) => {
   const [current, setCurrent] = React.useState(initialIndex);
   const [zoom, setZoom] = React.useState(MIN_ZOOM);
 
@@ -38,13 +38,13 @@ export function useLightbox(imagesLength: number, initialIndex: number) {
 
   return {
     current,
-    zoom,
+    goTo,
     isZoomed: zoom > MIN_ZOOM,
-    prev,
     next,
+    prev,
+    setZoom,
+    zoom,
     zoomIn,
     zoomOut,
-    goTo,
-    setZoom,
   };
-}
+};

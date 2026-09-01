@@ -4,6 +4,7 @@ import { env } from "@nest-arch-web/env/web";
 import { Toaster } from "@nest-arch-web/ui/components/sonner";
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 import { useTheme } from "next-themes";
+import type * as React from "react";
 
 import { ThemeProvider } from "./theme-provider";
 
@@ -21,16 +22,16 @@ const ThemedToaster = () => {
   return <Toaster richColors theme={theme} />;
 };
 
-export default function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-    >
-      <ConvexProvider client={convex}>{children}</ConvexProvider>
-      <ThemedToaster />
-    </ThemeProvider>
-  );
-}
+const Providers = ({ children }: { children: React.ReactNode }) => (
+  <ThemeProvider
+    attribute="class"
+    defaultTheme="system"
+    enableSystem
+    disableTransitionOnChange
+  >
+    <ConvexProvider client={convex}>{children}</ConvexProvider>
+    <ThemedToaster />
+  </ThemeProvider>
+);
+
+export default Providers;

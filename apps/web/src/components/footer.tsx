@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquare, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -19,16 +19,16 @@ const GithubIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const TwitterIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    fill="currentColor"
-    viewBox="0 0 24 24"
-    aria-hidden="true"
-  >
-    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-  </svg>
-);
+// const TwitterIcon = ({ className }: { className?: string }) => (
+//   <svg
+//     className={className}
+//     fill="currentColor"
+//     viewBox="0 0 24 24"
+//     aria-hidden="true"
+//   >
+//     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+//   </svg>
+// );
 
 const PRODUCT_LINKS = [
   { href: "/#features", label: "Features" },
@@ -47,147 +47,128 @@ const RESOURCE_LINKS = [
   },
 ];
 
-export default function Footer() {
-  return (
-    <footer className="border-t border-border bg-muted/20 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <div className="grid grid-cols-1 gap-10 pb-12 md:grid-cols-12">
-          <div className="flex flex-col gap-4 md:col-span-5">
+const Footer = () => (
+  <footer className="border-border bg-muted/20 border-t px-4 py-12 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl">
+      <div className="grid grid-cols-1 gap-10 pb-12 md:grid-cols-12">
+        <div className="flex flex-col gap-4 md:col-span-5">
+          <Link
+            href="/"
+            className="flex items-center gap-2.5"
+            aria-label="Nest Arch home"
+          >
+            <Image
+              src="/photos/logo.png"
+              alt=""
+              width={458}
+              height={393}
+              className="h-auto w-7"
+            />
+            <span className="text-foreground font-mono text-lg font-semibold tracking-[-0.04em]">
+              nest<span className="text-red-600 dark:text-red-400">/</span>
+              arch
+            </span>
+          </Link>
+          <p className="text-muted-foreground max-w-sm text-sm leading-relaxed">
+            The modern CLI and TUI generator for building opinionated,
+            production-ready NestJS applications and microservices.
+          </p>
+          <div className="mt-2 flex items-center gap-2.5">
             <Link
-              href="/"
-              className="flex items-center gap-2.5"
-              aria-label="Nest Arch home"
+              href="https://www.npmjs.com/package/@nest-arch/tui"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-8 items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-2.5 font-mono text-xs text-red-600 transition-colors hover:bg-red-500/20 dark:text-red-400"
+              aria-label="npm package"
             >
-              <Image
-                src="/photos/logo.png"
-                alt=""
-                width={458}
-                height={393}
-                className="h-auto w-7"
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/icons/npm-wordmark.svg"
+                alt="npm"
+                className="h-3 w-auto"
               />
-              <span className="font-mono text-lg font-semibold tracking-[-0.04em] text-foreground">
-                nest<span className="text-red-600 dark:text-red-400">/</span>
-                arch
-              </span>
+              <span>@nest-arch/tui</span>
             </Link>
-            <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
-              The modern CLI and TUI generator for building opinionated,
-              production-ready NestJS applications and microservices.
-            </p>
-            <div className="mt-2 flex items-center gap-2.5">
-              <Link
-                href="https://www.npmjs.com/package/@nest-arch/tui"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-8 items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-2.5 font-mono text-xs text-red-600 transition-colors hover:bg-red-500/20 dark:text-red-400"
-                aria-label="npm package"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/icons/npm-wordmark.svg"
-                  alt="npm"
-                  className="h-3 w-auto"
-                />
-                <span>@nest-arch/tui</span>
-              </Link>
-              <Link
-                href="https://github.com/Angel-Mario/nest-arch"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex size-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:border-red-500/50 hover:text-foreground"
-                aria-label="GitHub"
-              >
-                <GithubIcon className="size-4" />
-              </Link>
-              {/* <Link
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex size-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:border-red-500/50 hover:text-foreground"
-                aria-label="Twitter"
-              >
-                <TwitterIcon className="size-4" />
-              </Link>
-              <Link
-                href="https://discord.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex size-8 items-center justify-center rounded-lg border border-border bg-background text-muted-foreground transition-colors hover:border-red-500/50 hover:text-foreground"
-                aria-label="Discord"
-              >
-                <MessageSquare className="size-4" />
-              </Link> */}
-            </div>
-          </div>
-
-          <div className="md:col-span-2">
-            <h4 className="mb-4 font-mono text-xs font-semibold uppercase tracking-wider text-red-400">
-              Product
-            </h4>
-            <ul className="space-y-2.5">
-              {PRODUCT_LINKS.map(({ href, label }) => (
-                <li key={href}>
-                  <a
-                    href={href}
-                    className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    {label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="md:col-span-2">
-            <h4 className="mb-4 font-mono text-xs font-semibold uppercase tracking-wider text-red-400">
-              Resources
-            </h4>
-            <ul className="space-y-2.5">
-              {RESOURCE_LINKS.map(({ href, label }) => (
-                <li key={href}>
-                  <a
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={href}
-                    className="font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    {label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="md:col-span-3">
-            <h4 className="mb-4 font-mono text-xs font-semibold uppercase tracking-wider text-red-400">
-              Ready when you are
-            </h4>
-            <div className="rounded-xl border border-border bg-background p-4 font-mono text-xs leading-relaxed">
-              <p className="text-muted-foreground">
-                <span className="text-red-400">$</span> npx
-                @nest-arch/tui@latest
-              </p>
-              <p className="mt-1 text-muted-foreground">
-                <span className="text-red-400">&gt;</span> scaffold right, ship
-                fast.
-              </p>
-              <p className="mt-0.5 text-muted-foreground/60">&gt; _</p>
-            </div>
+            <Link
+              href="https://github.com/Angel-Mario/nest-arch"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-border bg-background text-muted-foreground hover:text-foreground flex size-8 items-center justify-center rounded-lg border transition-colors hover:border-red-500/50"
+              aria-label="GitHub"
+            >
+              <GithubIcon className="size-4" />
+            </Link>
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-between gap-4 border-t border-border pt-8 font-mono text-xs text-muted-foreground sm:flex-row">
-          <p>© 2026 Nest Arch. MIT License.</p>
-          <p className="flex items-center gap-1.5">
-            Built with
-            <Heart
-              className="size-3 fill-red-500 text-red-500"
-              aria-hidden="true"
-            />
-            for developers.
-          </p>
+        <div className="md:col-span-2">
+          <h4 className="mb-4 font-mono text-xs font-semibold tracking-wider text-red-400 uppercase">
+            Product
+          </h4>
+          <ul className="space-y-2.5">
+            {PRODUCT_LINKS.map(({ href, label }) => (
+              <li key={href}>
+                <a
+                  href={href}
+                  className="text-muted-foreground hover:text-foreground font-mono text-xs transition-colors"
+                >
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="md:col-span-2">
+          <h4 className="mb-4 font-mono text-xs font-semibold tracking-wider text-red-400 uppercase">
+            Resources
+          </h4>
+          <ul className="space-y-2.5">
+            {RESOURCE_LINKS.map(({ href, label }) => (
+              <li key={href}>
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={href}
+                  className="text-muted-foreground hover:text-foreground font-mono text-xs transition-colors"
+                >
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="md:col-span-3">
+          <h4 className="mb-4 font-mono text-xs font-semibold tracking-wider text-red-400 uppercase">
+            Ready when you are
+          </h4>
+          <div className="border-border bg-background rounded-xl border p-4 font-mono text-xs leading-relaxed">
+            <p className="text-muted-foreground">
+              <span className="text-red-400">$</span> npx @nest-arch/tui@latest
+            </p>
+            <p className="text-muted-foreground mt-1">
+              <span className="text-red-400">&gt;</span> scaffold right, ship
+              fast.
+            </p>
+            <p className="text-muted-foreground/60 mt-0.5">&gt; _</p>
+          </div>
         </div>
       </div>
-    </footer>
-  );
-}
+
+      <div className="border-border text-muted-foreground flex flex-col items-center justify-between gap-4 border-t pt-8 font-mono text-xs sm:flex-row">
+        <p>© 2026 Nest Arch. MIT License.</p>
+        <p className="flex items-center gap-1.5">
+          Built with
+          <Heart
+            className="size-3 fill-red-500 text-red-500"
+            aria-hidden="true"
+          />
+          for developers.
+        </p>
+      </div>
+    </div>
+  </footer>
+);
+
+export default Footer;

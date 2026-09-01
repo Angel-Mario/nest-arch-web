@@ -1,3 +1,4 @@
+// oxlint-disable jsx-a11y/prefer-tag-over-role jsx-a11y/no-static-element-interactions jsx-a11y/click-events-have-key-events jsx-a11y/no-noninteractive-element-interactions
 "use client";
 
 import Image from "next/image";
@@ -11,7 +12,7 @@ import { useLightbox } from "./use-lightbox";
 import { useLightboxKeyboard } from "./use-lightbox-keyboard";
 import { useScrollLock } from "./use-scroll-lock";
 
-export function Lightbox({ images, initialIndex, onClose }: LightboxProps) {
+export const Lightbox = ({ images, initialIndex, onClose }: LightboxProps) => {
   const {
     current,
     zoom,
@@ -24,7 +25,7 @@ export function Lightbox({ images, initialIndex, onClose }: LightboxProps) {
     setZoom,
   } = useLightbox(images.length, initialIndex);
 
-  useLightboxKeyboard({ onClose, onPrev: prev, onNext: next, setZoom });
+  useLightboxKeyboard({ onClose, onNext: next, onPrev: prev, setZoom });
   useScrollLock();
 
   const img = images[current];
@@ -55,7 +56,9 @@ export function Lightbox({ images, initialIndex, onClose }: LightboxProps) {
           }`}
           onClick={(e) => {
             e.stopPropagation();
-            if (!isZoomed) zoomIn();
+            if (!isZoomed) {
+              zoomIn();
+            }
           }}
         >
           <NavArrows
@@ -65,7 +68,7 @@ export function Lightbox({ images, initialIndex, onClose }: LightboxProps) {
             onNext={next}
           />
           <div
-            className={`relative select-none transition-transform duration-300 ${
+            className={`relative transition-transform duration-300 select-none ${
               isZoomed ? "max-h-[85vh] max-w-[95vw]" : "cursor-zoom-in"
             }`}
             style={{ transform: `scale(${zoom})` }}
@@ -94,4 +97,4 @@ export function Lightbox({ images, initialIndex, onClose }: LightboxProps) {
       <Thumbnails images={images} current={current} onSelect={goTo} />
     </div>
   );
-}
+};

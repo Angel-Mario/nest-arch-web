@@ -1,5 +1,8 @@
+// oxlint-disable react/set-state-in-effect
 "use client";
 
+import { api } from "@nest-arch-web/backend/convex/_generated/api";
+import { useQuery } from "convex/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -39,11 +42,15 @@ const useActiveSection = () => {
 
     const observers = SECTION_IDS.flatMap((id) => {
       const section = document.querySelector(`#${id}`);
-      if (!section) return [];
+      if (!section) {
+        return [];
+      }
 
       const observer = new IntersectionObserver(
         ([entry]) => {
-          if (entry?.isIntersecting) setActive(id);
+          if (entry?.isIntersecting) {
+            setActive(id);
+          }
         },
         { rootMargin: "-20% 0px -70% 0px" }
       );
@@ -54,7 +61,9 @@ const useActiveSection = () => {
     setActive((current) => current || "home");
 
     return () => {
-      for (const observer of observers) observer.disconnect();
+      for (const observer of observers) {
+        observer.disconnect();
+      }
     };
   }, [pathname]);
 
@@ -76,23 +85,20 @@ const GithubIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-import { api } from "@nest-arch-web/backend/convex/_generated/api";
-import { useQuery } from "convex/react";
-
-export default function Header() {
+const Header = () => {
   const activeSection = useActiveSection();
 
   const packageVersion = useQuery(api.crons.getLatestNpmPackageVersion, {});
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/85 backdrop-blur-xl">
+    <header className="border-border bg-background/85 sticky top-0 z-50 w-full border-b backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-5 px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
           onClick={() =>
-            window.scrollTo({ top: 0, left: 0, behavior: "smooth" })
+            window.scrollTo({ behavior: "smooth", left: 0, top: 0 })
           }
-          className="flex shrink-0 items-center gap-2 border-r border-border pr-5 transition-opacity hover:opacity-75"
+          className="border-border flex shrink-0 items-center gap-2 border-r pr-5 transition-opacity hover:opacity-75"
           aria-label="Nest Arch home"
         >
           <Image
@@ -102,7 +108,7 @@ export default function Header() {
             height={393}
             className="h-auto w-7"
           />
-          <span className="font-mono text-sm font-semibold tracking-[-0.08em] text-foreground">
+          <span className="text-foreground font-mono text-sm font-semibold tracking-[-0.08em]">
             nest<span className="text-red-600 dark:text-red-400">/</span>arch
           </span>
         </Link>
@@ -110,18 +116,21 @@ export default function Header() {
           className="hidden items-center gap-1 md:flex"
           aria-label="Main navigation"
         >
-          {NAV_LINKS.map(({ href, id, label }) => {
+          {NAV_LINKS.map(({ href, id, label }, index) => {
             const isActive = activeSection === id;
 
             return id === "undefined" ? (
-              <span key={href} className="opacity-80 text-red-500 mb-1">
+              <span
+                key={`href-${index}`}
+                className="mb-1 text-red-500 opacity-80"
+              >
                 |
               </span>
             ) : (
               <a
                 key={href}
                 href={href}
-                className={`rounded-lg border px-3 py-1.5 font-mono text-xs transition-colors ${isActive ? "border-red-500/40 bg-red-500/10 text-red-600 dark:text-red-300" : "border-transparent text-foreground/60 hover:border-border hover:bg-muted/50 hover:text-foreground dark:text-muted-foreground"}`}
+                className={`rounded-lg border px-3 py-1.5 font-mono text-xs transition-colors ${isActive ? "border-red-500/40 bg-red-500/10 text-red-600 dark:text-red-300" : "text-foreground/60 hover:border-border hover:bg-muted/50 hover:text-foreground dark:text-muted-foreground border-transparent"}`}
               >
                 {label}
               </a>
@@ -133,14 +142,14 @@ export default function Header() {
             href="https://www.npmjs.com/package/@nest-arch/tui"
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-lg border border-border px-2.5 py-1.5 font-mono text-[11px] text-foreground/60 transition-colors hover:border-red-500/40 hover:text-foreground dark:text-muted-foreground flex flex-row items-center gap-1.5"
+            className="border-border text-foreground/60 hover:text-foreground dark:text-muted-foreground flex flex-row items-center gap-1.5 rounded-lg border px-2.5 py-1.5 font-mono text-[11px] transition-colors hover:border-red-500/40"
           >
             <Image
               src="/icons/npm-wordmark.svg"
               alt="npm"
               width={38}
               height={26}
-              className="h-4 w-auto grayscale mt-0.5"
+              className="mt-0.5 h-4 w-auto grayscale"
             />
             <span className="">v{packageVersion?.version || "..."}</span>
           </Link>
@@ -149,7 +158,7 @@ export default function Header() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
-            className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-black/5 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white"
           >
             <GithubIcon className="h-4 w-4" />
           </Link>
@@ -164,4 +173,6 @@ export default function Header() {
       </div>
     </header>
   );
-}
+};
+
+export default Header;

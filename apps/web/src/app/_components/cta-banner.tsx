@@ -15,41 +15,39 @@ const GithubIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-export function CtaBanner() {
-  return (
-    <section
-      id="get-started"
-      className="flex flex-col items-center justify-between gap-8 border-y border-red-500/30 bg-red-500/5 px-6 py-10 md:flex-row md:px-10"
-    >
-      <div className="space-y-2 text-center md:text-left">
-        <p className="font-mono text-xs font-bold text-red-400 uppercase tracking-wider">
-          Start here
-        </p>
-        <h2 className="text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-4xl">
-          Generate a project you will recognize tomorrow.
-        </h2>
-      </div>
+export const CtaBanner = () => (
+  <section
+    id="get-started"
+    className="flex flex-col items-center justify-between gap-8 border-y border-red-500/30 bg-red-500/5 px-6 py-10 md:flex-row md:px-10"
+  >
+    <div className="space-y-2 text-center md:text-left">
+      <p className="font-mono text-xs font-bold tracking-wider text-red-400 uppercase">
+        Start here
+      </p>
+      <h2 className="text-foreground text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
+        Generate a project you will recognize tomorrow.
+      </h2>
+    </div>
 
-      <div className="flex w-full flex-col items-center gap-4 sm:flex-row md:w-auto">
-        <Link
-          href="https://www.npmjs.com/package/@nest-arch/tui"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex w-full items-center justify-center gap-2 rounded-md bg-red-500 px-5 py-3 font-mono text-sm font-semibold text-white transition-colors hover:bg-red-600 sm:w-auto"
-        >
-          <span>&gt;_ Get Started Now</span>
-        </Link>
+    <div className="flex w-full flex-col items-center gap-4 sm:flex-row md:w-auto">
+      <Link
+        href="https://www.npmjs.com/package/@nest-arch/tui"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex w-full items-center justify-center gap-2 rounded-md bg-red-500 px-5 py-3 font-mono text-sm font-semibold text-white transition-colors hover:bg-red-600 sm:w-auto"
+      >
+        <span>&gt;_ Get Started Now</span>
+      </Link>
 
-        <Link
-          href="https://github.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex w-full items-center justify-center gap-2 rounded-md border border-border bg-background px-5 py-3 font-mono text-sm font-medium text-foreground transition-colors hover:border-red-500/50 sm:w-auto"
-        >
-          <GithubIcon className="h-4 w-4" />
-          <span>Star on GitHub</span>
-        </Link>
-      </div>
-    </section>
-  );
-}
+      <Link
+        href="https://github.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="border-border bg-background text-foreground flex w-full items-center justify-center gap-2 rounded-md border px-5 py-3 font-mono text-sm font-medium transition-colors hover:border-red-500/50 sm:w-auto"
+      >
+        <GithubIcon className="h-4 w-4" />
+        <span>Star on GitHub</span>
+      </Link>
+    </div>
+  </section>
+);

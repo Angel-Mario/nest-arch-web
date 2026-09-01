@@ -1,10 +1,13 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import type * as React from "react";
 
-import "../index.css";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import Providers from "@/components/providers";
+
+import "../index.css";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -21,25 +24,19 @@ export const metadata: Metadata = {
     "Powerful CLI and interactive TUI generator for building opinionated, production-ready NestJS applications and microservices.",
   title: "Nest Arch — Scaffold Smarter. Ship Faster.",
 };
+const RootLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => (
+  <html lang="en" suppressHydrationWarning>
+    <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <Analytics />
+      <Providers>
+        <div className="flex min-h-screen flex-col">
+          <Header />
+          <div className="flex-1">{children}</div>
+          <Footer />
+        </div>
+      </Providers>
+    </body>
+  </html>
+);
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Providers>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <div className="flex-1">{children}</div>
-            <Footer />
-          </div>
-        </Providers>
-      </body>
-    </html>
-  );
-}
+export default RootLayout;

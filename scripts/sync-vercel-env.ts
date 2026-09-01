@@ -7,8 +7,8 @@ const DEFAULT_ENVIRONMENT = "preview";
 const VALID_ENVIRONMENTS = new Set(["development", "preview", "production"]);
 const VERCEL_COMMAND = ["pnpm", "exec", "vercel"] as const;
 const DEFAULT_FILES = ["apps/web/.env"];
-const SKIP_KEYS = new Set([]);
-const OVERRIDE_KEYS = new Map([]);
+const SKIP_KEYS = new Set();
+const OVERRIDE_KEYS = new Map();
 
 const args = process.argv.slice(2);
 const separatorIndex = args.indexOf("--");
@@ -66,7 +66,7 @@ if (env.size === 0) {
   process.exit(0);
 }
 
-const LOCAL_VALUE_PATTERN = /localhost|127\.0\.0\.1|0\.0\.0\.0|^file:/i;
+const LOCAL_VALUE_PATTERN = /localhost|127\.0\.0\.1|0\.0\.0\.0|^file:/iu;
 const localKeys = [...env.entries()]
   .filter(([, value]) => LOCAL_VALUE_PATTERN.test(value))
   .map(([key]) => key);
@@ -92,11 +92,11 @@ for (const [key, value] of env.entries()) {
       ...vercelArgs,
     ],
     {
-      input: `${value}\n`,
-      stdio: ["pipe", "inherit", "inherit"],
       encoding: "utf-8",
+      input: `${value}\n`,
       // Windows resolves bunx/npx/pnpm via .cmd shims, which need a shell
       shell: process.platform === "win32",
+      stdio: ["pipe", "inherit", "inherit"],
     }
   );
 

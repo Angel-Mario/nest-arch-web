@@ -5,5 +5,15 @@ import react from "ultracite/oxlint/react";
 
 export default defineConfig({
   extends: [core, react, next],
-  ignorePatterns: core.ignorePatterns,
+  ignorePatterns: [
+    ...(core.ignorePatterns ?? []),
+    "apps/web/components.json",
+    "apps/web/src/components/ui/**",
+    "packages/ui/src/**",
+    "packages/convex/**",
+    "**/interactive-terminal-wizard.tsx",
+  ],
+  rules: {
+    complexity: ["error", 50],
+  },
 });

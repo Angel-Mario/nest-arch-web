@@ -87,7 +87,7 @@ section[id] {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply font-sans bg-background text-foreground antialiased selection:bg-rose-500/30 selection:text-rose-200;
+    @apply bg-background text-foreground font-sans antialiased selection:bg-rose-500/30 selection:text-rose-200;
     background-attachment: fixed;
   }
   /* Dark mode ambient background glow — applied when html has .dark class */

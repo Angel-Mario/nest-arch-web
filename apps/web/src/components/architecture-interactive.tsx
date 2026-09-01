@@ -91,13 +91,13 @@ export const ArchitectureInteractive = ({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-white/10 bg-white/60 dark:bg-[#0d0e16]/80 p-4 sm:p-6 backdrop-blur-xl shadow-[0_0_50px_rgba(236,72,153,0.08)]",
+        "rounded-2xl border border-white/10 bg-white/60 p-4 shadow-[0_0_50px_rgba(236,72,153,0.08)] backdrop-blur-xl sm:p-6 dark:bg-[#0d0e16]/80",
         className
       )}
     >
-      <div className="grid gap-6 lg:grid-cols-12 items-center">
+      <div className="grid items-center gap-6 lg:grid-cols-12">
         {/* Left Sidebar Menu */}
-        <div className="lg:col-span-4 flex flex-col gap-2">
+        <div className="flex flex-col gap-2 lg:col-span-4">
           {CATEGORIES.map((cat) => {
             const Icon = cat.icon;
             const isSelected = cat.id === selectedId;
@@ -107,7 +107,7 @@ export const ArchitectureInteractive = ({
                 onClick={() => setSelectedId(cat.id)}
                 type="button"
                 className={cn(
-                  "flex items-center gap-3 rounded-xl px-4 py-3 text-left font-medium text-sm transition-all",
+                  "flex items-center gap-3 rounded-xl px-4 py-3 text-left text-sm font-medium transition-all",
                   isSelected
                     ? "border border-red-500/40 bg-red-500/15 text-white shadow-[0_0_15px_rgba(239,68,68,0.18)]"
                     : "border border-transparent text-zinc-400 hover:bg-white/5 hover:text-zinc-200"
@@ -133,10 +133,10 @@ export const ArchitectureInteractive = ({
         </div>
 
         {/* Center Node Visual Diagram */}
-        <div className="lg:col-span-4 flex flex-col items-center justify-center py-6 px-2 relative">
+        <div className="relative flex flex-col items-center justify-center px-2 py-6 lg:col-span-4">
           {/* Central Logo Node */}
-          <div className="relative z-10 flex flex-col items-center justify-center h-28 w-28 rounded-2xl border border-red-500/40 bg-white/5 dark:bg-[#161724] shadow-[0_0_30px_rgba(239,68,68,0.2)]">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-red-500 to-red-600 text-white font-mono font-bold text-xs">
+          <div className="relative z-10 flex h-28 w-28 flex-col items-center justify-center rounded-2xl border border-red-500/40 bg-white/5 shadow-[0_0_30px_rgba(239,68,68,0.2)] dark:bg-[#161724]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-red-500 to-red-600 font-mono text-xs font-bold text-white">
               NA
             </div>
             <span className="mt-2 font-mono text-xs font-semibold text-red-300">
@@ -145,10 +145,10 @@ export const ArchitectureInteractive = ({
           </div>
 
           {/* Outer connected nodes visual representation */}
-          <div className="mt-6 grid grid-cols-2 gap-3 w-full max-w-xs">
+          <div className="mt-6 grid w-full max-w-xs grid-cols-2 gap-3">
             <div
               className={cn(
-                "flex items-center gap-2 rounded-lg border p-2 text-xs font-mono transition-all",
+                "flex items-center gap-2 rounded-lg border p-2 font-mono text-xs transition-all",
                 selectedId === "web"
                   ? "border-red-500/60 bg-red-500/10 text-white"
                   : "border-white/10 bg-white/5 text-zinc-400"
@@ -164,7 +164,7 @@ export const ArchitectureInteractive = ({
             </div>
             <div
               className={cn(
-                "flex items-center gap-2 rounded-lg border p-2 text-xs font-mono transition-all",
+                "flex items-center gap-2 rounded-lg border p-2 font-mono text-xs transition-all",
                 selectedId === "backend"
                   ? "border-red-500/60 bg-red-500/10 text-white"
                   : "border-white/10 bg-white/5 text-zinc-400"
@@ -180,7 +180,7 @@ export const ArchitectureInteractive = ({
             </div>
             <div
               className={cn(
-                "flex items-center gap-2 rounded-lg border p-2 text-xs font-mono transition-all",
+                "flex items-center gap-2 rounded-lg border p-2 font-mono text-xs transition-all",
                 selectedId === "microservices"
                   ? "border-red-500/60 bg-red-500/10 text-white"
                   : "border-white/10 bg-white/5 text-zinc-400"
@@ -196,7 +196,7 @@ export const ArchitectureInteractive = ({
             </div>
             <div
               className={cn(
-                "flex items-center gap-2 rounded-lg border p-2 text-xs font-mono transition-all",
+                "flex items-center gap-2 rounded-lg border p-2 font-mono text-xs transition-all",
                 selectedId === "database"
                   ? "border-red-500/60 bg-red-500/10 text-white"
                   : "border-white/10 bg-white/5 text-zinc-400"
@@ -214,15 +214,15 @@ export const ArchitectureInteractive = ({
         </div>
 
         {/* Right Output / Feature List */}
-        <div className="lg:col-span-4 flex flex-col justify-center rounded-xl border border-white/10 bg-black/40 dark:bg-[#090a10] p-5">
-          <div className="flex items-center gap-2 border-b border-white/10 pb-3 mb-4">
+        <div className="flex flex-col justify-center rounded-xl border border-white/10 bg-black/40 p-5 lg:col-span-4 dark:bg-[#090a10]">
+          <div className="mb-4 flex items-center gap-2 border-b border-white/10 pb-3">
             <Terminal className="h-4 w-4 text-red-400" />
             <span className="font-mono text-xs font-semibold text-red-300">
               $ npx @nest-arch/tui --type={selectedCategory.id}
             </span>
           </div>
 
-          <p className="text-xs text-zinc-400 mb-4 leading-relaxed font-mono">
+          <p className="mb-4 font-mono text-xs leading-relaxed text-zinc-400">
             {selectedCategory.desc}
           </p>
 
@@ -232,7 +232,7 @@ export const ArchitectureInteractive = ({
                 key={idx}
                 className="flex items-start gap-2.5 text-xs text-zinc-300"
               >
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-red-400 mt-0.5" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
                 <span>{detail}</span>
               </div>
             ))}

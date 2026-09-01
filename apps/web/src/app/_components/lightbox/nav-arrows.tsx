@@ -9,8 +9,15 @@ interface NavArrowsProps {
   onNext: () => void;
 }
 
-export function NavArrows({ total, isZoomed, onPrev, onNext }: NavArrowsProps) {
-  if (total <= 1 || isZoomed) return null;
+export const NavArrows = ({
+  total,
+  isZoomed,
+  onPrev,
+  onNext,
+}: NavArrowsProps) => {
+  if (total <= 1 || isZoomed) {
+    return null;
+  }
 
   const buttonClass =
     "absolute top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-black/60 text-white backdrop-blur-sm transition-colors hover:bg-black/80";
@@ -41,4 +48,4 @@ export function NavArrows({ total, isZoomed, onPrev, onNext }: NavArrowsProps) {
       </button>
     </>
   );
-}
+};

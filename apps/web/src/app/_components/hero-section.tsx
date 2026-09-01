@@ -1,8 +1,10 @@
 "use client";
 
+import { api } from "@nest-arch-web/backend/convex/_generated/api";
 import { Badge } from "@nest-arch-web/ui/components/badge";
 import { CodeBlock } from "@nest-arch-web/ui/components/code-block";
 import { TerminalWindow } from "@nest-arch-web/ui/components/terminal-window";
+import { useQuery } from "convex/react";
 import { ArrowRight, Check, Play, Terminal } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
@@ -28,9 +30,9 @@ const ASCII_BANNER = ` _   _ _____ ____ _____     _    ____   ____ _   _
 | |\\  | |___ ___) || |   / ___ \\|  _ <| |___|  _  |
 |_| \\_|_____|____/ |_|  /_/   \\_\\_| \\_\\\\____|_| |_|`;
 
-export function HeroSection() {
+export const HeroSection = () => {
   const [isLiveDemo, setIsLiveDemo] = React.useState(false);
-
+  const packageVersion = useQuery(api.crons.getLatestNpmPackageVersion, {});
   return (
     <section
       className="relative isolate grid grid-cols-1 items-start gap-10 pt-2 pb-6 md:grid-cols-2 md:items-center md:gap-6 lg:grid-cols-12 lg:gap-8 lg:pt-4 lg:pb-10"
@@ -42,21 +44,24 @@ export function HeroSection() {
       <div className="flex flex-col items-start md:col-span-1 lg:col-span-6 xl:col-span-6">
         <Badge
           variant="outline"
-          className="gap-2 rounded-md border-red-500/50 bg-red-500/8 px-2.5 font-mono text-[11px] font-medium tracking-wide text-red-600 dark:border-red-500/35 dark:bg-red-500/5 dark:text-red-300"
+          className="gap-2 rounded-md border-red-500/50 bg-red-500/8 px-2.5 py-1 font-mono text-[11px] font-medium tracking-wide text-red-600 dark:border-red-500/35 dark:bg-red-500/5 dark:text-red-300"
         >
           <span className="size-1.5 animate-pulse rounded-full bg-red-400" />
-          <span>v0.2.2 is available</span>
+          <span>
+            v{packageVersion?.version || "..."} is available [pre-alpha for
+            nestjs 12]
+          </span>
         </Badge>
 
         <p className="mt-5 font-mono text-xs font-medium tracking-[0.18em] text-red-600 uppercase dark:text-red-400">
           Your architecture, made explicit
         </p>
 
-        <h1 className="mt-4 max-w-3xl text-4xl font-bold tracking-[-0.06em] text-balance leading-[0.96] text-foreground sm:text-5xl md:max-w-[12ch] md:text-[3.25rem] lg:max-w-3xl lg:text-6xl">
+        <h1 className="text-foreground mt-4 max-w-3xl text-4xl leading-[0.96] font-bold tracking-[-0.06em] text-balance sm:text-5xl md:max-w-[12ch] md:text-[3.25rem] lg:max-w-3xl lg:text-6xl">
           Build the NestJS project you actually meant to build.
         </h1>
 
-        <p className="mt-5 max-w-xl text-sm leading-relaxed text-foreground/65 dark:text-muted-foreground sm:text-base md:max-w-lg">
+        <p className="text-foreground/65 dark:text-muted-foreground mt-5 max-w-xl text-sm leading-relaxed sm:text-base md:max-w-lg">
           A guided terminal flow for choosing the runtime, data layer and
           tooling before your first file exists. Clear decisions in, a
           production-ready foundation out.
@@ -68,7 +73,7 @@ export function HeroSection() {
             prefix=""
             className="w-full rounded-md shadow-[0_18px_50px_rgba(0,0,0,0.22)]"
           />
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs text-foreground/60 dark:text-muted-foreground">
+          <div className="text-foreground/60 dark:text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs">
             <span className="flex items-center gap-1.5">
               <Check className="size-3.5 text-red-400" /> No config files
             </span>
@@ -82,7 +87,7 @@ export function HeroSection() {
           <button
             type="button"
             onClick={() => setIsLiveDemo((prev) => !prev)}
-            className="cursor-pointer inline-flex items-center gap-2 rounded-lg border border-red-600/70 bg-red-50 px-3.5 py-2 font-mono text-xs font-semibold text-red-700 shadow-[0_0_25px_rgba(239,68,68,0.12)] transition-all hover:scale-[1.02] hover:bg-red-100 dark:border-red-500/60 dark:bg-red-500/15 dark:text-red-200 dark:shadow-[0_0_25px_rgba(239,68,68,0.2)] dark:hover:bg-red-500/25 sm:text-sm"
+            className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-red-600/70 bg-red-50 px-3.5 py-2 font-mono text-xs font-semibold text-red-700 shadow-[0_0_25px_rgba(239,68,68,0.12)] transition-all hover:scale-[1.02] hover:bg-red-100 sm:text-sm dark:border-red-500/60 dark:bg-red-500/15 dark:text-red-200 dark:shadow-[0_0_25px_rgba(239,68,68,0.2)] dark:hover:bg-red-500/25"
           >
             {isLiveDemo ? (
               <>
@@ -100,7 +105,7 @@ export function HeroSection() {
 
           <Link
             href="#workflow"
-            className="inline-flex items-center gap-2 border-b border-red-600/60 pb-1 font-mono text-sm font-medium text-foreground transition-colors hover:border-red-500 hover:text-red-600 dark:border-red-500/50 dark:hover:border-red-400 dark:hover:text-red-400"
+            className="text-foreground inline-flex items-center gap-2 border-b border-red-600/60 pb-1 font-mono text-sm font-medium transition-colors hover:border-red-500 hover:text-red-600 dark:border-red-500/50 dark:hover:border-red-400 dark:hover:text-red-400"
           >
             Explore docs <ArrowRight className="size-4" />
           </Link>
@@ -110,7 +115,7 @@ export function HeroSection() {
       {/* Right Column: Terminal Preview / Live Wizard (Fixed 6 columns and fixed height to prevent layout shift) */}
       <div className="relative h-105 w-full sm:h-125 md:h-115 md:max-w-140 md:justify-self-end lg:col-span-6 lg:h-135 xl:col-span-6">
         {isLiveDemo ? (
-          <div className="h-full w-full animate-in fade-in zoom-in-95 duration-300">
+          <div className="animate-in fade-in zoom-in-95 h-full w-full duration-300">
             <InteractiveTerminalWizard onClose={() => setIsLiveDemo(false)} />
           </div>
         ) : (
@@ -129,14 +134,14 @@ export function HeroSection() {
 
                   {/* Banner + Subtitle + Version */}
                   <div className="flex flex-col justify-start pt-1">
-                    <pre className="font-mono text-[9px] font-bold leading-[1.15] text-red-500 sm:text-[8.5px] md:text-[9.5px]">
+                    <pre className="font-mono text-[9px] leading-[1.15] font-bold text-red-500 sm:text-[8.5px] md:text-[9.5px]">
                       {ASCII_BANNER}
                     </pre>
                     <p className="mt-2 font-mono text-[11px] text-zinc-300 sm:text-xs">
                       Build production-ready NestJS projects.
                     </p>
                     <p className="mt-0.5 font-mono text-[11px] font-semibold text-sky-400 sm:text-xs">
-                      v0.2.2
+                      v{packageVersion?.version || "..."}
                     </p>
                   </div>
                 </div>
@@ -205,7 +210,7 @@ export function HeroSection() {
               <button
                 type="button"
                 onClick={() => setIsLiveDemo(true)}
-                className="group/cta cursor-pointer flex max-w-sm items-center gap-3.5 rounded-xl border border-red-500/50 bg-[#10121d]/90 p-3.5 shadow-[0_0_40px_rgba(239,68,68,0.25)] backdrop-blur-xl transition-all duration-300 hover:scale-[1.03] hover:border-red-400 hover:bg-[#151726]/95 hover:shadow-[0_0_55px_rgba(239,68,68,0.38)] active:scale-[0.98] sm:max-w-md sm:gap-4 sm:p-4"
+                className="group/cta flex max-w-sm cursor-pointer items-center gap-3.5 rounded-xl border border-red-500/50 bg-[#10121d]/90 p-3.5 shadow-[0_0_40px_rgba(239,68,68,0.25)] backdrop-blur-xl transition-all duration-300 hover:scale-[1.03] hover:border-red-400 hover:bg-[#151726]/95 hover:shadow-[0_0_55px_rgba(239,68,68,0.38)] active:scale-[0.98] sm:max-w-md sm:gap-4 sm:p-4"
               >
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-red-500/20 text-red-400 ring-1 ring-red-500/50 transition-all duration-300 group-hover/cta:scale-110 group-hover/cta:bg-red-500/30 sm:size-10">
                   <Play className="size-4 fill-red-400" />
@@ -234,4 +239,4 @@ export function HeroSection() {
       </div>
     </section>
   );
-}
+};

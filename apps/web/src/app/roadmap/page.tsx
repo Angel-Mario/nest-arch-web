@@ -28,11 +28,11 @@ const GithubIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-type RoadmapItem = {
+interface RoadmapItem {
   title: string;
   description: string;
   icon: React.ElementType;
-};
+}
 
 const ROADMAP: {
   title: string;
@@ -42,76 +42,76 @@ const ROADMAP: {
   items: RoadmapItem[];
 }[] = [
   {
-    title: "On the horizon",
-    subtitle: "Actively planned and next up.",
     accent: "border-red-500/40 text-red-500",
     icon: Sparkles,
     items: [
       {
-        icon: Sparkles,
-        title: "Prettier support",
         description:
           "Format output with Prettier out of the box for clean, consistent generated code.",
+        icon: Sparkles,
+        title: "Prettier support",
       },
       {
-        icon: Boxes,
-        title: "Generate NestJS components",
         description:
           "Core CLI generation of resolvers, resources, controllers, and services — like nest generate, but driven by the nest-arch metadata file for custom generation.",
+        icon: Boxes,
+        title: "Generate NestJS components",
       },
       {
-        icon: MessageSquare,
-        title: "Create a Discord server",
         description:
           "A community space for questions, feedback, and collaboration around nest-arch.",
+        icon: MessageSquare,
+        title: "Create a Discord server",
       },
       {
-        icon: FileText,
-        title: "Documentation for nest-arch",
         description:
           "Comprehensive docs covering the CLI, TUI, templates, and the metadata file for custom generation.",
+        icon: FileText,
+        title: "Documentation for nest-arch",
       },
       {
-        icon: GithubIcon,
-        title: "Open-source on GitHub",
         description:
           "Open up the project for collaboration, issues, and community contributions.",
+        icon: GithubIcon,
+        title: "Open-source on GitHub",
       },
     ],
+    subtitle: "Actively planned and next up.",
+    title: "On the horizon",
   },
   {
-    title: "On hold",
-    subtitle: "Waiting on releases.",
     accent: "border-amber-500/40 text-amber-500",
     icon: Clock,
     items: [
       {
-        icon: Package,
-        title: "Wait for NestJS 12",
         description:
           "Pending the official stable release before upgrading the generator's baseline.",
+        icon: Package,
+        title: "Wait for NestJS 12",
       },
     ],
+    subtitle: "Waiting on releases.",
+    title: "On hold",
   },
   {
-    title: "Unsupported",
-    subtitle: "Flagged for later. Not ready yet.",
     accent: "border-rose-500/40 text-rose-500",
     icon: AlertTriangle,
     items: [
       {
-        icon: CircleDashed,
-        title: "NestJS GraphQL support",
         description:
           "Still pending for @nestjs/graphql v14 — currently on dev, not prepared for ESM compatibility.",
+        icon: CircleDashed,
+        title: "NestJS GraphQL support",
       },
       {
-        icon: CircleDashed,
-        title: "Prisma v7 + MongoDB",
         description:
           "Prisma v7 doesn't support Mongo yet. 6.19 is the last supported version, and the next Prisma release will add Mongo support.",
+        icon: CircleDashed,
+        title: "Prisma v7 + MongoDB",
       },
     ],
+    subtitle: "Flagged for later. Not ready yet.",
+    title: "Unsupported",
   },
 ];
 
@@ -140,104 +140,110 @@ export const metadata: Metadata = {
   title: "Roadmap — Nest Arch",
 };
 
-export default function RoadmapPage() {
-  return (
-    <div className="min-h-screen overflow-hidden bg-background text-foreground selection:bg-red-500/30 selection:text-red-100">
-      <main className="mx-auto max-w-7xl space-y-12 px-4 pb-24 pt-6 sm:px-6 lg:px-8 lg:pt-10">
-        <Link
-          href={BACK_LINK.href}
-          className="inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowUpRight className="size-4" aria-hidden="true" />
-          {BACK_LINK.label}
-        </Link>
+const RoadmapPage = () => (
+  <div className="bg-background text-foreground min-h-screen overflow-hidden selection:bg-red-500/30 selection:text-red-100">
+    <main className="mx-auto max-w-7xl space-y-12 px-4 pt-6 pb-24 sm:px-6 lg:px-8 lg:pt-10">
+      <Link
+        href={BACK_LINK.href}
+        className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 font-mono text-xs transition-colors"
+      >
+        <ArrowUpRight className="size-4" aria-hidden="true" />
+        {BACK_LINK.label}
+      </Link>
 
-        <div className="max-w-2xl space-y-3">
-          <p className="font-mono text-xs font-medium tracking-[0.18em] text-red-400 uppercase">
-            Roadmap
-          </p>
-          <h1 className="text-3xl font-semibold tracking-[-0.04em] sm:text-4xl lg:text-5xl">
-            Where nest/arch is headed.
-          </h1>
-          <p className="text-sm leading-relaxed text-muted-foreground">
-            A living view of what we are building, what we are waiting on, and
-            what is intentionally left for later.
-          </p>
-        </div>
+      <div className="max-w-2xl space-y-3">
+        <p className="font-mono text-xs font-medium tracking-[0.18em] text-red-400 uppercase">
+          Roadmap
+        </p>
+        <h1 className="text-3xl font-semibold tracking-[-0.04em] sm:text-4xl lg:text-5xl">
+          Where nest/arch is headed.
+        </h1>
+        <p className="text-muted-foreground text-sm leading-relaxed">
+          A living view of what we are building, what we are waiting on, and
+          what is intentionally left for later.
+        </p>
+      </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {ROADMAP.map((group) => {
-            const GroupIcon = group.icon;
-            return (
-              <section
-                key={group.title}
-                className="rounded-2xl border border-border bg-muted/20 p-6"
-                aria-label={group.title}
-              >
-                <header className="mb-6 flex items-center gap-3">
-                  <span
-                    className={`flex size-10 shrink-0 items-center justify-center rounded-xl border ${group.accent} bg-background`}
-                  >
-                    <GroupIcon className="size-5" aria-hidden="true" />
-                  </span>
-                  <div>
-                    <h2 className="font-mono text-sm font-semibold text-foreground">
-                      {group.title}
-                    </h2>
-                    <p className="text-xs text-muted-foreground">
-                      {group.subtitle}
-                    </p>
-                  </div>
-                </header>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {ROADMAP.map((group) => {
+          const GroupIcon = group.icon;
+          return (
+            <section
+              key={group.title}
+              className="border-border bg-muted/20 rounded-2xl border p-6"
+              aria-label={group.title}
+            >
+              <header className="mb-6 flex items-center gap-3">
+                <span
+                  className={`flex size-10 shrink-0 items-center justify-center rounded-xl border ${group.accent} bg-background`}
+                >
+                  <GroupIcon className="size-5" aria-hidden="true" />
+                </span>
+                <div>
+                  <h2 className="text-foreground font-mono text-sm font-semibold">
+                    {group.title}
+                  </h2>
+                  <p className="text-muted-foreground text-xs">
+                    {group.subtitle}
+                  </p>
+                </div>
+              </header>
 
-                <ul className="space-y-3">
-                  {group.items.map((item) => {
-                    const ItemIcon = item.icon;
-                    return (
-                      <li
-                        key={item.title}
-                        className="rounded-xl border border-border bg-background p-4 transition-colors hover:border-red-500/30"
-                      >
-                        {group.title === "Unsupported"
-                          ? statusRow(
-                              AlertTriangle,
-                              "Not ready",
-                              "border-rose-500/40 bg-rose-500/10 text-rose-500"
-                            )
-                          : group.title === "On hold"
-                            ? statusRow(
-                                Clock,
-                                "Waiting",
-                                "border-amber-500/40 bg-amber-500/10 text-amber-500"
-                              )
-                            : statusRow(
-                                CheckCircle2,
-                                "Planned",
-                                "border-red-500/40 bg-red-500/10 text-red-500"
-                              )}
-                        <div className="mt-2.5 flex items-start gap-2.5">
-                          <ItemIcon
-                            className="mt-0.5 size-4 shrink-0 text-foreground/60"
-                            aria-hidden="true"
-                          />
-                          <div>
-                            <h3 className="font-mono text-sm font-semibold text-foreground">
-                              {item.title}
-                            </h3>
-                            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                              {item.description}
-                            </p>
-                          </div>
+              <ul className="space-y-3">
+                {group.items.map((item) => {
+                  const ItemIcon = item.icon;
+                  return (
+                    <li
+                      key={item.title}
+                      className="border-border bg-background rounded-xl border p-4 transition-colors hover:border-red-500/30"
+                    >
+                      {(() => {
+                        if (group.title === "Unsupported") {
+                          return statusRow(
+                            AlertTriangle,
+                            "Not ready",
+                            "border-rose-500/40 bg-rose-500/10 text-rose-500"
+                          );
+                        }
+
+                        if (group.title === "On hold") {
+                          return statusRow(
+                            Clock,
+                            "Waiting",
+                            "border-amber-500/40 bg-amber-500/10 text-amber-500"
+                          );
+                        }
+
+                        return statusRow(
+                          CheckCircle2,
+                          "Planned",
+                          "border-red-500/40 bg-red-500/10 text-red-500"
+                        );
+                      })()}
+                      <div className="mt-2.5 flex items-start gap-2.5">
+                        <ItemIcon
+                          className="text-foreground/60 mt-0.5 size-4 shrink-0"
+                          aria-hidden="true"
+                        />
+                        <div>
+                          <h3 className="text-foreground font-mono text-sm font-semibold">
+                            {item.title}
+                          </h3>
+                          <p className="text-muted-foreground mt-1 text-sm leading-relaxed">
+                            {item.description}
+                          </p>
                         </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </section>
-            );
-          })}
-        </div>
-      </main>
-    </div>
-  );
-}
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          );
+        })}
+      </div>
+    </main>
+  </div>
+);
+
+export default RoadmapPage;
