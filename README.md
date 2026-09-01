@@ -10,13 +10,7 @@ The official landing page for [**nest-arch**](https://github.com/Angel-Mario/nes
 
 <br/>
 
-[![npm version](https://img.shields.io/npm/v/%40nest-arch%2Ftui?color=dc2626&label=%40nest-arch%2Ftui&logo=npm)](https://www.npmjs.com/package/@nest-arch/tui)
-[![GitHub](https://img.shields.io/badge/GitHub-Angel_Mario%2Fnest--arch-dc2626?logo=github&logoColor=white)](https://github.com/Angel-Mario/nest-arch)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)](https://nextjs.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Convex](https://img.shields.io/badge/backend-Convex-de7868)](https://www.convex.dev/)
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![npm version](https://img.shields.io/npm/v/%40nest-arch%2Ftui?color=dc2626&label=%40nest-arch%2Ftui&logo=npm)](https://www.npmjs.com/package/@nest-arch/tui) [![GitHub](https://img.shields.io/badge/GitHub-Angel_Mario%2Fnest--arch-dc2626?logo=github&logoColor=white)](https://github.com/Angel-Mario/nest-arch) [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/) [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js&logoColor=white)](https://nextjs.org/) [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/) [![Convex](https://img.shields.io/badge/backend-Convex-de7868)](https://www.convex.dev/) [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 `npx @nest-arch/tui@latest`
 
@@ -125,17 +119,17 @@ nest-arch-web/
 
 ## Available scripts
 
-| Command | Description |
-| --- | --- |
-| `pnpm run dev` | Start all applications in development mode |
-| `pnpm run dev:web` | Start only the web application (port 3001) |
-| `pnpm run dev:setup` | Configure and link the Convex project |
-| `pnpm run build` | Build all applications |
-| `pnpm run check-types` | Type-check all apps and packages |
-| `pnpm run check` | Run Ultracite linting + formatting checks |
-| `pnpm run fix` | Auto-fix lint and formatting issues |
-| `pnpm run deploy` | Create a Vercel preview deployment |
-| `pnpm run deploy:prod` | Deploy to Vercel production |
+| Command                | Description                                |
+| ---------------------- | ------------------------------------------ |
+| `pnpm run dev`         | Start all applications in development mode |
+| `pnpm run dev:web`     | Start only the web application (port 3001) |
+| `pnpm run dev:setup`   | Configure and link the Convex project      |
+| `pnpm run build`       | Build all applications                     |
+| `pnpm run check-types` | Type-check all apps and packages           |
+| `pnpm run check`       | Run Ultracite linting + formatting checks  |
+| `pnpm run fix`         | Auto-fix lint and formatting issues        |
+| `pnpm run deploy`      | Create a Vercel preview deployment         |
+| `pnpm run deploy:prod` | Deploy to Vercel production                |
 
 ## Contributing
 

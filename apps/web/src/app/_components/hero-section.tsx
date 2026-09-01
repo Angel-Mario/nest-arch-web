@@ -33,6 +33,16 @@ const ASCII_BANNER = ` _   _ _____ ____ _____     _    ____   ____ _   _
 export const HeroSection = () => {
   const [isLiveDemo, setIsLiveDemo] = React.useState(false);
   const packageVersion = useQuery(api.crons.getLatestNpmPackageVersion, {});
+  const totalDownloads = useQuery(api.ossStats.getNpmPackage, {
+    name: "@nest-arch/tui",
+  });
+
+  const formattedTotalDownloads =
+    totalDownloads?.downloadCount !== null &&
+    totalDownloads?.downloadCount !== undefined
+      ? new Intl.NumberFormat("en-US").format(totalDownloads.downloadCount)
+      : "...";
+
   return (
     <section
       className="relative isolate grid grid-cols-1 items-start gap-10 pt-2 pb-6 md:grid-cols-2 md:items-center md:gap-6 lg:grid-cols-12 lg:gap-8 lg:pt-4 lg:pb-10"
@@ -47,10 +57,7 @@ export const HeroSection = () => {
           className="gap-2 rounded-md border-red-500/50 bg-red-500/8 px-2.5 py-1 font-mono text-[11px] font-medium tracking-wide text-red-600 dark:border-red-500/35 dark:bg-red-500/5 dark:text-red-300"
         >
           <span className="size-1.5 animate-pulse rounded-full bg-red-400" />
-          <span>
-            v{packageVersion?.version || "..."} is available [pre-alpha for
-            nestjs 12]
-          </span>
+          <span>v{packageVersion?.version || "..."} is available</span>
         </Badge>
 
         <p className="mt-5 font-mono text-xs font-medium tracking-[0.18em] text-red-600 uppercase dark:text-red-400">
@@ -103,12 +110,18 @@ export const HeroSection = () => {
             )}
           </button>
 
-          <Link
-            href="#workflow"
-            className="text-foreground inline-flex items-center gap-2 border-b border-red-600/60 pb-1 font-mono text-sm font-medium transition-colors hover:border-red-500 hover:text-red-600 dark:border-red-500/50 dark:hover:border-red-400 dark:hover:text-red-400"
-          >
-            Explore docs <ArrowRight className="size-4" />
-          </Link>
+          <div className="inline-flex items-center gap-2 font-mono text-sm text-red-300">
+            <Link
+              href="#workflow"
+              className="text-foreground inline-flex items-center gap-2 border-b border-red-600/60 pb-1 font-medium transition-colors hover:border-red-500 hover:text-red-600 dark:border-red-500/50 dark:hover:border-red-400 dark:hover:text-red-400"
+            >
+              Explore docs <ArrowRight className="size-4" />
+            </Link>
+            <span className="ml-3 text-zinc-500">•</span>
+            <span className="text-zinc-400">
+              {formattedTotalDownloads} downloads
+            </span>
+          </div>
         </div>
       </div>
 
