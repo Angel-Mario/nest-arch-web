@@ -44,7 +44,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 gap-10 pb-12 md:grid-cols-12">
           <div className="flex flex-col gap-4 md:col-span-5">
             <Link
-              href={`/${locale}`}
+              href={`/${locale}` as unknown as "/"}
               className="flex items-center gap-2.5"
               aria-label={t.header.nestArchHome}
             >

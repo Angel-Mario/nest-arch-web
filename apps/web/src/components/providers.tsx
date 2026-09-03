@@ -25,9 +25,7 @@ const ThemedToaster = () => {
 const Providers = ({ children }: { children: React.ReactNode }) => (
   <ThemeProvider
     attribute="class"
-    cookie="theme"
     defaultTheme="system"
-    enableSystem
     disableTransitionOnChange
   >
     <ConvexProvider client={convex}>{children}</ConvexProvider>

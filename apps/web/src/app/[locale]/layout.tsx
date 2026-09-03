@@ -28,9 +28,10 @@ const LOCALE_MAP: Record<Locale, string> = {
 export const generateMetadata = async ({
   params,
 }: {
-  params: Promise<{ locale: Locale }>;
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> => {
-  const { locale } = await params;
+  const { locale: localeParam } = await params;
+  const locale = localeParam as Locale;
   const t = getUiMessages(locale);
   const title = "Nest Arch — Scaffold Smarter. Ship Faster.";
   const description = t.metaDescription;
@@ -59,9 +60,10 @@ const RootLayout = async ({
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: Locale }>;
+  params: Promise<{ locale: string }>;
 }) => {
-  const { locale } = await params;
+  const { locale: localeParam } = await params;
+  const locale = localeParam as Locale;
   const cookieStore = await cookies();
   const theme = cookieStore.get("theme")?.value;
 
