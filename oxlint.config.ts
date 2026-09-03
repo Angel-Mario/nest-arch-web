@@ -10,10 +10,11 @@ export default defineConfig({
     "apps/web/components.json",
     "apps/web/src/components/ui/**",
     "packages/ui/src/**",
-    "packages/convex/**",
+    "packages/backend/convex/**",
     "**/interactive-terminal-wizard.tsx",
   ],
   rules: {
     complexity: ["error", 50],
+    // "unicorn/filename-case": "off",
   },
 });

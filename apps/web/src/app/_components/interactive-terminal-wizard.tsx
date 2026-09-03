@@ -1268,7 +1268,7 @@ export const InteractiveTerminalWizard = ({
         className={`group flex cursor-pointer flex-col rounded-md px-3 py-2 transition-all select-none ${
           isFocused
             ? "border border-red-500/30 bg-red-500/10 text-zinc-100 shadow-[0_0_15px_rgba(239,68,68,0.08)]"
-            : "border border-transparent text-zinc-400 hover:border-white/5 hover:bg-white/[0.02]"
+            : "border border-transparent text-zinc-400 hover:border-white/5 hover:bg-white/2"
         }`}
       >
         <div className="flex items-center gap-2.5">
@@ -1373,18 +1373,18 @@ export const InteractiveTerminalWizard = ({
   return (
     <div
       ref={terminalRef}
-      className="relative flex h-full w-full flex-col overflow-hidden rounded-xl border border-red-500/25 bg-[#0a0a0f]/95 shadow-[0_28px_90px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all"
+      className="border-border bg-background relative flex h-full w-full flex-col overflow-hidden rounded-xl border shadow-[0_24px_70px_rgba(0,0,0,0.22)] backdrop-blur-xl transition-all dark:border-red-500/15"
     >
       {/* Terminal Title Bar */}
-      <div className="relative flex shrink-0 items-center justify-between border-b border-white/10 bg-[#12131c] px-4 py-1.5">
-        <div className="flex items-center gap-2">
-          <span className="inline-block size-3 rounded-full border border-black/20 bg-[#ff5f56]" />
-          <span className="inline-block size-3 rounded-full border border-black/20 bg-[#ffbd2e]" />
-          <span className="inline-block size-3 rounded-full border border-black/20 bg-[#27c93f]" />
+      <div className="bg-muted relative flex shrink-0 items-center justify-between border-b px-4 py-1.5">
+        <div className="border-border bg-muted/60 flex items-center gap-2">
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-red-500/80" />
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-amber-500/80" />
+          <span className="inline-block h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
         </div>
 
         {/* Center Title */}
-        <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2 font-mono text-xs text-zinc-400">
+        <div className="text-muted-foreground absolute left-1/2 flex -translate-x-1/2 items-center gap-1.5 font-mono text-[11px]">
           <span className="contents sm:flex">nest-arch</span>
         </div>
 
@@ -1408,7 +1408,7 @@ export const InteractiveTerminalWizard = ({
       </div>
 
       {/* Terminal Inner Body */}
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-4 font-mono text-xs leading-relaxed text-zinc-300 sm:p-5 sm:text-sm">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[#0a0a0f]/95 p-4 font-mono text-xs leading-relaxed text-zinc-300 sm:p-5 sm:text-sm">
         {/* Context Bar & Header (Hidden during install / done) */}
         {stepId !== "installing" && stepId !== "done" && (
           <div className="mb-3 shrink-0 space-y-1.5 border-b border-white/10 pb-2.5">

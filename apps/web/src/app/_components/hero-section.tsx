@@ -9,6 +9,8 @@ import { ArrowRight, Check, Play, Terminal } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
+import { useUi } from "@/components/locale-provider";
+
 import { InteractiveTerminalWizard } from "./interactive-terminal-wizard";
 
 const ASCII_CAT = `   ,-.       _,---._ __   /\\
@@ -31,16 +33,25 @@ const ASCII_BANNER = ` _   _ _____ ____ _____     _    ____   ____ _   _
 |_| \\_|_____|____/ |_|  /_/   \\_\\_| \\_\\\\____|_| |_|`;
 
 export const HeroSection = () => {
+  const { t, locale } = useUi();
   const [isLiveDemo, setIsLiveDemo] = React.useState(false);
   const packageVersion = useQuery(api.crons.getLatestNpmPackageVersion, {});
   const totalDownloads = useQuery(api.ossStats.getNpmPackage, {
     name: "@nest-arch/tui",
   });
 
+  const NUMBER_FORMAT_LOCALE: Record<string, string> = {
+    en: "en-US",
+    es: "es-ES",
+    pt: "pt-BR",
+  };
+
   const formattedTotalDownloads =
     totalDownloads?.downloadCount !== null &&
     totalDownloads?.downloadCount !== undefined
-      ? new Intl.NumberFormat("en-US").format(totalDownloads.downloadCount)
+      ? new Intl.NumberFormat(NUMBER_FORMAT_LOCALE[locale] ?? "en-US").format(
+          totalDownloads.downloadCount
+        )
       : "...";
 
   return (
@@ -57,21 +68,21 @@ export const HeroSection = () => {
           className="gap-2 rounded-md border-red-500/50 bg-red-500/8 px-2.5 py-1 font-mono text-[11px] font-medium tracking-wide text-red-600 dark:border-red-500/35 dark:bg-red-500/5 dark:text-red-300"
         >
           <span className="size-1.5 animate-pulse rounded-full bg-red-400" />
-          <span>v{packageVersion?.version || "..."} is available</span>
+          <span>
+            v{packageVersion?.version || "..."} {t.hero.badge}
+          </span>
         </Badge>
 
         <p className="mt-5 font-mono text-xs font-medium tracking-[0.18em] text-red-600 uppercase dark:text-red-400">
-          Your architecture, made explicit
+          {t.hero.tagline}
         </p>
 
         <h1 className="text-foreground mt-4 max-w-3xl text-4xl leading-[0.96] font-bold tracking-[-0.06em] text-balance sm:text-5xl md:max-w-[12ch] md:text-[3.25rem] lg:max-w-3xl lg:text-6xl">
-          Build the NestJS project you actually meant to build.
+          {t.hero.headline}
         </h1>
 
         <p className="text-foreground/65 dark:text-muted-foreground mt-5 max-w-xl text-sm leading-relaxed sm:text-base md:max-w-lg">
-          A guided terminal flow for choosing the runtime, data layer and
-          tooling before your first file exists. Clear decisions in, a
-          production-ready foundation out.
+          {t.hero.description}
         </p>
 
         <div className="mt-7 flex w-full max-w-xl flex-col gap-3">
@@ -82,10 +93,11 @@ export const HeroSection = () => {
           />
           <div className="text-foreground/60 dark:text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs">
             <span className="flex items-center gap-1.5">
-              <Check className="size-3.5 text-red-400" /> No config files
+              <Check className="size-3.5 text-red-400" /> {t.hero.noConfigFiles}
             </span>
             <span className="flex items-center gap-1.5">
-              <Check className="size-3.5 text-red-400" /> Interactive by default
+              <Check className="size-3.5 text-red-400" />{" "}
+              {t.hero.interactiveByDefault}
             </span>
           </div>
         </div>
@@ -99,12 +111,12 @@ export const HeroSection = () => {
             {isLiveDemo ? (
               <>
                 <Terminal className="size-4 text-red-600 dark:text-red-400" />
-                <span>Exit Interactive Demo</span>
+                <span>{t.hero.exitInteractiveDemo}</span>
               </>
             ) : (
               <>
                 <Play className="size-3.5 fill-red-600 text-red-600 dark:fill-red-400 dark:text-red-400" />
-                <span>Try Live Demo</span>
+                <span>{t.hero.tryLiveDemo}</span>
                 <span className="size-1.5 animate-pulse rounded-full bg-red-500 dark:bg-red-400" />
               </>
             )}
@@ -115,11 +127,11 @@ export const HeroSection = () => {
               href="#workflow"
               className="text-foreground inline-flex items-center gap-2 border-b border-red-600/60 pb-1 font-medium transition-colors hover:border-red-500 hover:text-red-600 dark:border-red-500/50 dark:hover:border-red-400 dark:hover:text-red-400"
             >
-              Explore docs <ArrowRight className="size-4" />
+              {t.hero.exploreDocs} <ArrowRight className="size-4" />
             </Link>
             <span className="ml-3 text-zinc-500">•</span>
             <span className="text-zinc-400">
-              {formattedTotalDownloads} downloads
+              {formattedTotalDownloads} {t.hero.downloads}
             </span>
           </div>
         </div>
@@ -132,10 +144,10 @@ export const HeroSection = () => {
             <InteractiveTerminalWizard onClose={() => setIsLiveDemo(false)} />
           </div>
         ) : (
-          <div className="group relative h-full w-full overflow-hidden rounded-xl">
+          <div className="group relative h-full w-full overflow-hidden rounded-xl border shadow-[0_24px_70px_rgba(0,0,0,0.22)] dark:border-red-500/15">
             <TerminalWindow
               title="Administrator: PowerShell"
-              className="h-full w-full overflow-hidden rounded-xl border-red-500/25 bg-[#090a10]/95 shadow-[0_28px_90px_rgba(0,0,0,0.48)]"
+              className="h-full w-full overflow-hidden"
             >
               <div className="flex h-full flex-col justify-between space-y-3 font-mono text-xs leading-relaxed select-none sm:text-sm">
                 {/* Header: ASCII Cat & NEST ARCH Banner */}
@@ -151,7 +163,7 @@ export const HeroSection = () => {
                       {ASCII_BANNER}
                     </pre>
                     <p className="mt-2 font-mono text-[11px] text-zinc-300 sm:text-xs">
-                      Build production-ready NestJS projects.
+                      A production-ready CLI
                     </p>
                     <p className="mt-0.5 font-mono text-[11px] font-semibold text-sky-400 sm:text-xs">
                       v{packageVersion?.version || "..."}
@@ -167,8 +179,8 @@ export const HeroSection = () => {
                   <span className="font-bold text-red-400">✧</span>
                   <span>
                     Welcome to{" "}
-                    <span className="font-bold text-red-400">Nest Arch</span> –
-                    Let&apos;s build something amazing.
+                    <span className="font-bold text-red-400">Nest Arch</span> –{" "}
+                    Let&apos;s build something great.
                   </span>
                 </div>
 
@@ -183,7 +195,7 @@ export const HeroSection = () => {
                     <div className="flex items-center gap-2 text-red-400">
                       <span className="w-3 font-bold text-red-400">&gt;</span>
                       <span className="font-semibold text-red-400">
-                        Create a new NestJS project
+                        Create new project
                       </span>
                     </div>
 
@@ -232,17 +244,17 @@ export const HeroSection = () => {
                 <div className="flex flex-col text-left">
                   <div className="flex items-center gap-2">
                     <p className="font-mono text-xs font-semibold text-zinc-100 sm:text-sm">
-                      Launch Interactive Live Demo
+                      {t.hero.launchDemo}
                     </p>
                     <span className="size-1.5 animate-pulse rounded-full bg-red-400" />
                   </div>
                   <p className="font-mono text-[11px] text-zinc-400">
-                    Click to test all CLI steps in browser
+                    {t.hero.launchDemoDescription}
                   </p>
                 </div>
 
                 <span className="ml-auto flex items-center gap-1 rounded-md border border-red-500/40 bg-red-500/20 px-2 py-1 font-mono text-[10px] font-bold text-red-300 transition-all duration-300 group-hover/cta:border-red-400 group-hover/cta:bg-red-500/30 sm:text-xs">
-                  START
+                  {t.hero.start}
                   <ArrowRight className="size-3.5 transition-transform duration-300 group-hover/cta:translate-x-0.5" />
                 </span>
               </button>
