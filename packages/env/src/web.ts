@@ -16,8 +16,12 @@ export const env = createEnv({
   },
   emptyStringAsUndefined: true,
   runtimeEnv: {
+    GOOGLE_SITE_VERIFICATION: process.env.GOOGLE_SITE_VERIFICATION,
     NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
     NEXT_PUBLIC_GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
+  },
+  server: {
+    GOOGLE_SITE_VERIFICATION: z.string().min(1).optional(),
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
