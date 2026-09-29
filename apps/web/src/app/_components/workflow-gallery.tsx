@@ -21,6 +21,43 @@ export const WorkflowGallery = () => {
   const { t } = useUi();
   const [activeGalleryTab, setActiveGalleryTab] = React.useState(0);
   const [lightboxIndex, setLightboxIndex] = React.useState<number | null>(null);
+  const touchStart = React.useRef<{ x: number; y: number } | null>(null);
+
+  const handlePreviewTouchStart = (
+    event: React.TouchEvent<HTMLButtonElement>
+  ) => {
+    const touch = event.touches[0];
+    if (!touch) {
+      return;
+    }
+
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handlePreviewTouchEnd = (
+    event: React.TouchEvent<HTMLButtonElement>
+  ) => {
+    const start = touchStart.current;
+    touchStart.current = null;
+
+    const touch = event.changedTouches[0];
+    if (!start || !touch) {
+      return;
+    }
+
+    const deltaX = touch.clientX - start.x;
+    const deltaY = touch.clientY - start.y;
+    const swipeThreshold = 48;
+
+    if (Math.abs(deltaX) < swipeThreshold || Math.abs(deltaX) <= Math.abs(deltaY)) {
+      return;
+    }
+
+    setActiveGalleryTab((current) =>
+      (current + (deltaX < 0 ? 1 : -1) + GALLERY_IMAGES.length) %
+      GALLERY_IMAGES.length
+    );
+  };
 
   const activeStep = t.workflow.steps[activeGalleryTab];
   const activeImage = GALLERY_IMAGES[activeGalleryTab];
@@ -138,8 +175,13 @@ export const WorkflowGallery = () => {
             <button
               type="button"
               onClick={() => setLightboxIndex(activeGalleryTab)}
+              onTouchStart={handlePreviewTouchStart}
+              onTouchEnd={handlePreviewTouchEnd}
+              onTouchCancel={() => {
+                touchStart.current = null;
+              }}
               aria-label={`Expand: ${activeStep?.title}`}
-              className="group relative block w-full cursor-zoom-in"
+              className="group relative block w-full cursor-zoom-in touch-pan-y"
             >
               <Image
                 src={activeImage?.src ?? ""}
