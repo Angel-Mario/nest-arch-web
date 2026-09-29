@@ -26,7 +26,7 @@ export const WorkflowGallery = () => {
   const handlePreviewTouchStart = (
     event: React.TouchEvent<HTMLButtonElement>
   ) => {
-    const [touch] = event.touches;
+    const touch = event.touches.item(0);
     if (!touch) {
       return;
     }
@@ -40,7 +40,7 @@ export const WorkflowGallery = () => {
     const start = touchStart.current;
     touchStart.current = null;
 
-    const [touch] = event.changedTouches;
+    const touch = event.changedTouches.item(0);
     if (!start || !touch) {
       return;
     }
