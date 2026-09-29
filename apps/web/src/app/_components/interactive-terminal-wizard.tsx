@@ -9,6 +9,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import * as React from "react";
+import { trackAnalyticsEvent } from "@/lib/analytics";
+import { useUi } from "@/components/locale-provider";
 
 // ==========================================
 // Types & Interfaces
@@ -726,6 +728,7 @@ interface InteractiveTerminalWizardProps {
 export const InteractiveTerminalWizard = ({
   onClose,
 }: InteractiveTerminalWizardProps) => {
+  const { locale } = useUi();
   const [state, setState] =
     React.useState<CreateProjectWizardState>(INITIAL_STATE);
   const [stepId, setStepId] = React.useState<WizardStepId>("projectName");
@@ -1086,6 +1089,7 @@ export const InteractiveTerminalWizard = ({
 
     const stagesCount = SCAFFOLD_STAGES.length;
     let currentStage = 0;
+    let completionTimer: ReturnType<typeof setTimeout> | undefined;
 
     const stageTimer = setInterval(() => {
       currentStage += 1;
@@ -1093,7 +1097,8 @@ export const InteractiveTerminalWizard = ({
 
       if (currentStage >= stagesCount) {
         clearInterval(stageTimer);
-        setTimeout(() => {
+        completionTimer = setTimeout(() => {
+          trackAnalyticsEvent({ name: "demo_complete", locale });
           setStepId("done");
         }, 500);
       }
@@ -1110,10 +1115,11 @@ export const InteractiveTerminalWizard = ({
     }, 120);
 
     return () => {
+      clearTimeout(completionTimer);
       clearInterval(stageTimer);
       clearInterval(progressTimer);
     };
-  }, [stepId]);
+  }, [stepId, locale]);
 
   // Keyboard navigation
   React.useEffect(() => {

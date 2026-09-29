@@ -9,10 +9,15 @@ const convexUrlSchema = (exampleHost: string) =>
 export const env = createEnv({
   client: {
     NEXT_PUBLIC_CONVEX_URL: convexUrlSchema("example.convex.cloud"),
+    NEXT_PUBLIC_GA_MEASUREMENT_ID: z
+      .string()
+      .regex(/^G-[A-Z0-9]+$/u)
+      .optional(),
   },
   emptyStringAsUndefined: true,
   runtimeEnv: {
     NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
+    NEXT_PUBLIC_GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });

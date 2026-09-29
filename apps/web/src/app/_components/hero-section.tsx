@@ -10,6 +10,7 @@ import Link from "next/link";
 import * as React from "react";
 
 import { useUi } from "@/components/locale-provider";
+import { trackAnalyticsEvent } from "@/lib/analytics";
 
 import { InteractiveTerminalWizard } from "./interactive-terminal-wizard";
 
@@ -105,7 +106,16 @@ export const HeroSection = () => {
         <div className="mt-6 flex flex-wrap items-center gap-4">
           <button
             type="button"
-            onClick={() => setIsLiveDemo((prev) => !prev)}
+            onClick={() => {
+              if (!isLiveDemo) {
+                trackAnalyticsEvent({
+                  locale,
+                  name: "demo_start",
+                  placement: "hero",
+                });
+              }
+              setIsLiveDemo(!isLiveDemo);
+            }}
             className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-red-600/70 bg-red-50 px-3.5 py-2 font-mono text-xs font-semibold text-red-700 shadow-[0_0_25px_rgba(239,68,68,0.12)] transition-all hover:scale-[1.02] hover:bg-red-100 sm:text-sm dark:border-red-500/60 dark:bg-red-500/15 dark:text-red-200 dark:shadow-[0_0_25px_rgba(239,68,68,0.2)] dark:hover:bg-red-500/25"
           >
             {isLiveDemo ? (
@@ -234,7 +244,14 @@ export const HeroSection = () => {
             <div className="absolute inset-0 flex items-center justify-center bg-black/10 p-4 backdrop-blur-[1.5px] transition-all duration-300 group-hover:bg-black/30">
               <button
                 type="button"
-                onClick={() => setIsLiveDemo(true)}
+                onClick={() => {
+                  trackAnalyticsEvent({
+                    locale,
+                    name: "demo_start",
+                    placement: "terminal",
+                  });
+                  setIsLiveDemo(true);
+                }}
                 className="group/cta flex max-w-sm cursor-pointer items-center gap-3.5 rounded-xl border border-red-500/50 bg-[#10121d]/90 p-3.5 shadow-[0_0_40px_rgba(239,68,68,0.25)] backdrop-blur-xl transition-all duration-300 hover:scale-[1.03] hover:border-red-400 hover:bg-[#151726]/95 hover:shadow-[0_0_55px_rgba(239,68,68,0.38)] active:scale-[0.98] sm:max-w-md sm:gap-4 sm:p-4"
               >
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-red-500/20 text-red-400 ring-1 ring-red-500/50 transition-all duration-300 group-hover/cta:scale-110 group-hover/cta:bg-red-500/30 sm:size-10">

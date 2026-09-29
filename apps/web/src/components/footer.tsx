@@ -4,7 +4,9 @@ import { Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { AnalyticsPreferences } from "@/components/analytics-preferences";
 import { useUi } from "@/components/locale-provider";
+import { trackAnalyticsEvent } from "@/lib/analytics";
 
 const GithubIcon = ({ className }: { className?: string }) => (
   <svg
@@ -66,6 +68,14 @@ const Footer = () => {
             <div className="mt-2 flex items-center gap-2.5">
               <Link
                 href="https://www.npmjs.com/package/@nest-arch/tui"
+                onClick={() =>
+                  trackAnalyticsEvent({
+                    destination: "npm",
+                    locale,
+                    name: "cta_click",
+                    placement: "footer",
+                  })
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex h-8 items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-2.5 font-mono text-xs text-red-600 transition-colors hover:bg-red-500/20 dark:text-red-400"
@@ -81,6 +91,14 @@ const Footer = () => {
               </Link>
               <Link
                 href="https://github.com/Angel-Mario/nest-arch"
+                onClick={() =>
+                  trackAnalyticsEvent({
+                    destination: "github",
+                    locale,
+                    name: "cta_click",
+                    placement: "footer",
+                  })
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="border-border bg-background text-muted-foreground hover:text-foreground flex size-8 items-center justify-center rounded-lg border transition-colors hover:border-red-500/50"
@@ -149,6 +167,7 @@ const Footer = () => {
 
         <div className="border-border text-muted-foreground flex flex-col items-center justify-between gap-4 border-t pt-8 font-mono text-xs sm:flex-row">
           <p>{t.footer.copyright}</p>
+          <AnalyticsPreferences />
           <p className="flex items-center gap-1.5">
             {t.footer.builtWith}
             <Heart
