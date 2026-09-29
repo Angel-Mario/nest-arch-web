@@ -84,7 +84,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
     features: {
       description:
         "Start with the decisions that are difficult to retrofit later, not a generic starter and a long cleanup.",
-      heading: "The pieces that shape a real project.",
+      heading: "The pieces that shape a real project",
       items: [
         {
           description:
@@ -218,7 +218,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
     features: {
       description:
         "Comienza con las decisiones que son difíciles de implementar después, no con un starter genérico y una larga limpieza.",
-      heading: "Las piezas que dan forma a un proyecto real.",
+      heading: "Las piezas que dan forma a un proyecto real",
       items: [
         {
           description:
@@ -354,7 +354,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
     features: {
       description:
         "Comece com as decisões que são difíceis de implementar depois, não com um starter genérico e uma longa limpeza.",
-      heading: "As peças que moldam um projeto real.",
+      heading: "As peças que moldam um projeto real",
       items: [
         {
           description:
