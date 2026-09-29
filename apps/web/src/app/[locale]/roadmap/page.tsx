@@ -17,8 +17,8 @@ export const generateMetadata = async ({
   const t = getUiMessages(locale);
 
   return {
-    description: t.metaDescription,
-    title: "Roadmap — Nest Arch",
+    description: t.roadmap.description,
+    title: `${t.roadmap.sectionLabel} — Nest Arch`,
   };
 };
 

@@ -1,4 +1,6 @@
 import type { Locale } from "@/lib/i18n";
+import { roadmapMessages } from "@/lib/roadmap-messages";
+import type { RoadmapMessages } from "@/lib/roadmap-messages";
 
 export interface UiMessages {
   metaDescription: string;
@@ -64,25 +66,7 @@ export interface UiMessages {
       description: string;
     }[];
   };
-  roadmap: {
-    sectionLabel: string;
-    heading: string;
-    description: string;
-    backToHome: string;
-    status: {
-      planned: string;
-      waiting: string;
-      notReady: string;
-    };
-    groups: {
-      title: string;
-      subtitle: string;
-      items: {
-        title: string;
-        description: string;
-      }[];
-    }[];
-  };
+  roadmap: RoadmapMessages;
   footer: {
     description: string;
     product: string;
@@ -185,67 +169,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
     },
     metaDescription:
       "Powerful CLI and interactive TUI generator for building opinionated, production-ready NestJS applications and microservices.",
-    roadmap: {
-      backToHome: "Back to home",
-      description:
-        "A living view of what we are building, what we are waiting on, and what is intentionally left for later.",
-      groups: [
-        {
-          items: [
-            {
-              description:
-                "Format output with Prettier out of the box for clean, consistent generated code.",
-              title: "Prettier support",
-            },
-            {
-              description:
-                "Core CLI generation of resolvers, resources, controllers, and services — like nest generate, but driven by the nest-arch metadata file for custom generation.",
-              title: "Generate NestJS components",
-            },
-            {
-              description:
-                "A community space for questions, feedback, and collaboration around nest-arch.",
-              title: "Create a Discord server",
-            },
-            {
-              description:
-                "Comprehensive docs covering the CLI, TUI, templates, and the metadata file for custom generation.",
-              title: "Documentation for nest-arch",
-            },
-            {
-              description:
-                "Open up the project for collaboration, issues, and community contributions.",
-              title: "Open-source on GitHub",
-            },
-          ],
-          subtitle: "Actively planned and next up.",
-          title: "On the horizon",
-        },
-        {
-          items: [],
-          subtitle: "Waiting on releases.",
-          title: "On hold",
-        },
-        {
-          items: [
-            {
-              description:
-                "Prisma v7 doesn't support Mongo yet. 6.19 is the last supported version, and the next Prisma release will add Mongo support.",
-              title: "Prisma v7 + MongoDB",
-            },
-          ],
-          subtitle: "Flagged for later. Not ready yet.",
-          title: "Unsupported",
-        },
-      ],
-      heading: "Where nest/arch is headed.",
-      sectionLabel: "Roadmap",
-      status: {
-        notReady: "Not ready",
-        planned: "Planned",
-        waiting: "Waiting",
-      },
-    },
+    roadmap: roadmapMessages.en,
     workflow: {
       description:
         "Each stage stays explicit, so configuration never feels like a black box.",
@@ -381,67 +305,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
     },
     metaDescription:
       "CLI potente e interactivo generador TUI para construir aplicaciones y microservicios NestJS listos para producción.",
-    roadmap: {
-      backToHome: "Volver al inicio",
-      description:
-        "Una vista viva de lo que estamos construyendo, lo que estamos esperando y lo que se deja intencionalmente para después.",
-      groups: [
-        {
-          items: [
-            {
-              description:
-                "Formatea la salida con Prettier listo para usar para código generado limpio y consistente.",
-              title: "Soporte para Prettier",
-            },
-            {
-              description:
-                "Generación CLI de resolvers, resources, controllers y services — como nest generate, pero impulsado por el archivo de metadatos de nest-arch para generación personalizada.",
-              title: "Generar componentes NestJS",
-            },
-            {
-              description:
-                "Un espacio comunitario para preguntas, comentarios y colaboración alrededor de nest-arch.",
-              title: "Crear un servidor de Discord",
-            },
-            {
-              description:
-                "Documentación completa que cubre la CLI, TUI, plantillas y el archivo de metadatos para generación personalizada.",
-              title: "Documentación para nest-arch",
-            },
-            {
-              description:
-                "Abrir el proyecto para colaboración, issues y contribuciones de la comunidad.",
-              title: "Código abierto en GitHub",
-            },
-          ],
-          subtitle: "Planificado activamente y lo siguiente.",
-          title: "En el horizonte",
-        },
-        {
-          items: [],
-          subtitle: "Esperando lanzamientos.",
-          title: "En espera",
-        },
-        {
-          items: [
-            {
-              description:
-                "Prisma v7 aún no soporta Mongo. 6.19 es la última versión soportada, y la próxima versión de Prisma agregará soporte para Mongo.",
-              title: "Prisma v7 + MongoDB",
-            },
-          ],
-          subtitle: "Marcado para después. Aún no está listo.",
-          title: "No soportado",
-        },
-      ],
-      heading: "Hacia dónde va nest/arch.",
-      sectionLabel: "Hoja de ruta",
-      status: {
-        notReady: "No disponible",
-        planned: "Planificado",
-        waiting: "Esperando",
-      },
-    },
+    roadmap: roadmapMessages.es,
     workflow: {
       description:
         "Cada etapa se mantiene explícita, para que la configuración nunca se sienta como una caja negra.",
@@ -576,67 +440,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
     },
     metaDescription:
       "CLI poderoso e gerador TUI interativo para construir aplicações e microserviços NestJS prontos para produção.",
-    roadmap: {
-      backToHome: "Voltar ao início",
-      description:
-        "Uma visão viva do que estamos construindo, do que estamos esperando e do que é intencionalmente deixado para depois.",
-      groups: [
-        {
-          items: [
-            {
-              description:
-                "Formate a saída com Prettier pronto para uso para código gerado limpo e consistente.",
-              title: "Suporte a Prettier",
-            },
-            {
-              description:
-                "Geração CLI de resolvers, resources, controllers e services — como nest generate, mas impulsionado pelo arquivo de metadados do nest-arch para geração personalizada.",
-              title: "Gerar componentes NestJS",
-            },
-            {
-              description:
-                "Um espaço comunitário para perguntas, feedback e colaboração em torno do nest-arch.",
-              title: "Criar um servidor Discord",
-            },
-            {
-              description:
-                "Documentação abrangente cobrindo a CLI, TUI, templates e o arquivo de metadados para geração personalizada.",
-              title: "Documentação para nest-arch",
-            },
-            {
-              description:
-                "Abrir o projeto para colaboração, issues e contribuições da comunidade.",
-              title: "Código aberto no GitHub",
-            },
-          ],
-          subtitle: "Planejado ativamente e próximo.",
-          title: "No horizonte",
-        },
-        {
-          items: [],
-          subtitle: "Aguardando lançamentos.",
-          title: "Em espera",
-        },
-        {
-          items: [
-            {
-              description:
-                "Prisma v7 ainda não suporta Mongo. 6.19 é a última versão suportada, e a próxima versão do Prisma adicionará suporte a Mongo.",
-              title: "Prisma v7 + MongoDB",
-            },
-          ],
-          subtitle: "Marcado para depois. Ainda não está pronto.",
-          title: "Não suportado",
-        },
-      ],
-      heading: "Para onde nest/arch está indo.",
-      sectionLabel: "Roadmap",
-      status: {
-        notReady: "Não disponível",
-        planned: "Planejado",
-        waiting: "Aguardando",
-      },
-    },
+    roadmap: roadmapMessages.pt,
     workflow: {
       description:
         "Cada etapa permanece explícita, para que a configuração nunca se sinta como uma caixa-preta.",

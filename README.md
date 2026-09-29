@@ -41,7 +41,7 @@ The site includes:
 - **Workflow gallery** — a 5-step screenshot walkthrough (Start → Configure → Confirm → Generate → Done) with an expandable lightbox (zoom, thumbnails, keyboard navigation)
 - **Features grid** — the core value propositions of nest-arch
 - **Architecture explorer** — an interactive node graph covering Web, Microservices, Monorepos, APIs & Backends, and Databases, with per-category `--type=` usage examples
-- **Roadmap page** — a living view of what is planned, waiting, and intentionally unsupported
+- **Roadmap page** — release milestones for standalone apps, monorepos, and ongoing project development, with Prisma compatibility notes
 - **Dark/light theme**, sticky navigation, and responsive layout throughout
 
 ## Tech stack
