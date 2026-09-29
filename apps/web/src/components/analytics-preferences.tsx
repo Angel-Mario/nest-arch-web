@@ -71,17 +71,16 @@ export const AnalyticsPreferences = () => {
               aria-label={messages.title}
               className="fixed inset-x-4 bottom-4 z-50 mx-auto max-h-[80dvh] max-w-xl overflow-y-auto"
             >
-              <Card>
+              <Card className="border-border bg-background text-foreground rounded-xl border-2 shadow-2xl">
                 <CardHeader>
                   <CardTitle>
-                    <h2>{messages.title}</h2>
+                    <h2>{messages.promptTitle}</h2>
                   </CardTitle>
                   <CardDescription>{messages.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p>{messages.vercel}</p>
                   <Link href={`/${locale}/privacy`} className="underline">
-                    {messages.privacy}
+                    {messages.privacyDetails}
                   </Link>
                   {error ? <p role="alert">{messages.error}</p> : null}
                 </CardContent>

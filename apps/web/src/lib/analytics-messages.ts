@@ -1,53 +1,59 @@
 export const analyticsMessages = {
   en: {
-    accept: "Accept",
+    accept: "Allow analytics",
     close: "Close",
     description:
-      "With your permission, Google Analytics uses cookies to measure page visits, demo usage, and clicks on npm and GitHub links. You can change your choice here at any time.",
+      "If you allow it, Google Analytics helps us understand which pages visitors find useful and how the live demo is used. Analytics is optional, and the site works the same if you decline. You can change your choice at any time in Cookie settings.",
     details:
       "Google Analytics receives page URLs, browser and device information, and interaction events after you accept. We do not include the project names you enter in the demo in analytics events. Your choice is stored in this browser for 180 days. Rejecting stops Google Analytics and removes its cookies from this site. Blocking browser storage may prevent your choice from being saved.",
     error:
       "Your preference could not be saved. Check your browser storage settings and try again.",
     googlePolicy: "Google privacy policy",
     privacy: "Privacy",
-    reject: "Reject",
-    title: "Analytics preferences",
+    privacyDetails: "Privacy details",
+    promptTitle: "Optional analytics",
+    reject: "No thanks",
+    title: "Cookie settings",
     vercel:
-      "We also use Vercel Web Analytics to measure visits without analytics cookies. Your Google Analytics choice does not disable Vercel Analytics.",
+      "We also use Vercel Web Analytics to understand overall site traffic. It does not use analytics cookies, and this choice does not affect it.",
     vercelPolicy: "Vercel analytics privacy information",
   },
   es: {
-    accept: "Aceptar",
+    accept: "Permitir analítica",
     close: "Cerrar",
     description:
-      "Con tu permiso, Google Analytics utiliza cookies para medir visitas, uso de la demo y clics en enlaces de npm y GitHub. Puedes cambiar tu elección aquí en cualquier momento.",
+      "Si lo permites, Google Analytics nos ayuda a entender qué páginas resultan útiles y cómo se usa la demostración interactiva. La analítica es opcional y el sitio funciona igual si la rechazas. Puedes cambiar tu elección en cualquier momento en la configuración de cookies.",
     details:
       "Google Analytics recibe las URL de las páginas, información del navegador y dispositivo y eventos de interacción después de que aceptes. No incluimos en los eventos los nombres de proyectos que introduces en la demo. Tu elección se guarda en este navegador durante 180 días. Rechazar detiene Google Analytics y elimina sus cookies de este sitio. Bloquear el almacenamiento puede impedir guardar tu elección.",
     error:
       "No se pudo guardar tu preferencia. Revisa el almacenamiento del navegador e inténtalo de nuevo.",
     googlePolicy: "Política de privacidad de Google",
     privacy: "Privacidad",
-    reject: "Rechazar",
-    title: "Preferencias de analítica",
+    privacyDetails: "Información de privacidad",
+    promptTitle: "Analítica opcional",
+    reject: "Ahora no",
+    title: "Configuración de cookies",
     vercel:
-      "También usamos Vercel Web Analytics para medir visitas sin cookies de analítica. Tu elección sobre Google Analytics no desactiva Vercel Analytics.",
+      "También usamos Vercel Web Analytics para conocer el tráfico general del sitio. No utiliza cookies de analítica y esta elección no afecta ese servicio.",
     vercelPolicy: "Información de privacidad de Vercel Analytics",
   },
   pt: {
-    accept: "Aceitar",
+    accept: "Permitir análise",
     close: "Fechar",
     description:
-      "Com sua permissão, o Google Analytics usa cookies para medir visitas, uso da demonstração e cliques nos links do npm e GitHub. Você pode alterar sua escolha aqui a qualquer momento.",
+      "Se você permitir, o Google Analytics nos ajuda a entender quais páginas são úteis e como a demonstração interativa é usada. A análise é opcional e o site funciona normalmente se você não permitir. Você pode mudar sua escolha a qualquer momento nas configurações de cookies.",
     details:
       "O Google Analytics recebe URLs das páginas, informações do navegador e dispositivo e eventos de interação após sua aceitação. Não incluímos nos eventos os nomes de projetos inseridos na demonstração. Sua escolha fica salva neste navegador por 180 dias. Recusar interrompe o Google Analytics e remove seus cookies deste site. Bloquear o armazenamento pode impedir que sua escolha seja salva.",
     error:
       "Não foi possível salvar sua preferência. Verifique o armazenamento do navegador e tente novamente.",
     googlePolicy: "Política de privacidade do Google",
     privacy: "Privacidade",
-    reject: "Recusar",
-    title: "Preferências de análise",
+    privacyDetails: "Informações de privacidade",
+    promptTitle: "Análise opcional",
+    reject: "Agora não",
+    title: "Configurações de cookies",
     vercel:
-      "Também usamos o Vercel Web Analytics para medir visitas sem cookies de análise. Sua escolha sobre o Google Analytics não desativa o Vercel Analytics.",
+      "Também usamos o Vercel Web Analytics para entender o tráfego geral do site. Ele não usa cookies de análise e essa escolha não afeta esse serviço.",
     vercelPolicy: "Informações de privacidade do Vercel Analytics",
   },
 };
