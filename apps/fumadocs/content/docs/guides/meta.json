@@ -1,0 +1,10 @@
+{
+  "title": "Guides",
+  "pages": [
+    "wizard",
+    "project-structure",
+    "environment",
+    "starter-templates",
+    "web-preview"
+  ]
+}

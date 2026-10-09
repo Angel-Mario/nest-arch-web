@@ -1,0 +1,10 @@
+---
+title: Project type and architecture
+description: Choose the standalone NestJS architecture that fits your application.
+---
+
+In `@nest-arch/tui` 0.5.0, the selectable project type is **Single project**. The architecture choices include a NestJS API and a NestJS microservice. Monorepo and API Gateway generation are not part of the currently documented release scope.
+
+An API project can use an HTTP provider and an API layer. A microservice project is organized around a messaging transport; database access and transport combinations have their own compatibility constraints. Check the [compatibility reference](../reference/compatibility) before adding a database, authentication, or other features to a transport profile.
+
+The monorepo options visible in development source are not evidence of released, supported monorepo generation. Monorepo support is planned for a future version.

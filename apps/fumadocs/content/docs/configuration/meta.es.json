@@ -1,0 +1,11 @@
+{
+  "title": "Configuración",
+  "pages": [
+    "project-and-architecture",
+    "http-and-api",
+    "databases-and-orms",
+    "authentication",
+    "tooling",
+    "extras-and-addons"
+  ]
+}

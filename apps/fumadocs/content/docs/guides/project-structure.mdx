@@ -1,0 +1,20 @@
+---
+title: Explore a generated project
+description: Find the NestJS application entry points and common configuration files.
+---
+
+The exact file tree depends on your selections. A basic standalone API typically includes:
+
+| Path | Purpose |
+| --- | --- |
+| `src/main.ts` | Starts the NestJS application |
+| `src/app.module.ts` | Root application module |
+| `src/app.controller.ts` | Example HTTP controller |
+| `src/app.service.ts` | Example service |
+| `test/` | End-to-end tests and test configuration |
+| `package.json` | Scripts and dependencies for the selected stack |
+| `.env.example` | Example environment variables, when the selected features need them |
+
+Database adapters, auth modules, health checks, Docker files, and API examples appear only when relevant to the chosen configuration. Inspect the generated `package.json` and the next-step instructions before assuming a command or file exists.
+
+The generated output is yours to modify. Nest Arch scaffolds the starting point; it does not keep generated applications synchronized with later changes to the CLI.

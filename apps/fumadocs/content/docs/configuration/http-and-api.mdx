@@ -1,0 +1,10 @@
+---
+title: HTTP providers and API layers
+description: Understand Express, Fastify, REST, tRPC, and GraphQL selections.
+---
+
+For an HTTP API, the wizard offers Express or Fastify and lets you choose an API layer. REST is the simplest route for a first project. tRPC adds typed procedure-based endpoints; GraphQL creates a GraphQL API and has stricter compatibility requirements.
+
+The presence of an option in the wizard does not mean every pairing is certified. Express, Fastify, API type, authentication, database, ORM, and optional features together form the support profile. Consult the [compatibility guide](../reference/compatibility), then use the generated commands for the selected stack.
+
+Choose **NestJS Microservice** to work with a transport such as Redis, MQTT, NATS, RabbitMQ, Kafka, or gRPC. These are message-based application setups; they are not HTTP providers. Review the transport limitations in the compatibility guide before relying on retries or delivery guarantees.

@@ -1,0 +1,12 @@
+---
+title: Use the terminal wizard
+description: Learn what the Nest Arch setup steps ask and how options depend on one another.
+---
+
+The wizard gathers a project name, package manager, formatter, HTTP provider, project type, architecture, API, data and authentication choices, optional features, Git preference, and whether to install dependencies.
+
+Use the arrow keys to move through a single-select list and Enter to choose. Multi-select steps let you toggle options before confirming. The exact step count changes with your selections: for example, the ORM step is skipped when no database is selected, and Ultracite configuration steps appear only when that addon is selected.
+
+Review the summary before confirming generation. Nest Arch can initialize Git and install packages based on your choices. At the end, the wizard shows setup commands and next steps for the generated project. Run commands from that screen rather than assuming every project needs the same database or migration setup.
+
+The `0.5.0` release generates standalone applications. A gateway option may be shown in the source option list, but that does not make monorepo generation available in this release. The wizard filters unsupported selections and may clear a conflicting authentication option after a database or ORM change.

@@ -1,0 +1,10 @@
+---
+title: Package managers and tooling
+description: Choose how dependencies are installed and how the generated project is formatted.
+---
+
+The wizard offers npm, pnpm, Yarn, and Bun. Choose a package manager installed on your machine. If you let Nest Arch install dependencies, it uses your selection; if you skip installation, run that manager's install command in the generated project.
+
+For formatting and linting, the `0.5.0` wizard offers Biome, Oxlint + Oxfmt, or none. The choice changes which configuration and package scripts are generated. Do not run `npm run check` or `npm run fix` unless those scripts exist in your generated `package.json`.
+
+Git initialization is optional. If selected, Nest Arch initializes a repository in the output project. The Husky and Ultracite addons add more tooling and configuration steps; review their [feature requirements](./extras-and-addons) before enabling them.

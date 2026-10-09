@@ -1,0 +1,18 @@
+---
+title: CLI reference
+description: Install, launch, and check the version of the Nest Arch terminal wizard.
+---
+
+The `@nest-arch/tui` package publishes the `nest-arch` executable.
+
+| Task                           | Command                                     |
+| ------------------------------ | ------------------------------------------- |
+| Run release 0.5.0 once         | `npx @nest-arch/tui@0.5.0`                  |
+| Run the newest release once    | `npx @nest-arch/tui@latest`                 |
+| Install release 0.5.0 globally | `npm install --global @nest-arch/tui@0.5.0` |
+| Start a global installation    | `nest-arch`                                 |
+| Print the installed version    | `nest-arch --version`                       |
+
+The wizard requires an interactive terminal. Project generation is performed in the current working directory, so start it from the parent folder where you want the new project created. Use a fresh output directory to avoid mixing generated files with an existing project.
+
+The CLI package does not publish a `generate:module` command. Module generation, when available from a separate development package or workflow, is outside this TUI reference.

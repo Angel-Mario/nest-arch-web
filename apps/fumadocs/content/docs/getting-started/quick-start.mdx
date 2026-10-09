@@ -1,0 +1,49 @@
+---
+title: Quick start
+description: Generate a small NestJS REST application and start its development server.
+---
+
+This walkthrough targets `@nest-arch/tui` **0.5.0** and creates a standalone NestJS REST API with Express, no database, and no authentication.
+
+## Generate the project
+
+Run the wizard from a parent directory where you want the new project created:
+
+```sh
+npx @nest-arch/tui@0.5.0
+```
+
+Choose these values when the corresponding steps appear:
+
+| Wizard step          | Selection                                          |
+| -------------------- | -------------------------------------------------- |
+| Project name         | `hello-nest`                                       |
+| Package manager      | A manager installed on your machine, such as `npm` |
+| Formatter            | Biome, Oxlint + Oxfmt, or none                     |
+| HTTP provider        | Express                                            |
+| Project type         | Single project                                     |
+| Architecture         | NestJS API                                         |
+| Database             | None                                               |
+| API layer            | REST                                               |
+| Authentication       | None                                               |
+| Git repository       | Choose whether to initialize Git                   |
+| Install dependencies | Yes, or install them in the next section           |
+
+Leave optional extras and addons unselected for this first project. Confirm the summary to generate the files.
+
+## Start the server
+
+Move into the project directory. If you skipped dependency installation in the wizard, install dependencies first:
+
+```sh
+cd hello-nest
+npm install
+```
+
+Start the NestJS development server:
+
+```sh
+npm run dev
+```
+
+The generated project listens on the port configured by its environment file; open the local URL printed by NestJS. The `dev` script runs Nest in watch mode. See [first run](./first-run) for setup steps when your selected project needs a database or environment variables.

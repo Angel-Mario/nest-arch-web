@@ -1,0 +1,10 @@
+---
+title: Provedores HTTP e camadas de API
+description: Conheça as opções Express, Fastify, REST, tRPC e GraphQL.
+---
+
+Para uma API HTTP, o assistente oferece Express ou Fastify e uma camada de API. REST é uma opção simples para começar; tRPC adiciona procedimentos tipados e GraphQL cria uma API GraphQL com requisitos próprios de compatibilidade.
+
+A presença de uma opção no assistente não certifica todas as combinações. O suporte depende do provedor, API, banco de dados, ORM, autenticação e extras escolhidos. Consulte a [compatibilidade](../reference/compatibility).
+
+NestJS Microservice usa transportes como Redis, MQTT, NATS, RabbitMQ, Kafka ou gRPC; eles não são provedores HTTP. Confira os limites de entrega e recuperação antes de depender de um comportamento específico.

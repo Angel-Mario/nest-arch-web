@@ -1,0 +1,12 @@
+---
+title: Environment variables
+description: Configure the connection and secret values required by your selected project.
+---
+
+When a selected database, authentication provider, or transport needs configuration, the generated project includes environment support and may include `.env.example`. Copy the example to `.env` when instructed, then provide values for services running in your environment.
+
+The exact variable names depend on the selected features. Nest Arch validates configuration when the application starts, so a missing or malformed value can stop startup with a validation error. Read the message and compare `.env` with the generated example.
+
+For Better Auth, the generator's next steps request a `BETTER_AUTH_SECRET` of at least 32 characters and appropriate `BETTER_AUTH_URL` and `CORS_ORIGIN` values. Create a private random secret for local development; do not publish or commit it. Database profiles also need a reachable database and matching credentials. SQL Server requires an existing database, and the SQLite file location must be writable.
+
+Keep local secrets out of version control. The example file is a template; do not replace it with real credentials before committing.

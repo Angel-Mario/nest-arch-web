@@ -1,0 +1,10 @@
+---
+title: Variables de entorno
+description: Configura conexiones y secretos para las funciones seleccionadas.
+---
+
+Cuando una base de datos, autenticación o transporte necesita configuración, el proyecto puede incluir `.env.example`. Cópialo a `.env` cuando se indique y completa los valores para tus servicios locales.
+
+Los nombres dependen de las funciones elegidas. La aplicación valida la configuración al iniciar; compara los errores con el archivo de ejemplo. Better Auth pide un `BETTER_AUTH_SECRET` aleatorio de al menos 32 caracteres, además de `BETTER_AUTH_URL` y `CORS_ORIGIN`, cuando el perfil los requiere.
+
+SQL Server necesita que la base de datos ya exista. El archivo SQLite debe estar en una ruta escribible. Mantén las credenciales reales en `.env` local y fuera del control de versiones.

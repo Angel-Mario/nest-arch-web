@@ -1,0 +1,11 @@
+{
+  "title": "Guias",
+  "pages": [
+    "index",
+    "getting-started",
+    "guides",
+    "configuration",
+    "reference",
+    "troubleshooting"
+  ]
+}

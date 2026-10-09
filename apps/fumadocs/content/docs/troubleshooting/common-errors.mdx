@@ -1,0 +1,32 @@
+---
+title: Common errors
+description: Diagnose installation, configuration, and project startup problems.
+---
+
+## The wizard does not start
+
+Run the command in a terminal that accepts interactive keyboard input. Confirm that Node.js and npm are available, then try the pinned release again:
+
+```sh
+npx @nest-arch/tui@0.5.0
+```
+
+## A package manager is not found
+
+The dependency install step uses the manager selected in the wizard. Install that manager or return to the wizard and choose one available on your machine. If you skipped installation, run its install command from the generated project directory.
+
+## The generator rejects my selection
+
+The support boundary applies to the complete combination. Remove optional features, change an incompatible database or ORM, and check the [compatibility guide](../reference/compatibility). Do not infer support just because each option appears separately in the wizard.
+
+## The application cannot connect to a service
+
+Check `.env`, the service address, port, credentials, and whether the database or broker is running. Follow the generated next steps. SQL Server requires an existing database; SQLite needs a writable file location.
+
+## An authentication setup step fails
+
+Verify the auth environment values and run the schema-generation or migration commands printed after generation. Use a private `BETTER_AUTH_SECRET` with at least 32 characters where the selected profile requires one. Do not commit the secret.
+
+## A script is missing
+
+Generated scripts depend on the selected features. Check `package.json` and the wizard's setup summary; commands documented for a different database or addon may not exist in your project.

@@ -1,0 +1,32 @@
+---
+title: First run
+description: Follow the generated setup steps and start your NestJS application.
+---
+
+After generation, Nest Arch displays next steps for the selections you made. Follow those commands in order: some applications need code generation, database configuration, or services before they can start.
+
+## If dependencies were not installed
+
+From the generated project's directory, run the package manager you selected in the wizard:
+
+```sh
+npm install
+```
+
+For pnpm, Yarn, or Bun, use that manager's install command instead.
+
+## Configure external services
+
+Database and broker selections can require services to be running and connection variables to be set in `.env`. Configure the addresses for your local environment before starting the application. SQLite uses a local file; check that its directory is writable.
+
+Authentication setup may also require secrets and a public application URL. Use the environment example generated for your project and the [authentication guide](../configuration/authentication) for the variables relevant to your selected profile. Never commit real secrets.
+
+## Run project setup and start the app
+
+Nest Arch may ask you to generate an auth schema, generate Prisma Client, push a schema, or create and run TypeORM migrations. Run only the commands shown for your generated project. Then start the development server:
+
+```sh
+npm run dev
+```
+
+The generated `dev` script starts Nest in watch mode. For a profile with an external database or message broker, make sure that service is reachable before launching the app. The exact setup steps depend on the complete wizard selection.

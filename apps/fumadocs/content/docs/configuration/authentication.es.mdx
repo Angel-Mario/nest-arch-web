@@ -1,0 +1,10 @@
+---
+title: Autenticación
+description: Compara las opciones y configura una combinación compatible.
+---
+
+El asistente ofrece Passport, Better Auth, Better Auth sin estado o ninguna configuración de autenticación. Cada opción tiene requisitos diferentes de almacenamiento y compatibilidad.
+
+Algunos perfiles Better Auth requieren variables de entorno, generar el esquema e inicializar la base de datos. Cuando corresponda, configura `BETTER_AUTH_SECRET` con un valor aleatorio de al menos 32 caracteres, `BETTER_AUTH_URL` y `CORS_ORIGIN`. Mantén secretos reales fuera del repositorio.
+
+Passport y Better Auth no son compatibles con cualquier capa API, proveedor o base de datos. Revisa la [guía de compatibilidad](../reference/compatibility) y ejecuta solo los pasos que Nest Arch muestra para tu proyecto. Revisa el código y la configuración de seguridad antes de producción.

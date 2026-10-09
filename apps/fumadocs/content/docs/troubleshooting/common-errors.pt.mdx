@@ -1,0 +1,16 @@
+---
+title: Problemas comuns
+description: Diagnostique erros de instalação, configuração e inicialização.
+---
+
+**O assistente não inicia.** Use um terminal interativo e tente `npx @nest-arch/tui@0.5.0`. Confira se Node.js e npm estão disponíveis.
+
+**O gerenciador de pacotes não foi encontrado.** Instale o gerenciador escolhido ou selecione outro. Se pulou a instalação, execute o comando correspondente dentro do projeto.
+
+**O gerador rejeita uma seleção.** A compatibilidade depende da combinação completa. Remova opções extras e consulte o [guia de compatibilidade](../reference/compatibility).
+
+**A aplicação não conecta a um serviço.** Confira `.env`, endereço, porta, credenciais e se o banco ou broker está ativo. O SQL Server precisa de um banco existente; o SQLite precisa de um caminho gravável.
+
+**Uma etapa de autenticação falha.** Confira as variáveis e execute os comandos de esquema ou migração exibidos para esse perfil. Mantenha segredos fora do repositório.
+
+**Um script não existe.** Os scripts dependem das escolhas. Confira `package.json` e o resumo dos próximos passos.

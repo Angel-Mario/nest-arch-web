@@ -1,0 +1,12 @@
+---
+title: Databases and ORMs
+description: Select a database and data-access layer that matches a validated profile.
+---
+
+The TUI lists PostgreSQL, MySQL, SQLite, SQL Server, and MongoDB. It also offers Prisma, TypeORM, and Drizzle. The available and supported combinations vary: MongoDB may use native access in supported profiles, and Drizzle targets SQL databases.
+
+Choose at most one database and one ORM. An ORM requires a database. Selecting a database often adds connection variables and project setup, such as generating a client, pushing a schema, or applying migrations. Follow the commands Nest Arch prints for your generated project.
+
+Do not infer support by combining rows from this list. The generator applies a conservative policy to complete profiles, and some code paths or templates are still unverified. Use the [compatibility reference](../reference/compatibility) to check the specific API, provider, ORM, database, authentication, and extras together.
+
+For external database profiles, start the service and configure `.env` before running setup commands. SQLite does not need a separate database server, but its file path must be writable.

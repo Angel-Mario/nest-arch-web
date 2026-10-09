@@ -1,0 +1,21 @@
+---
+title: Compatibilidad y soporte
+description: Diferencia entre opciones seleccionables y perfiles Nest Arch validados.
+---
+
+Estas guías corresponden a **`@nest-arch/tui` 0.5.0**. Esta versión alpha puede cambiar sus opciones y su salida.
+
+La compatibilidad se determina para una configuración completa: proyecto, arquitectura, proveedor HTTP, API, base de datos, ORM y versión, autenticación, extras, addons, formatter y transporte. Que el asistente permita elegir una opción en cierto contexto no garantiza cualquier combinación.
+
+| Estado | Significado |
+| --- | --- |
+| Seleccionable | El asistente ofrece una opción en algún contexto |
+| Implementado | Existe código generador para esa función o combinación |
+| Perfil validado | Hay evidencia de un escenario integral para esa configuración completa |
+| Planeado o sin validar | No debe tratarse como compatible |
+
+Usa perfiles completos admitidos por la política de la release. Si el generador rechaza una configuración como no verificada, quita opciones opcionales o elige otro perfil. La existencia de una plantilla no equivale a certificación.
+
+La matriz de escenarios de la versión etiquetada incluye perfiles independientes validados de REST, tRPC y GraphQL; PostgreSQL, MySQL, SQLite, SQL Server y algunas configuraciones MongoDB; variantes Express/Fastify y selecciones concretas de Prisma, TypeORM, Drizzle, Passport y Better Auth. La cobertura de extras varía. Revisa los escenarios exactos en la [guía de validación de la release](https://github.com/Angel-Mario/nest-arch/blob/%40nest-arch%2Ftui%400.5.0/scripts/README.md).
+
+Los monorepos y API Gateway están previstos para una versión futura. En microservicios no supongas que hay reintentos, persistencia o deduplicación de mensajes. La vista previa de la web puede diferir del paquete npm.

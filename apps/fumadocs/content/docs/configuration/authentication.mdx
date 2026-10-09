@@ -1,0 +1,12 @@
+---
+title: Authentication
+description: Compare the authentication choices and configure a supported combination.
+---
+
+The wizard offers Passport, Better Auth, stateless Better Auth, and no authentication scaffolding. These selections have different storage requirements and are not interchangeable across all databases, API layers, and HTTP providers.
+
+Better Auth profiles may need environment variables, generated schema, and database setup. Its stateless option stores sessions in encrypted cookies and has separate support status. Passport profiles also depend on a validated API and database combination. Check the [compatibility reference](../reference/compatibility) before choosing one.
+
+After generation, use the displayed setup commands to generate auth schemas or initialize auth tables where required. Set a private random `BETTER_AUTH_SECRET` of at least 32 characters and the correct application URL and CORS origin when prompted. Keep real secrets in your local `.env` and outside version control.
+
+Passing the selection policy does not mean every authentication flow has been security-reviewed for your deployment. Review the generated code and adapt secret management, cookie policy, origins, and provider configuration to your environment before production use.

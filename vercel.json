@@ -5,9 +5,22 @@
       "root": "apps/web",
       "framework": "nextjs",
       "installCommand": "cd ../.. && pnpm install"
+    },
+    "fumadocs": {
+      "root": "apps/fumadocs",
+      "framework": "nextjs",
+      "installCommand": "cd ../.. && pnpm install"
     }
   },
   "rewrites": [
+    {
+      "source": "/docs",
+      "destination": { "service": "fumadocs" }
+    },
+    {
+      "source": "/docs/:path*",
+      "destination": { "service": "fumadocs" }
+    },
     {
       "source": "/(.*)",
       "destination": {

@@ -1,0 +1,10 @@
+---
+title: Bancos de dados e ORMs
+description: Escolha banco de dados e acesso a dados para um perfil validado.
+---
+
+A TUI lista PostgreSQL, MySQL, SQLite, SQL Server e MongoDB, além de Prisma, TypeORM e Drizzle. As combinações suportadas variam; Drizzle é usado com bancos SQL e alguns perfis MongoDB usam acesso nativo.
+
+Escolha no máximo um banco de dados e um ORM. Um ORM precisa de um banco. Depois, talvez seja necessário configurar `.env`, gerar um cliente, aplicar um esquema ou executar migrações. Siga as instruções do seu projeto.
+
+Não deduza compatibilidade combinando opções separadas. Confira a [matriz de perfis](../reference/compatibility). Inicie o serviço antes de usar um banco externo; o arquivo SQLite precisa estar em um caminho gravável.
