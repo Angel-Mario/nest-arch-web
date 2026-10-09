@@ -5,6 +5,10 @@ const withMDX = createMDX();
 /** @type {import('next').NextConfig} */
 const config = {
   basePath: "/docs",
+  // Serve static sources directly while the Services image optimizer returns 404.
+  images: {
+    unoptimized: true,
+  },
   reactStrictMode: true,
   async redirects() {
     // Vercel routes the public root to web; this shortcut is for local development.

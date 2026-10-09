@@ -20,6 +20,10 @@ const nextConfig: NextConfig = {
       },
     ]);
   },
+  // The shared Services deployment serves static images but returns 404 for /_next/image.
+  images: {
+    unoptimized: true,
+  },
   outputFileTracingIncludes: {
     "/api/project-preview": ["./private/nest-arch/**/*"],
   },

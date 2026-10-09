@@ -25,6 +25,8 @@ El indicador npm de Fumadocs consulta `@nest-arch/tui/latest` con revalidación 
 
 ## Verificar antes de publicar
 
+Las dos apps usan `images.unoptimized: true` en Next.js. En este despliegue, los endpoints `/_next/image` y `/docs/_next/image` devuelven 404, aunque los archivos estáticos originales responden correctamente. Los componentes `Image` sirven esos archivos directamente, conservando sus dimensiones y la carga diferida. Las imágenes se descargan en su tamaño original, sin redimensionado ni conversión automática de formato.
+
 Desde la raíz:
 
 ```sh
