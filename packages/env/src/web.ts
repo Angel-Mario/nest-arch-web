@@ -13,12 +13,17 @@ export const env = createEnv({
       .string()
       .regex(/^G-[A-Z0-9]+$/u)
       .optional(),
+    NEXT_PUBLIC_GTM_ID: z
+      .string()
+      .regex(/^GTM-[A-Z0-9]+$/u)
+      .optional(),
   },
   emptyStringAsUndefined: true,
   runtimeEnv: {
     GOOGLE_SITE_VERIFICATION: process.env.GOOGLE_SITE_VERIFICATION,
     NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
     NEXT_PUBLIC_GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
+    NEXT_PUBLIC_GTM_ID: process.env.NEXT_PUBLIC_GTM_ID,
   },
   server: {
     GOOGLE_SITE_VERIFICATION: z.string().min(1).optional(),

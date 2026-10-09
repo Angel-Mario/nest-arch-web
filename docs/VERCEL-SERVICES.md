@@ -16,6 +16,8 @@ Las reglas de documentación van antes del catch-all. Vercel conserva la ruta or
 - Usa Node.js **24.x** y el pnpm fijado en `package.json`.
 - Los comandos de instalación y build pertenecen a cada servicio, en `vercel.json`. Cada instalación usa el lockfile de la raíz y cada build ejecuta el script de su aplicación.
 - Configura `NEXT_PUBLIC_CONVEX_URL` para el backend de la web. La generación personalizada del preview requiere además `BLOB_READ_WRITE_TOKEN`; los presets publicados no lo requieren.
+- Para activar Google Analytics 4 directo, configura `NEXT_PUBLIC_GA_MEASUREMENT_ID` (`G-…`) en **Production**. Para usar Google Tag Manager, configura `NEXT_PUBLIC_GTM_ID` (`GTM-…`) y añade GA4 y los eventos en ese contenedor. Si defines ambos, se carga GTM y no se inicializa GA4 por separado para evitar duplicados. Son identificadores públicos; cada cambio requiere una nueva compilación. Sin esos IDs, los scripts de Google y el aviso de consentimiento quedan desactivados.
+- Activa **Vercel Web Analytics** por separado en el proyecto de Vercel. No requiere un ID de Google y no depende del consentimiento para cookies descrito arriba.
 - Configura `NEXT_PUBLIC_SITE_URL` con el dominio público completo (`https://tu-dominio.com`) para los metadatos. Fumadocs usa como alternativa las variables de URL de Vercel.
 - Añade el dominio al único proyecto Vercel. `/docs/es` y `/docs/pt` sirven los idiomas adicionales.
 

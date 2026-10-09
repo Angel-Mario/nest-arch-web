@@ -1,5 +1,5 @@
 import { env } from "@nest-arch-web/env/web";
-import { sendGAEvent } from "@next/third-parties/google";
+import { sendGAEvent, sendGTMEvent } from "@next/third-parties/google";
 import Cookies from "js-cookie";
 
 import type { Locale } from "@/lib/i18n";
@@ -10,6 +10,7 @@ const CONSENT_DURATION_MS = 180 * 24 * 60 * 60 * 1000;
 export type AnalyticsConsent = "accepted" | "rejected" | "unknown";
 
 export const gaMeasurementId = env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+export const gtmContainerId = env.NEXT_PUBLIC_GTM_ID;
 
 export const getAnalyticsConsent = (): AnalyticsConsent => {
   if (typeof window === "undefined") {
@@ -51,10 +52,9 @@ export const subscribeToAnalyticsConsent = (callback: () => void) => {
 };
 
 export const disableGoogleAnalytics = () => {
-  if (!gaMeasurementId) {
-    return;
+  if (gaMeasurementId) {
+    Reflect.set(window, `ga-disable-${gaMeasurementId}`, true);
   }
-  Reflect.set(window, `ga-disable-${gaMeasurementId}`, true);
   const domainParts = window.location.hostname.split(".");
   for (const name of Object.keys(Cookies.get())) {
     if (name !== "_ga" && !name.startsWith("_ga_")) {
@@ -95,10 +95,17 @@ export const trackAnalyticsEvent = ({
   name,
   ...parameters
 }: AnalyticsEvent) => {
-  if (!gaMeasurementId || getAnalyticsConsent() !== "accepted") {
+  if (
+    (!gaMeasurementId && !gtmContainerId) ||
+    getAnalyticsConsent() !== "accepted"
+  ) {
     return;
   }
   if (typeof window === "undefined" || !Reflect.get(window, "dataLayer")) {
+    return;
+  }
+  if (gtmContainerId) {
+    sendGTMEvent({ event: name, ...parameters });
     return;
   }
   sendGAEvent("event", name, parameters);

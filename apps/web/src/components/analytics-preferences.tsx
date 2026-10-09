@@ -9,7 +9,7 @@ import {
   CardContent,
   CardFooter,
 } from "@nest-arch-web/ui/components/card";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
@@ -18,6 +18,7 @@ import {
   disableGoogleAnalytics,
   gaMeasurementId,
   getAnalyticsConsent,
+  gtmContainerId,
   saveAnalyticsConsent,
   subscribeToAnalyticsConsent,
 } from "@/lib/analytics";
@@ -61,7 +62,7 @@ export const AnalyticsPreferences = () => {
   return (
     <>
       <Link href={`/${locale}/privacy`}>{messages.privacy}</Link>
-      {gaMeasurementId ? (
+      {gaMeasurementId || gtmContainerId ? (
         <>
           <Button variant="link" onClick={() => setOpen(true)}>
             {messages.title}
@@ -112,7 +113,10 @@ export const AnalyticsPreferences = () => {
               </Card>
             </section>
           ) : null}
-          {consent === "accepted" ? (
+          {consent === "accepted" && gtmContainerId ? (
+            <GoogleTagManager gtmId={gtmContainerId} />
+          ) : null}
+          {consent === "accepted" && !gtmContainerId && gaMeasurementId ? (
             <GoogleAnalytics gaId={gaMeasurementId} />
           ) : null}
         </>

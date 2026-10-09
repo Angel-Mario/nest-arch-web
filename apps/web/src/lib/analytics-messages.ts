@@ -3,9 +3,9 @@ export const analyticsMessages = {
     accept: "Allow analytics",
     close: "Close",
     description:
-      "If you allow it, Google Analytics helps us understand which pages visitors find useful and how the live demo is used. Analytics is optional, and the site works the same if you decline. You can change your choice at any time in Cookie settings.",
+      "If you allow it, Google Analytics or the configured Google Tag Manager tags help us understand which pages visitors find useful and how the live demo is used. Analytics is optional, and the site works the same if you decline. You can change your choice at any time in Cookie settings.",
     details:
-      "Google Analytics receives page URLs, browser and device information, and interaction events after you accept. We do not include the project names you enter in the demo in analytics events. Your choice is stored in this browser for 180 days. Rejecting stops Google Analytics and removes its cookies from this site. Blocking browser storage may prevent your choice from being saved.",
+      "After you accept, Google Analytics or tags configured in Google Tag Manager may receive page URLs, browser and device information, and interaction events. We do not include the project names you enter in the demo in analytics events. Your choice is stored in this browser for 180 days. Rejecting prevents these Google scripts from loading. Blocking browser storage may prevent your choice from being saved.",
     error:
       "Your preference could not be saved. Check your browser storage settings and try again.",
     googlePolicy: "Google privacy policy",
@@ -22,9 +22,9 @@ export const analyticsMessages = {
     accept: "Permitir analítica",
     close: "Cerrar",
     description:
-      "Si lo permites, Google Analytics nos ayuda a entender qué páginas resultan útiles y cómo se usa la demostración interactiva. La analítica es opcional y el sitio funciona igual si la rechazas. Puedes cambiar tu elección en cualquier momento en la configuración de cookies.",
+      "Si lo permites, Google Analytics o las etiquetas configuradas en Google Tag Manager nos ayudan a entender qué páginas resultan útiles y cómo se usa la demostración interactiva. La analítica es opcional y el sitio funciona igual si la rechazas. Puedes cambiar tu elección en cualquier momento en la configuración de cookies.",
     details:
-      "Google Analytics recibe las URL de las páginas, información del navegador y dispositivo y eventos de interacción después de que aceptes. No incluimos en los eventos los nombres de proyectos que introduces en la demo. Tu elección se guarda en este navegador durante 180 días. Rechazar detiene Google Analytics y elimina sus cookies de este sitio. Bloquear el almacenamiento puede impedir guardar tu elección.",
+      "Después de que aceptes, Google Analytics o las etiquetas configuradas en Google Tag Manager pueden recibir las URL de las páginas, información del navegador y dispositivo y eventos de interacción. No incluimos en los eventos los nombres de proyectos que introduces en la demo. Tu elección se guarda en este navegador durante 180 días. Rechazar impide que se carguen estos scripts de Google. Bloquear el almacenamiento puede impedir guardar tu elección.",
     error:
       "No se pudo guardar tu preferencia. Revisa el almacenamiento del navegador e inténtalo de nuevo.",
     googlePolicy: "Política de privacidad de Google",
@@ -41,9 +41,9 @@ export const analyticsMessages = {
     accept: "Permitir análise",
     close: "Fechar",
     description:
-      "Se você permitir, o Google Analytics nos ajuda a entender quais páginas são úteis e como a demonstração interativa é usada. A análise é opcional e o site funciona normalmente se você não permitir. Você pode mudar sua escolha a qualquer momento nas configurações de cookies.",
+      "Se você permitir, o Google Analytics ou as tags configuradas no Google Tag Manager nos ajudam a entender quais páginas são úteis e como a demonstração interativa é usada. A análise é opcional e o site funciona normalmente se você não permitir. Você pode mudar sua escolha a qualquer momento nas configurações de cookies.",
     details:
-      "O Google Analytics recebe URLs das páginas, informações do navegador e dispositivo e eventos de interação após sua aceitação. Não incluímos nos eventos os nomes de projetos inseridos na demonstração. Sua escolha fica salva neste navegador por 180 dias. Recusar interrompe o Google Analytics e remove seus cookies deste site. Bloquear o armazenamento pode impedir que sua escolha seja salva.",
+      "Após sua aceitação, o Google Analytics ou as tags configuradas no Google Tag Manager podem receber URLs das páginas, informações do navegador e dispositivo e eventos de interação. Não incluímos nos eventos os nomes de projetos inseridos na demonstração. Sua escolha fica salva neste navegador por 180 dias. Recusar impede o carregamento desses scripts do Google. Bloquear o armazenamento pode impedir que sua escolha seja salva.",
     error:
       "Não foi possível salvar sua preferência. Verifique o armazenamento do navegador e tente novamente.",
     googlePolicy: "Política de privacidade do Google",

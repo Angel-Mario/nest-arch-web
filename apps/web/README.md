@@ -12,7 +12,7 @@ pnpm dev:setup
 pnpm dev:web
 ```
 
-Set `NEXT_PUBLIC_CONVEX_URL` in `apps/web/.env` to your Convex deployment URL. Optional analytics and verification variables are defined in `packages/env/src/web.ts`. The website runs at http://localhost:3001.
+Set `NEXT_PUBLIC_CONVEX_URL` in `apps/web/.env` to your Convex deployment URL. Google Analytics and Tag Manager are optional; configure `NEXT_PUBLIC_GA_MEASUREMENT_ID` or `NEXT_PUBLIC_GTM_ID` for production as described in [ANALYTICS.md](ANALYTICS.md). `GOOGLE_SITE_VERIFICATION` is also optional. The website runs at http://localhost:3001.
 
 ## Project previews
 
