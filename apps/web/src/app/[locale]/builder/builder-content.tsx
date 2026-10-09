@@ -10,19 +10,24 @@ import {
 } from "@nest-arch-web/ui/components/field";
 import { Input } from "@nest-arch-web/ui/components/input";
 import { Separator } from "@nest-arch-web/ui/components/separator";
-import { FolderTree, RotateCcw, Terminal } from "lucide-react";
+import { cn } from "@nest-arch-web/ui/lib/utils";
+import { Check, FolderTree, RotateCcw, Terminal } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 
 import { BuilderOptions } from "@/components/builder-options";
 import type { BuilderOption } from "@/components/builder-options";
+import { BuilderSectionNav } from "@/components/builder-section-nav";
 import { useUi } from "@/components/locale-provider";
 import { ProjectCommand } from "@/components/project-command";
 import { TechnologyIcon } from "@/components/technology-icon";
 import { updateBuilderConfig } from "@/lib/builder-config";
 import { builderMessages } from "@/lib/builder-messages";
 import { buildProjectCommand } from "@/lib/project-command";
-import { normalizePreviewConfig } from "@/lib/project-preview/config";
+import {
+  canonicalConfig,
+  normalizePreviewConfig,
+} from "@/lib/project-preview/config";
 import type { PreviewConfig } from "@/lib/project-preview/config";
 import manifest from "@/lib/project-preview/generated/manifest.json";
 import { previewMessages } from "@/lib/project-preview/messages";
@@ -127,22 +132,19 @@ export const BuilderContent = () => {
     { field: "packageManager", options: options.packageManagerOptions },
     {
       field: "formatter",
-      options: [
-        ...options.formatterOptions.map((option) =>
-          option.value === "none"
-            ? {
-                ...option,
-                description: t.withoutFormatterDescription,
-                label: t.withoutFormatter,
-              }
-            : option
-        ),
-        {
-          description: t.formatterDescription,
-          label: "ESLint + Prettier",
-          value: "eslint-prettier-no-stylelint",
-        },
-      ],
+      options: options.formatterOptions.map((option) => {
+        if (option.value === "none") {
+          return {
+            ...option,
+            description: t.withoutFormatterDescription,
+            label: t.withoutFormatter,
+          };
+        }
+        if (option.value === "eslint-prettier-no-stylelint") {
+          return { ...option, description: t.formatterDescription };
+        }
+        return option;
+      }),
     },
     {
       field: "extras",
@@ -233,6 +235,28 @@ export const BuilderContent = () => {
     ...config.addons,
     ...config.microservices,
   ].filter((value) => value !== "none");
+  const integrations = [
+    ...config.ultraciteEditors.map((value) => ({
+      field: "ultraciteEditors",
+      value,
+    })),
+    ...config.ultraciteAgents.map((value) => ({
+      field: "ultraciteAgents",
+      value,
+    })),
+    ...config.ultraciteHooks.map((value) => ({
+      field: "ultraciteHooks",
+      value,
+    })),
+    ...(config.ultraciteInstallSkill === "yes"
+      ? [{ field: "ultraciteInstallSkill", value: "yes" }]
+      : []),
+  ];
+  const activePreset = manifest.presets.find(
+    (preset) =>
+      canonicalConfig(normalizePreviewConfig(preset.config)) ===
+      canonicalConfig(config)
+  )?.id;
   const labelFor = (value: string) =>
     groups
       .flatMap((group) => group.options)
@@ -299,7 +323,9 @@ export const BuilderContent = () => {
                 className="flex items-center justify-between font-mono text-xs font-semibold uppercase"
               >
                 {t.selected}
-                <Badge variant="outline">{selected.length}</Badge>
+                <Badge variant="outline">
+                  {selected.length + integrations.length}
+                </Badge>
               </h2>
               <div className="flex flex-wrap gap-2">
                 {selected.map((value) => (
@@ -311,6 +337,26 @@ export const BuilderContent = () => {
                   >
                     <TechnologyIcon value={value} className="size-3.5" />
                     {labelFor(value)}
+                  </Badge>
+                ))}
+                {integrations.map(({ field, value }) => (
+                  <Badge
+                    key={`${field}-${value}`}
+                    variant="outline"
+                    className="technology-pill gap-1.5 rounded-full px-2.5 py-1"
+                    style={technologyStyle(
+                      value === "yes" ? "ultracite" : value
+                    )}
+                  >
+                    <TechnologyIcon
+                      value={value === "yes" ? "ultracite" : value}
+                      className="size-3.5"
+                    />
+                    {titleFor(field as keyof PreviewConfig)}:{" "}
+                    {groups
+                      .find((group) => group.field === field)
+                      ?.options.find((option) => option.value === value)
+                      ?.label ?? value}
                   </Badge>
                 ))}
               </div>
@@ -336,26 +382,20 @@ export const BuilderContent = () => {
           </div>
         </aside>
         <div className="min-w-0">
-          <nav
-            aria-label={t.sections}
-            className="builder-section-nav preview-scrollbar bg-background/95 border-border sticky top-16 z-20 flex gap-2 overflow-x-auto border-b px-4 py-3 backdrop-blur-xl sm:px-6"
-          >
-            {groups.map(({ field }) => (
-              <a
-                key={field}
-                href={`#builder-${field}`}
-                className="text-muted-foreground hover:text-primary hover:border-primary/40 shrink-0 rounded-md border px-2.5 py-1.5 font-mono text-[10px] uppercase transition-colors"
-              >
-                {titleFor(field)}
-              </a>
-            ))}
-            <a
-              href="#builder-initGit"
-              className="text-muted-foreground shrink-0 rounded-md border px-2.5 py-1.5 font-mono text-[10px] uppercase"
-            >
-              Git
-            </a>
-          </nav>
+          <BuilderSectionNav
+            label={t.sections}
+            sections={[
+              ...groups.map(({ field }) => ({
+                id: `builder-${field}`,
+                label: titleFor(field),
+              })),
+              { id: "builder-initGit", label: "Git" },
+              {
+                id: "builder-installDependencies",
+                label: t.installDependencies,
+              },
+            ]}
+          />
           <div className="flex flex-col gap-8 p-4 py-6 sm:p-6 lg:p-8">
             <section className="flex flex-col gap-3" aria-label={t.presets}>
               <h2 className="text-muted-foreground font-mono text-xs uppercase">
@@ -366,12 +406,20 @@ export const BuilderContent = () => {
                   <Button
                     key={preset.id}
                     variant="outline"
-                    className="rounded-lg"
+                    aria-pressed={activePreset === preset.id}
+                    className={cn(
+                      "rounded-lg",
+                      activePreset === preset.id &&
+                        "border-primary/30 bg-primary/5 text-primary"
+                    )}
                     size="sm"
                     onClick={() =>
                       setConfig(normalizePreviewConfig(preset.config))
                     }
                   >
+                    {activePreset === preset.id && (
+                      <Check aria-hidden="true" data-icon="inline-start" />
+                    )}
                     {preset.label}
                   </Button>
                 ))}

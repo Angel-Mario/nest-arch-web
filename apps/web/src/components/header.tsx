@@ -2,7 +2,16 @@
 "use client";
 
 import { api } from "@nest-arch-web/backend/convex/_generated/api";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@nest-arch-web/ui/components/dropdown-menu";
 import { useQuery } from "convex/react";
+import { Menu } from "lucide-react";
 import type { Route } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -136,8 +145,8 @@ const Header = () => {
           </span>
         </Link>
         <nav
-          className="hidden items-center gap-1 md:flex"
-          aria-label="Main navigation"
+          className="hidden items-center gap-1 xl:flex"
+          aria-label={t.header.navigation}
         >
           {NAV_LINKS.map(({ href, id, label }, index) => {
             const isActive = active === id;
@@ -163,15 +172,40 @@ const Header = () => {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <Link
-            href={`/${locale}/builder` as Route}
-            aria-current={
-              pathname === `/${locale}/builder` ? "page" : undefined
-            }
-            className="text-foreground rounded-md border px-2 py-1.5 font-mono text-xs md:hidden"
-          >
-            {builderMessages[locale].nav}
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              aria-label={t.header.navigation}
+              className="hover:bg-muted focus-visible:ring-ring flex size-9 shrink-0 items-center justify-center rounded-lg border outline-none focus-visible:ring-2 xl:hidden"
+            >
+              <Menu className="size-4" aria-hidden="true" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="min-w-48 rounded-xl p-1.5"
+            >
+              <DropdownMenuGroup>
+                {NAV_LINKS.map(({ href, id, label }) =>
+                  href ? (
+                    <DropdownMenuItem
+                      key={id}
+                      className="min-h-10 rounded-md"
+                      nativeButton={false}
+                      render={
+                        <Link
+                          href={href as Route}
+                          aria-current={active === id ? "page" : undefined}
+                        />
+                      }
+                    >
+                      {label}
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuSeparator key={id} />
+                  )
+                )}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <LocaleSelect />
           <Link
             href="https://www.npmjs.com/package/@nest-arch/tui"

@@ -32,6 +32,9 @@ export const AppDataSource = new DataSource({
   {{/if}}
   // Register entities explicitly for consistent metadata in Node and test runners.
   entities: [{{#if (or hasTodoExample hasMongodb)}}Todo{{/if}}{{#if (and hasTodoExample (and useTypeorm isPassportAuth))}}, {{/if}}{{#if (and useTypeorm isPassportAuth)}}UserEntity{{/if}}{{#if (eq auth "better-auth:stateless")}}{{#if (or hasTodoExample (and useTypeorm isPassportAuth))}}, {{/if}}AppEntity{{/if}}],
+  {{#if hasMongodb}}
+  extra: { serverSelectionTimeoutMS: 5000 },
+  {{/if}}
   {{#if hasSqlserver}}
   host: env.SQLSERVER_HOST,
   {{/if}}
@@ -48,7 +51,6 @@ export const AppDataSource = new DataSource({
   type: "{{#if hasPostgres}}postgres{{/if}}{{#if hasMysql}}mysql{{/if}}{{#if hasSqlite}}better-sqlite3{{/if}}{{#if hasSqlserver}}mssql{{/if}}{{#if hasMongodb}}mongodb{{/if}}",
   {{#if hasMongodb}}
   url: env.MONGODB_URL,
-  serverSelectionTimeoutMS: 5000,
   {{/if}}
   {{#if hasSqlserver}}
   username: env.SQLSERVER_USER,

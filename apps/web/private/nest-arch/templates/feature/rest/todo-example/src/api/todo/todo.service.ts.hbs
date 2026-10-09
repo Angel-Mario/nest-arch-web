@@ -1,10 +1,24 @@
 {{#if (and hasMongodb useTypeorm)}}
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { ObjectId } from "mongodb";
+import type { Document, WithId } from "mongodb";
+
 import { DbService } from "../../database/db.service.js";
-import { Todo } from "../../database/entities/todo.entity.js";
 import { CreateTodoDto } from "./dto/create-todo.dto.js";
 import { UpdateTodoDto } from "./dto/update-todo.dto.js";
+
+interface TodoDocument extends Document {
+  completed: boolean;
+  createdAt: Date;
+  description?: string;
+  title: string;
+  updatedAt: Date;
+}
+
+const serialize = ({ _id, ...todo }: WithId<TodoDocument>) => ({
+  ...todo,
+  id: _id.toHexString(),
+});
 
 function objectId(id: string): ObjectId {
   if (!/^[a-f0-9]{24}$/iu.test(id)) {
@@ -13,31 +27,40 @@ function objectId(id: string): ObjectId {
   return new ObjectId(id);
 }
 
-const serialize = ({ id, ...todo }: Todo) => ({ ...todo, id: id.toHexString() });
-
 @Injectable()
 export class TodoService {
   constructor(private readonly db: DbService) {}
 
   private get todos() {
-    return this.db.typeorm.getMongoRepository(Todo);
+    return this.db.mongo.collection<TodoDocument>("todos");
   }
 
   async findAll() {
-    return (await this.todos.find({ take: 100 })).map(serialize);
+    const todos = await this.todos.find().sort({ _id: 1 }).limit(100).toArray();
+    return todos.map(serialize);
   }
 
   async create(input: CreateTodoDto) {
-    const todo = this.todos.create({ ...input, completed: input.completed ?? false });
-    return serialize(await this.todos.save(todo));
+    const now = new Date();
+    const todo = {
+      completed: input.completed ?? false,
+      createdAt: now,
+      ...(input.description === undefined ? {} : { description: input.description }),
+      title: input.title,
+      updatedAt: now,
+    };
+    const result = await this.todos.insertOne(todo);
+    return { ...todo, id: result.insertedId.toHexString() };
   }
 
   async update(id: string, input: UpdateTodoDto) {
-    const todo = await this.todos.findOneBy({ id: objectId(id) });
+    const _id = objectId(id);
+    await this.todos.updateOne({ _id }, { $set: { ...input, updatedAt: new Date() } });
+    const todo = await this.todos.findOne({ _id });
     if (!todo) {
       throw new NotFoundException("Todo not found");
     }
-    return serialize(await this.todos.save(this.todos.merge(todo, input)));
+    return serialize(todo);
   }
 
   async delete(id: string) {
@@ -51,26 +74,50 @@ export class TodoService {
 {{else}}
 {{#if (and hasMongodb useRawSql)}}
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { ObjectId, type WithId } from "mongodb";
+import { ObjectId } from "mongodb";
+import type { Document, WithId } from "mongodb";
+
 import { DbService } from "../../database/db.service.js";
 import { CreateTodoDto } from "./dto/create-todo.dto.js";
 import { UpdateTodoDto } from "./dto/update-todo.dto.js";
-interface TodoDocument { title: string; completed: boolean; description?: string; }
-const serialize = ({ _id, ...todo }: WithId<TodoDocument>) => ({ ...todo, id: _id.toHexString() });
+
+interface TodoDocument extends Document {
+  completed: boolean;
+  description?: string;
+  title: string;
+}
+
+const serialize = ({ _id, ...todo }: WithId<TodoDocument>) => ({
+  ...todo,
+  id: _id.toHexString(),
+});
+
 function objectId(id: string): ObjectId {
-  if (!/^[a-f0-9]{24}$/iu.test(id)) throw new BadRequestException("Invalid todo identifier");
+  if (!/^[a-f0-9]{24}$/iu.test(id)) {
+    throw new BadRequestException("Invalid todo identifier");
+  }
   return new ObjectId(id);
 }
+
 @Injectable()
 export class TodoService {
   constructor(private readonly db: DbService) {}
-  private get todos() { return this.db.raw.mongo.collection<TodoDocument>("todos"); }
+
+  private get todos() {
+    return this.db.raw.mongo.collection<TodoDocument>("todos");
+  }
+
   async findAll() {
     const todos = await this.todos.find().sort({ _id: 1 }).limit(100).toArray();
     return todos.map(serialize);
   }
+
   async create(input: CreateTodoDto) {
-    const todo = { title: input.title, completed: input.completed ?? false, ...(input.description === undefined ? {} : { description: input.description }) };
+    const todo = {
+      completed: input.completed ?? false,
+      ...(input.description === undefined ? {} : { description: input.description }),
+      title: input.title,
+    };
     const result = await this.todos.insertOne(todo);
     return { ...todo, id: result.insertedId.toHexString() };
   }
@@ -80,18 +127,22 @@ export class TodoService {
   async update(id: string, input: UpdateTodoDto) {
 {{/if}}
     const todo = await this.todos.findOneAndUpdate({ _id: objectId(id) }, { $set: input }, { returnDocument: "after" });
-    if (!todo) throw new NotFoundException("Todo not found");
+    if (!todo) {
+      throw new NotFoundException("Todo not found");
+    }
     return serialize(todo);
   }
   async delete(id: string) {
     const result = await this.todos.deleteOne({ _id: objectId(id) });
-    if (result.deletedCount === 0) throw new NotFoundException("Todo not found");
+    if (result.deletedCount === 0) {
+      throw new NotFoundException("Todo not found");
+    }
     return { message: "Todo deleted successfully" };
   }
 }
 {{else}}
-{{#if (or (and hasTodoExample (not hasDatabase)) hasAuth isPrisma8 (and hasDatabase useTypeorm) (and hasDatabase useDrizzle hasMysql))}}
-import { Injectable, NotFoundException{{#if (and hasAuth hasPostgres useRawSql)}}, type OnModuleInit{{/if}} } from "@nestjs/common";
+{{#if (or (and hasTodoExample (not hasDatabase)) hasAuth isPrisma8 (and hasDatabase useTypeorm) (and hasDatabase useDrizzle (or hasMysql hasSqlserver)) (and hasMongodb usePrisma))}}
+import { {{#if (and hasMongodb usePrisma (not isPrisma8))}}BadRequestException, {{/if}}Injectable, NotFoundException{{#if (and hasAuth hasPostgres useRawSql)}}, type OnModuleInit{{/if}} } from "@nestjs/common";
 {{else}}
 import { Injectable } from "@nestjs/common";
 {{/if}}
@@ -109,7 +160,7 @@ import { and, eq } from "drizzle-orm";
 import { eq } from "drizzle-orm";
 {{/if}}
 {{/if}}
-{{#if useTypeorm}}
+{{#if (and useTypeorm (not hasMongodb))}}
 import { Todo } from "../../database/entities/todo.entity.js";
 {{/if}}
 {{#if (and hasAuth hasPostgres useRawSql)}}
@@ -129,6 +180,13 @@ type Todo = Models.public_Todo;
 export class TodoService implements OnModuleInit {
 {{else}}
 export class TodoService {
+{{/if}}
+{{#if (and hasMongodb usePrisma (not isPrisma8))}}
+  private assertMongoId(id: string): void {
+    if (!/^[a-f0-9]{24}$/iu.test(id)) {
+      throw new BadRequestException("Invalid todo identifier");
+    }
+  }
 {{/if}}
 {{#if hasDatabase}}
   constructor(private readonly db: DbService) {}
@@ -384,6 +442,13 @@ export class TodoService {
     }
     return todo;
 {{else if usePrisma}}
+{{#if (and hasMongodb (not isPrisma8))}}
+    this.assertMongoId(id);
+    const existingTodo = await this.db.prisma.todo.findUnique({ where: { id } });
+    if (!existingTodo) {
+      throw new NotFoundException("Todo not found");
+    }
+{{/if}}
     const result = await this.db.prisma.todo.update({ data: input, where: { id } });
     return result;
 {{else if useTypeorm}}
@@ -420,6 +485,13 @@ export class TodoService {
 {{#if isPrisma8}}
     await this.db.prisma.orm.public.Todo.where({ id: Number(id) }).delete();
 {{else if usePrisma}}
+{{#if (and hasMongodb (not isPrisma8))}}
+    this.assertMongoId(id);
+    const existingTodo = await this.db.prisma.todo.findUnique({ where: { id } });
+    if (!existingTodo) {
+      throw new NotFoundException("Todo not found");
+    }
+{{/if}}
     await this.db.prisma.todo.delete({ where: { id } });
 {{else if useTypeorm}}
     await this.db.typeorm.getRepository(Todo).delete(id);

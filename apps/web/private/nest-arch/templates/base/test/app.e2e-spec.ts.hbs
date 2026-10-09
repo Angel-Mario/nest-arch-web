@@ -541,8 +541,8 @@ describe("AppController (e2e)", () => {
     const id = created.id as string | number;
 
     const list = await request(getRequestTarget(server)).get("/trpc/todoRouter.findAll").expect(200);
-    const todos = list.body.result?.data?.json ?? list.body.result?.data;
-    expect(todos).toEqual(expect.arrayContaining([expect.objectContaining({ id })]));
+    const todoResults = list.body.result?.data?.json ?? list.body.result?.data;
+    expect(todoResults).toEqual(expect.arrayContaining([expect.objectContaining({ id })]));
 
     const update = await request(getRequestTarget(server))
       .post("/trpc/todoRouter.update")

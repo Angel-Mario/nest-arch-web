@@ -1,15 +1,27 @@
 // oxlint-disable typescript/no-explicit-any
 {{#if hasPostgres}}
-import { {{#if hasTodoExample}}boolean, {{/if}}pgTable{{#if (or (not isPassportAuth) hasTodoExample)}}, serial{{/if}}, text{{#if (or isPassportAuth (eq auth "better-auth:stateless"))}}, timestamp{{/if}} } from 'drizzle-orm/pg-core';
+{{#if (or hasTodoExample isPassportAuth (eq auth "better-auth:stateless"))}}
+import { {{#if hasTodoExample}}boolean, {{/if}}pgTable{{#if (or hasTodoExample (eq auth "better-auth:stateless"))}}, serial{{/if}}, text{{#if (or isPassportAuth (eq auth "better-auth:stateless"))}}, timestamp{{/if}} } from 'drizzle-orm/pg-core';
+
+{{/if}}
 {{/if}}
 {{#if hasMysql}}
-import { {{#if hasTodoExample}}boolean, {{/if}}mysqlTable{{#if (or (not isPassportAuth) hasTodoExample)}}, int{{/if}}, text{{#if (or isPassportAuth (eq auth "better-auth:stateless"))}}, timestamp, varchar{{/if}} } from 'drizzle-orm/mysql-core';
+{{#if (or hasTodoExample isPassportAuth (eq auth "better-auth:stateless"))}}
+import { {{#if hasTodoExample}}boolean, {{/if}}mysqlTable{{#if (or hasTodoExample (eq auth "better-auth:stateless"))}}, int{{/if}}, text{{#if (or isPassportAuth (eq auth "better-auth:stateless"))}}, timestamp, varchar{{/if}} } from 'drizzle-orm/mysql-core';
+
+{{/if}}
 {{/if}}
 {{#if hasSqlite}}
-import { sqliteTable{{#if (or (not isPassportAuth) hasTodoExample)}}, integer{{/if}}, text } from 'drizzle-orm/sqlite-core';
+{{#if (or hasTodoExample isPassportAuth (eq auth "better-auth:stateless"))}}
+import { sqliteTable{{#if (or hasTodoExample (eq auth "better-auth:stateless"))}}, integer{{/if}}, text } from 'drizzle-orm/sqlite-core';
+
+{{/if}}
 {{/if}}
 {{#if hasSqlserver}}
-import { bit, int, mssqlTable, nvarchar } from 'drizzle-orm/mssql-core';
+{{#if (or hasTodoExample isPassportAuth (eq auth "better-auth:stateless"))}}
+import { {{#if hasTodoExample}}bit, {{/if}}{{#if (or hasTodoExample (eq auth "better-auth:stateless"))}}int, {{/if}}mssqlTable, nvarchar } from 'drizzle-orm/mssql-core';
+
+{{/if}}
 {{/if}}
 {{#if (eq auth "better-auth")}}
 // oxlint-disable-next-line oxc/no-barrel-file
@@ -18,18 +30,22 @@ export * from "./auth-schema.js";
 {{#if hasPostgres}}
 {{#if (or isPassportAuth (eq auth "better-auth:stateless"))}}
 export const users = pgTable('users', {
+{{#if (or isPassportAuth (eq auth "better-auth:stateless"))}}
+  createdAt: timestamp('created_at').defaultNow(),
+{{/if}}
   email: text('email').unique(),
 {{#if isPassportAuth}}
+  firstname: text('firstname'),
   id: text('id').primaryKey(),
 {{else}}
   id: serial('id').primaryKey(),
 {{/if}}
+{{#if isPassportAuth}}
+  lastname: text('lastname'),
+{{/if}}
   name: text('name'),
-  createdAt: timestamp('created_at').defaultNow(),
 {{#if isPassportAuth}}
   password: text('password').notNull(),
-  firstname: text('firstname'),
-  lastname: text('lastname'),
   role: text('role').default('USER'),
 {{/if}}
 });
@@ -49,18 +65,22 @@ export const todos = pgTable('todos', {
 {{#if hasMysql}}
 {{#if (or isPassportAuth (eq auth "better-auth:stateless"))}}
 export const users = mysqlTable('users', {
+{{#if (or isPassportAuth (eq auth "better-auth:stateless"))}}
+  createdAt: timestamp('created_at').defaultNow(),
+{{/if}}
   email: varchar('email', { length: 320 }).unique(),
 {{#if isPassportAuth}}
+  firstname: text('firstname'),
   id: varchar('id', { length: 255 }).primaryKey(),
 {{else}}
   id: int('id').autoincrement().primaryKey(),
 {{/if}}
+{{#if isPassportAuth}}
+  lastname: text('lastname'),
+{{/if}}
   name: text('name'),
-  createdAt: timestamp('created_at').defaultNow(),
 {{#if isPassportAuth}}
   password: text('password').notNull(),
-  firstname: text('firstname'),
-  lastname: text('lastname'),
   role: text('role').default('USER'),
 {{/if}}
 });
@@ -82,15 +102,17 @@ export const todos = mysqlTable('todos', {
 export const users = sqliteTable('users', {
   email: text('email').unique(),
 {{#if isPassportAuth}}
+  firstname: text('firstname'),
   id: text('id').primaryKey(),
 {{else}}
   id: integer('id').primaryKey({ autoIncrement: true }),
 {{/if}}
+{{#if isPassportAuth}}
+  lastname: text('lastname'),
+{{/if}}
   name: text('name'),
 {{#if isPassportAuth}}
   password: text('password').notNull(),
-  firstname: text('firstname'),
-  lastname: text('lastname'),
   role: text('role').default('USER'),
 {{/if}}
 });
@@ -112,15 +134,17 @@ export const todos = sqliteTable('todos', {
 export const users = mssqlTable('users', {
   email: nvarchar('email', { length: 320 }).unique(),
 {{#if isPassportAuth}}
+  firstname: nvarchar('firstname', { length: 255 }),
   id: nvarchar('id', { length: 255 }).primaryKey(),
 {{else}}
   id: int('id').identity().primaryKey(),
 {{/if}}
+{{#if isPassportAuth}}
+  lastname: nvarchar('lastname', { length: 255 }),
+{{/if}}
   name: nvarchar('name', { length: 255 }),
 {{#if isPassportAuth}}
   password: nvarchar('password', { length: 255 }).notNull(),
-  firstname: nvarchar('firstname', { length: 255 }),
-  lastname: nvarchar('lastname', { length: 255 }),
   role: nvarchar('role', { length: 32 }).default('USER'),
 {{/if}}
 });

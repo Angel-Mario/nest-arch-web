@@ -1131,7 +1131,7 @@ export const InteractiveTerminalWizard = ({
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isExplorerOpen) return;
-      if (e.target instanceof Element && e.target.closest("button, a, dialog, [role=button]")) return;
+      if (e.target instanceof Element && e.target.closest("button, a, summary, dialog, [role=button]")) return;
       // Don't intercept if typing in text input unless Enter
       if (stepId === "projectName") {
         if (e.key === "Enter") {
@@ -1489,7 +1489,7 @@ export const InteractiveTerminalWizard = ({
         )}
 
         {/* Step Contents Container */}
-        <div className="flex min-h-0 flex-1 flex-col justify-start overflow-y-auto pr-1">
+        <div className="preview-scrollbar flex min-h-0 flex-1 flex-col justify-start overflow-y-auto pr-1">
           {/* STEP 1: PROJECT NAME */}
           {stepId === "projectName" && (
             <div className="space-y-4">
@@ -1582,7 +1582,7 @@ export const InteractiveTerminalWizard = ({
 
           {/* SUMMARY STEP */}
           {stepId === "summary" && (
-            <div className="flex min-h-0 flex-1 flex-col gap-2">
+            <div className="flex shrink-0 flex-col gap-3">
               <div className="flex shrink-0 items-center gap-2">
                 <span className="text-red-400">✦</span>
                 <span className="font-semibold text-[#61AFEF]">
@@ -1590,7 +1590,7 @@ export const InteractiveTerminalWizard = ({
                 </span>
               </div>
 
-              <div className="grid min-h-0 flex-1 grid-cols-1 gap-1.5 overflow-y-auto rounded-lg border border-white/10 bg-white/[0.02] p-3 text-xs sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-1.5 rounded-lg border border-white/10 bg-white/[0.02] p-3 text-xs sm:grid-cols-2">
                 <div>
                   <span className="text-[#e96142ff]">Project: </span>
                   <span className="font-semibold text-[#E8C468]">
@@ -1677,18 +1677,18 @@ export const InteractiveTerminalWizard = ({
                 </div>
               </div>
 
-              <ProjectCommand command={buildProjectCommand(state)} />
-              <div className="shrink-0 pt-1">
-                <button type="button" onClick={() => setIsExplorerOpen(true)} className="mr-3 inline-flex items-center gap-2 rounded-md border border-white/20 px-4 py-2 font-mono text-xs font-semibold text-zinc-200 hover:bg-white/10">
+              <ProjectCommand command={buildProjectCommand(state)} variant="terminal" />
+              <div className="flex flex-wrap gap-2 pt-1">
+                <button type="button" onClick={() => setIsExplorerOpen(true)} className="inline-flex min-h-9 flex-[1_1_10rem] items-center justify-center gap-2 rounded-md border border-white/20 px-3 py-2 text-center font-mono text-xs font-semibold text-zinc-200 hover:bg-white/10">
                   {previewMessages[locale].explore}
                 </button>
                 <button
                   type="button"
                   onClick={() => setStepId("installing")}
-                  className="inline-flex items-center gap-2 rounded-md border border-red-400 bg-red-500/20 px-4 py-2 font-mono text-xs font-bold text-red-200 shadow-[0_0_20px_rgba(239,68,68,0.25)] transition-all hover:scale-[1.02] hover:bg-red-500/35"
+                  className="inline-flex min-h-9 flex-[1_1_10rem] items-center justify-center gap-2 rounded-md border border-red-400/50 bg-red-500/20 px-3 py-2 text-center font-mono text-xs font-semibold text-red-200 transition-colors hover:bg-red-500/35"
                 >
-                  <Sparkles className="size-4 text-red-400" />
-                  Scaffold Project Demo (Enter)
+                  <Sparkles className="size-4 shrink-0 text-red-400" />
+                  <span>Scaffold Project Demo <span className="text-red-200/60">(Enter)</span></span>
                 </button>
               </div>
             </div>
@@ -1797,7 +1797,7 @@ export const InteractiveTerminalWizard = ({
                   </p>
                 </div>
 
-                <ProjectCommand command={buildProjectCommand(state)} />
+                <ProjectCommand command={buildProjectCommand(state)} variant="terminal" />
                 {/* Next steps card */}
                 <div className="rounded-lg border border-red-500/40 bg-red-500/[0.05] p-3 text-xs">
                   <p className="font-bold text-zinc-100">🚀 NEXT STEPS</p>
@@ -1815,13 +1815,13 @@ export const InteractiveTerminalWizard = ({
               </div>
 
               <div className="flex shrink-0 flex-wrap items-center gap-3 pt-1">
-                <button type="button" onClick={() => setIsExplorerOpen(true)} className="inline-flex items-center gap-2 rounded-md border border-white/20 px-3 py-1.5 font-mono text-xs text-zinc-200 hover:bg-white/10">
+                <button type="button" onClick={() => setIsExplorerOpen(true)} className="inline-flex min-h-9 flex-[1_1_10rem] items-center justify-center gap-2 rounded-md border border-white/20 px-3 py-2 text-center font-mono text-xs text-zinc-200 hover:bg-white/10">
                   {previewMessages[locale].explore}
                 </button>
                 <button
                   type="button"
                   onClick={handleRestart}
-                  className="inline-flex items-center gap-2 rounded-md border border-red-400/50 bg-red-500/20 px-3 py-1.5 font-mono text-xs font-semibold text-red-200 transition-all hover:bg-red-500/30"
+                  className="inline-flex min-h-9 flex-[1_1_10rem] items-center justify-center gap-2 rounded-md border border-red-400/50 bg-red-500/20 px-3 py-2 text-center font-mono text-xs font-semibold text-red-200 transition-colors hover:bg-red-500/30"
                 >
                   <RotateCcw className="size-3.5" /> Restart Demo (Enter)
                 </button>

@@ -43,7 +43,7 @@ import { HealthModule } from "./health/health.module.js";
       {{#if hasPostgres}}postgresUrl: env.POSTGRES_URL,{{/if}}
       {{#if hasMysql}}mysqlUrl: env.MYSQL_URL,{{/if}}
       {{#if hasSqlite}}sqlitePath: env.SQLITE_PATH,{{/if}}
-      {{#if hasSqlserver}}sqlserver: { server: env.SQLSERVER_HOST, port: env.SQLSERVER_PORT, database: env.SQLSERVER_DATABASE, user: env.SQLSERVER_USER, password: env.SQLSERVER_PASSWORD, options: { encrypt: env.SQLSERVER_ENCRYPT, trustServerCertificate: env.SQLSERVER_TRUST_SERVER_CERTIFICATE } },{{/if}}
+      {{#if hasSqlserver}}sqlserver: { database: env.SQLSERVER_DATABASE, options: { encrypt: env.SQLSERVER_ENCRYPT, trustServerCertificate: env.SQLSERVER_TRUST_SERVER_CERTIFICATE }, password: env.SQLSERVER_PASSWORD, port: env.SQLSERVER_PORT, server: env.SQLSERVER_HOST, user: env.SQLSERVER_USER },{{/if}}
       {{#if hasMongodb}}mongodbUrl: env.MONGODB_URL,{{/if}}
     }),
     {{/if}}

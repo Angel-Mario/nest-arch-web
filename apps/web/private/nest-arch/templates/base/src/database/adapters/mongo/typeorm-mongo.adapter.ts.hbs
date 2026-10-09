@@ -1,14 +1,18 @@
 import { Inject, Injectable } from "@nestjs/common";
 import type { OnModuleDestroy } from "@nestjs/common";
 import type { DataSource } from "typeorm";
+import type { Collection, Document } from "mongodb";
 import type { IMongoAdapter } from "../interfaces/db-adapter.interface.js";
 
 @Injectable()
 export class TypeormMongoAdapter implements IMongoAdapter<DataSource>, OnModuleDestroy {
   constructor(@Inject("TYPEORM_DATA_SOURCE") private readonly dataSource: DataSource) {}
 
-  collection<T = unknown>(name: string): T {
-    return this.dataSource.getMongoRepository(name) as T;
+  collection<T = unknown>(name: string): Collection<T & Document> {
+    const databaseName = this.dataSource.options.database;
+    return this.dataSource.mongoManager.mongoQueryRunner.databaseConnection
+      .db(typeof databaseName === "string" ? databaseName : undefined)
+      .collection(name) as unknown as Collection<T & Document>;
   }
 
   getClient(): DataSource {

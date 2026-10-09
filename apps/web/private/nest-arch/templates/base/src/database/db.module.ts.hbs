@@ -176,7 +176,8 @@ export class DbModule {
           url: options.mongodbUrl,
         },
       },
-    }, {
+    });
+    providers.push({
       provide: 'PRISMA_MONGO_CLIENT',
       useValue: prismaMongo,
     }, {
@@ -195,15 +196,15 @@ export class DbModule {
         return drizzle({ client, schema });
         {{else if hasMysql}}
         const client = mysql.createPool({ uri: options.mysqlUrl });
-        return drizzle(client, { schema, mode: "default" });
+        return drizzle(client, { mode: "default", schema });
         {{else if hasSqlserver}}
         const client = await new sql.ConnectionPool({
-          server: options.sqlserver?.server ?? 'localhost',
-          port: options.sqlserver?.port ?? 1433,
           database: options.sqlserver?.database ?? 'app_db',
-          user: options.sqlserver?.user ?? 'sa',
-          password: options.sqlserver?.password ?? 'DevOnly_Strong_Password_2026!X9',
           options: options.sqlserver?.options ?? { encrypt: true, trustServerCertificate: true },
+          password: options.sqlserver?.password ?? 'DevOnly_Strong_Password_2026!X9',
+          port: options.sqlserver?.port ?? 1433,
+          server: options.sqlserver?.server ?? 'localhost',
+          user: options.sqlserver?.user ?? 'sa',
         }).connect();
         return drizzle({ client, schema });
         {{else}}
@@ -234,7 +235,8 @@ export class DbModule {
         {{#if hasPostgres}}
     const pool = new Pool({
       connectionString: options.postgresUrl,
-    }, {
+    });
+    providers.push({
       provide: 'SQL_CLIENT',
       useValue: pool,
     });
@@ -242,7 +244,8 @@ export class DbModule {
         {{#if hasMysql}}
     const pool = mysql.createPool({
       uri: options.mysqlUrl,
-    }, {
+    });
+    providers.push({
       provide: 'SQL_CLIENT',
       useValue: pool,
     });
@@ -262,7 +265,9 @@ export class DbModule {
       {{/if}}
 
       {{#if hasMongodb}}
-    if (!options.mongodbUrl) throw new Error("A MongoDB URL is required");
+    if (!options.mongodbUrl) {
+      throw new Error("A MongoDB URL is required");
+    }
     providers.push({
       provide: 'MONGODB_CLIENT',
       useFactory: () => new MongoClient(options.mongodbUrl!, { serverSelectionTimeoutMS: 5000 }),

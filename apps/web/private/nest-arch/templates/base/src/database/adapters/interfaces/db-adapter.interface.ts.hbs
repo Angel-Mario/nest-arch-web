@@ -1,3 +1,6 @@
+{{#if (and hasMongodb (or useRawSql useTypeorm))}}
+import type { Collection, Document } from "mongodb";
+{{/if}}
 {{#if (or hasPostgres hasMysql hasSqlite hasSqlserver)}}
 export interface ISqlAdapter<TClient = unknown> {
   query: <T = unknown>(sql: string, params?: unknown[]) => Promise<T[]>;
@@ -7,12 +10,9 @@ export interface ISqlAdapter<TClient = unknown> {
 {{/if}}
 
 {{#if hasMongodb}}
-{{#if useRawSql}}
-import type { Collection, Document } from "mongodb";
-{{/if}}
 export interface IMongoAdapter<TClient = unknown> {
-{{#if useRawSql}}
-  collection: <T extends Document = Document>(name: string) => Collection<T>;
+{{#if (or useRawSql useTypeorm)}}
+  collection: <T = unknown>(name: string) => Collection<T & Document>;
 {{else}}
   collection: <T = unknown>(name: string) => T;
 {{/if}}

@@ -5,12 +5,27 @@ import { Badge } from "@nest-arch-web/ui/components/badge";
 import { CodeBlock } from "@nest-arch-web/ui/components/code-block";
 import { TerminalWindow } from "@nest-arch-web/ui/components/terminal-window";
 import { useQuery } from "convex/react";
-import { ArrowRight, Check, Play } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Play,
+  SlidersHorizontal,
+  Terminal,
+} from "lucide-react";
 import type { Route } from "next";
+import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useState } from "react";
 
 import { useUi } from "@/components/locale-provider";
+import { trackAnalyticsEvent } from "@/lib/analytics";
 import { builderMessages } from "@/lib/builder-messages";
+
+const InteractiveTerminalWizard = dynamic(async () => {
+  const { InteractiveTerminalWizard: Wizard } =
+    await import("./interactive-terminal-wizard");
+  return Wizard;
+});
 
 const ASCII_CAT = `   ,-.       _,---._ __   /\\
   /  )    .-'       \`./  /  \\
@@ -33,6 +48,11 @@ const ASCII_BANNER = ` _   _ _____ ____ _____     _    ____   ____ _   _
 
 export const HeroSection = () => {
   const { t, locale } = useUi();
+  const [isLiveDemo, setIsLiveDemo] = useState(false);
+  const startDemo = (placement: "hero" | "terminal") => {
+    trackAnalyticsEvent({ locale, name: "demo_start", placement });
+    setIsLiveDemo(true);
+  };
   const packageVersion = useQuery(api.crons.getLatestNpmPackageVersion, {});
   const totalDownloads = useQuery(api.ossStats.getNpmPackage, {
     name: "@nest-arch/tui",
@@ -101,11 +121,30 @@ export const HeroSection = () => {
         </div>
 
         <div className="mt-6 flex flex-wrap items-center gap-4">
+          <button
+            type="button"
+            aria-pressed={isLiveDemo}
+            onClick={() => {
+              if (isLiveDemo) {
+                setIsLiveDemo(false);
+              } else {
+                startDemo("hero");
+              }
+            }}
+            className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-red-600/70 bg-red-50 px-3.5 py-2 font-mono text-xs font-semibold text-red-700 transition-colors hover:bg-red-100 sm:text-sm dark:border-red-500/60 dark:bg-red-500/15 dark:text-red-200 dark:hover:bg-red-500/25"
+          >
+            {isLiveDemo ? (
+              <Terminal className="size-4" aria-hidden="true" />
+            ) : (
+              <Play className="size-4" aria-hidden="true" />
+            )}
+            {isLiveDemo ? t.hero.exitInteractiveDemo : t.hero.tryLiveDemo}
+          </button>
           <Link
             href={`/${locale}/builder` as Route}
             className="border-border text-foreground hover:bg-muted inline-flex items-center gap-2 rounded-lg border px-3.5 py-2 font-mono text-xs font-semibold sm:text-sm"
           >
-            <Play className="size-4" aria-hidden="true" />
+            <SlidersHorizontal className="size-4" aria-hidden="true" />
             {builderMessages[locale].open}
           </Link>
 
@@ -124,123 +163,128 @@ export const HeroSection = () => {
         </div>
       </div>
 
-      {/* Right Column: Terminal Preview (Fixed 6 columns and fixed height to prevent layout shift) */}
+      {/* Right Column: Terminal Preview / Live Wizard */}
       <div className="relative h-105 w-full sm:h-125 md:h-115 md:max-w-140 md:justify-self-end lg:col-span-6 lg:h-135 xl:col-span-6">
-        <div className="group relative h-full w-full overflow-hidden rounded-xl border shadow-[0_24px_70px_rgba(0,0,0,0.22)] dark:border-red-500/15">
-          <TerminalWindow
-            title="Administrator: PowerShell"
-            className="h-full w-full overflow-hidden"
-          >
-            <div className="flex h-full flex-col justify-between space-y-3 font-mono text-xs leading-relaxed select-none sm:text-sm">
-              {/* Header: ASCII Cat & NEST ARCH Banner */}
-              <div className="flex flex-col gap-4 overflow-x-auto pb-1 text-red-500 sm:flex-row sm:items-start sm:justify-start sm:gap-6">
-                {/* Cat ASCII */}
-                <pre className="font-mono text-[10px] leading-[1.15] text-red-500 sm:text-[8.5px] md:text-[9.5px]">
-                  {ASCII_CAT}
-                </pre>
-
-                {/* Banner + Subtitle + Version */}
-                <div className="flex flex-col justify-start pt-1">
-                  <pre className="font-mono text-[9px] leading-[1.15] font-bold text-red-500 sm:text-[8.5px] md:text-[9.5px]">
-                    {ASCII_BANNER}
-                  </pre>
-                  <p className="mt-2 font-mono text-[11px] text-zinc-300 sm:text-xs">
-                    A production-ready CLI
-                  </p>
-                  <p className="mt-0.5 font-mono text-[11px] font-semibold text-sky-400 sm:text-xs">
-                    v{packageVersion?.version || "..."}
-                  </p>
-                </div>
-              </div>
-
-              {/* Horizontal Divider */}
-              <div className="h-px w-full bg-white/10" />
-
-              {/* Welcome Line */}
-              <div className="flex items-center gap-2 font-mono text-xs text-zinc-200 sm:text-sm">
-                <span className="font-bold text-red-400">✧</span>
-                <span>
-                  Welcome to{" "}
-                  <span className="font-bold text-red-400">Nest Arch</span> –{" "}
-                  Let&apos;s build something great.
-                </span>
-              </div>
-
-              {/* Prompt Question */}
-              <div className="pt-1">
-                <p className="font-mono text-xs text-zinc-400 sm:text-sm">
-                  What would you like to do?
-                </p>
-
-                {/* Menu Options List (Static main menu representation) */}
-                <div className="mt-2.5 space-y-1.5 font-mono text-xs sm:text-sm">
-                  <div className="flex items-center gap-2 text-red-400">
-                    <span className="w-3 font-bold text-red-400">&gt;</span>
-                    <span className="font-semibold text-red-400">
-                      Create new project
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-zinc-400">
-                    <span className="w-3 text-transparent">&gt;</span>
-                    <span>Starter templates</span>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-zinc-400">
-                    <span className="w-3 text-transparent">&gt;</span>
-                    <span>Documentation</span>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-zinc-400">
-                    <span className="w-3 text-transparent">&gt;</span>
-                    <span>Exit</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Footer Controls Instruction */}
-              <div className="border-t border-white/10 pt-3">
-                <p className="font-mono text-[11px] text-zinc-500 sm:text-xs">
-                  Use <span className="font-semibold text-zinc-300">↑/↓</span>{" "}
-                  to navigate •{" "}
-                  <span className="font-semibold text-zinc-300">Enter</span> to
-                  select •{" "}
-                  <span className="font-semibold text-zinc-300">Ctrl+C</span> to
-                  exit
-                </p>
-              </div>
-            </div>
-          </TerminalWindow>
-
-          {/* Glassmorphic Centered Interactive CTA Overlay */}
-          <div className="absolute inset-0 flex items-center justify-center bg-black/10 p-4 backdrop-blur-[1.5px] transition-all duration-300 group-hover:bg-black/30">
-            <Link
-              href={`/${locale}/builder` as Route}
-              className="group/cta flex max-w-sm cursor-pointer items-center gap-3.5 rounded-xl border border-red-500/50 bg-[#10121d]/90 p-3.5 shadow-[0_0_40px_rgba(239,68,68,0.25)] backdrop-blur-xl transition-all duration-300 hover:scale-[1.03] hover:border-red-400 hover:bg-[#151726]/95 hover:shadow-[0_0_55px_rgba(239,68,68,0.38)] active:scale-[0.98] sm:max-w-md sm:gap-4 sm:p-4"
+        {isLiveDemo ? (
+          <InteractiveTerminalWizard onClose={() => setIsLiveDemo(false)} />
+        ) : (
+          <div className="group relative h-full w-full overflow-hidden rounded-xl border shadow-[0_24px_70px_rgba(0,0,0,0.22)] dark:border-red-500/15">
+            <TerminalWindow
+              title="Administrator: PowerShell"
+              className="h-full w-full overflow-hidden"
             >
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-red-500/20 text-red-400 ring-1 ring-red-500/50 transition-all duration-300 group-hover/cta:scale-110 group-hover/cta:bg-red-500/30 sm:size-10">
-                <Play className="size-4 fill-red-400" />
-              </span>
+              <div className="flex h-full flex-col justify-between space-y-3 font-mono text-xs leading-relaxed select-none sm:text-sm">
+                {/* Header: ASCII Cat & NEST ARCH Banner */}
+                <div className="flex flex-col gap-4 overflow-x-auto pb-1 text-red-500 sm:flex-row sm:items-start sm:justify-start sm:gap-6">
+                  {/* Cat ASCII */}
+                  <pre className="font-mono text-[10px] leading-[1.15] text-red-500 sm:text-[8.5px] md:text-[9.5px]">
+                    {ASCII_CAT}
+                  </pre>
 
-              <div className="flex flex-col text-left">
-                <div className="flex items-center gap-2">
-                  <p className="font-mono text-xs font-semibold text-zinc-100 sm:text-sm">
-                    {builderMessages[locale].open}
-                  </p>
-                  <span className="size-1.5 animate-pulse rounded-full bg-red-400" />
+                  {/* Banner + Subtitle + Version */}
+                  <div className="flex flex-col justify-start pt-1">
+                    <pre className="font-mono text-[9px] leading-[1.15] font-bold text-red-500 sm:text-[8.5px] md:text-[9.5px]">
+                      {ASCII_BANNER}
+                    </pre>
+                    <p className="mt-2 font-mono text-[11px] text-zinc-300 sm:text-xs">
+                      A production-ready CLI
+                    </p>
+                    <p className="mt-0.5 font-mono text-[11px] font-semibold text-sky-400 sm:text-xs">
+                      v{packageVersion?.version || "..."}
+                    </p>
+                  </div>
                 </div>
-                <p className="font-mono text-[11px] text-zinc-400">
-                  {builderMessages[locale].configure}
-                </p>
-              </div>
 
-              <span className="ml-auto flex items-center gap-1 rounded-md border border-red-500/40 bg-red-500/20 px-2 py-1 font-mono text-[10px] font-bold text-red-300 transition-all duration-300 group-hover/cta:border-red-400 group-hover/cta:bg-red-500/30 sm:text-xs">
-                {t.hero.start}
-                <ArrowRight className="size-3.5 transition-transform duration-300 group-hover/cta:translate-x-0.5" />
-              </span>
-            </Link>
+                {/* Horizontal Divider */}
+                <div className="h-px w-full bg-white/10" />
+
+                {/* Welcome Line */}
+                <div className="flex items-center gap-2 font-mono text-xs text-zinc-200 sm:text-sm">
+                  <span className="font-bold text-red-400">✧</span>
+                  <span>
+                    Welcome to{" "}
+                    <span className="font-bold text-red-400">Nest Arch</span> –{" "}
+                    Let&apos;s build something great.
+                  </span>
+                </div>
+
+                {/* Prompt Question */}
+                <div className="pt-1">
+                  <p className="font-mono text-xs text-zinc-400 sm:text-sm">
+                    What would you like to do?
+                  </p>
+
+                  {/* Menu Options List (Static main menu representation) */}
+                  <div className="mt-2.5 space-y-1.5 font-mono text-xs sm:text-sm">
+                    <div className="flex items-center gap-2 text-red-400">
+                      <span className="w-3 font-bold text-red-400">&gt;</span>
+                      <span className="font-semibold text-red-400">
+                        Create new project
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-zinc-400">
+                      <span className="w-3 text-transparent">&gt;</span>
+                      <span>Starter templates</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-zinc-400">
+                      <span className="w-3 text-transparent">&gt;</span>
+                      <span>Documentation</span>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-zinc-400">
+                      <span className="w-3 text-transparent">&gt;</span>
+                      <span>Exit</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Controls Instruction */}
+                <div className="border-t border-white/10 pt-3">
+                  <p className="font-mono text-[11px] text-zinc-500 sm:text-xs">
+                    Use <span className="font-semibold text-zinc-300">↑/↓</span>{" "}
+                    to navigate •{" "}
+                    <span className="font-semibold text-zinc-300">Enter</span>{" "}
+                    to select •{" "}
+                    <span className="font-semibold text-zinc-300">Ctrl+C</span>{" "}
+                    to exit
+                  </p>
+                </div>
+              </div>
+            </TerminalWindow>
+
+            {/* Glassmorphic Centered Interactive CTA Overlay */}
+            <div className="absolute inset-0 flex items-center justify-center bg-black/10 p-4 backdrop-blur-[1.5px] transition-all duration-300 group-hover:bg-black/30">
+              <button
+                type="button"
+                onClick={() => startDemo("terminal")}
+                className="group/cta flex max-w-sm cursor-pointer items-center gap-3.5 rounded-xl border border-red-500/50 bg-[#10121d]/90 p-3.5 shadow-[0_0_40px_rgba(239,68,68,0.25)] backdrop-blur-xl transition-all duration-300 hover:scale-[1.03] hover:border-red-400 hover:bg-[#151726]/95 hover:shadow-[0_0_55px_rgba(239,68,68,0.38)] active:scale-[0.98] sm:max-w-md sm:gap-4 sm:p-4"
+              >
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-red-500/20 text-red-400 ring-1 ring-red-500/50 transition-all duration-300 group-hover/cta:scale-110 group-hover/cta:bg-red-500/30 sm:size-10">
+                  <Play className="size-4 fill-red-400" />
+                </span>
+
+                <div className="flex flex-col text-left">
+                  <div className="flex items-center gap-2">
+                    <p className="font-mono text-xs font-semibold text-zinc-100 sm:text-sm">
+                      {t.hero.launchDemo}
+                    </p>
+                    <span className="size-1.5 animate-pulse rounded-full bg-red-400" />
+                  </div>
+                  <p className="font-mono text-[11px] text-zinc-400">
+                    {t.hero.launchDemoDescription}
+                  </p>
+                </div>
+
+                <span className="ml-auto flex items-center gap-1 rounded-md border border-red-500/40 bg-red-500/20 px-2 py-1 font-mono text-[10px] font-bold text-red-300 transition-all duration-300 group-hover/cta:border-red-400 group-hover/cta:bg-red-500/30 sm:text-xs">
+                  {t.hero.start}
+                  <ArrowRight className="size-3.5 transition-transform duration-300 group-hover/cta:translate-x-0.5" />
+                </span>
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

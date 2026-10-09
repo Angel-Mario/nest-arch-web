@@ -85,14 +85,26 @@ export const AnalyticsPreferences = () => {
                   {error ? <p role="alert">{messages.error}</p> : null}
                 </CardContent>
                 <CardFooter className="flex-wrap gap-2">
-                  <Button variant="outline" onClick={() => choose("rejected")}>
+                  <Button
+                    className="rounded-lg"
+                    variant="outline"
+                    onClick={() => choose("rejected")}
+                  >
                     {messages.reject}
                   </Button>
-                  <Button variant="outline" onClick={() => choose("accepted")}>
+                  <Button
+                    className="rounded-lg"
+                    variant="outline"
+                    onClick={() => choose("accepted")}
+                  >
                     {messages.accept}
                   </Button>
                   {consent === "unknown" ? null : (
-                    <Button variant="ghost" onClick={() => setOpen(false)}>
+                    <Button
+                      className="rounded-lg"
+                      variant="ghost"
+                      onClick={() => setOpen(false)}
+                    >
                       {messages.close}
                     </Button>
                   )}

@@ -1,5 +1,5 @@
 {
-  "generatorVersion": "0.5.0",
+  "generatorVersion": "0.5.1",
   "options": {
     "STEP_LABELS": {
       "addons": "Addons",
@@ -178,6 +178,11 @@
         "description": "The modern, all-in-one toolchain written in Rust",
         "label": "Biome",
         "value": "biome"
+      },
+      {
+        "description": "ESLint and Prettier with an optional NestJS-focused Ultracite preset",
+        "label": "ESLint + Prettier",
+        "value": "eslint-prettier-no-stylelint"
       },
       {
         "description": "The fastest linter available, 50-100x faster than ESLint",
@@ -425,7 +430,7 @@
       "id": "rest",
       "key": "6bf11d286ad0fbd72be92164c709413bc9ec34ce28457421a871ef27e90a5808",
       "label": "NestJS REST",
-      "url": "/project-previews/0.5.0-749389f0498bd1961226/6bf11d286ad0fbd72be92164c709413bc9ec34ce28457421a871ef27e90a5808.json"
+      "url": "/project-previews/0.5.1-192eca3e9b9cf497a5af/6bf11d286ad0fbd72be92164c709413bc9ec34ce28457421a871ef27e90a5808.json"
     },
     {
       "config": {
@@ -456,7 +461,7 @@
       "id": "postgresql",
       "key": "c55b236121d5be0de18915cbaf25038f12a7957c90bd54a755d988732898abcd",
       "label": "PostgreSQL + Prisma",
-      "url": "/project-previews/0.5.0-749389f0498bd1961226/c55b236121d5be0de18915cbaf25038f12a7957c90bd54a755d988732898abcd.json"
+      "url": "/project-previews/0.5.1-192eca3e9b9cf497a5af/c55b236121d5be0de18915cbaf25038f12a7957c90bd54a755d988732898abcd.json"
     },
     {
       "config": {
@@ -487,7 +492,7 @@
       "id": "sqlserver",
       "key": "ed9e3bf44ee33e60855da0224ba01fa828aff6959d712a548edb34543a35c1c2",
       "label": "SQL Server + Prisma",
-      "url": "/project-previews/0.5.0-749389f0498bd1961226/ed9e3bf44ee33e60855da0224ba01fa828aff6959d712a548edb34543a35c1c2.json"
+      "url": "/project-previews/0.5.1-192eca3e9b9cf497a5af/ed9e3bf44ee33e60855da0224ba01fa828aff6959d712a548edb34543a35c1c2.json"
     },
     {
       "config": {
@@ -517,7 +522,7 @@
       "id": "sqlite",
       "key": "e2c49843018900f192dcfb2884552048e46c7fa1cf4fa17644e0ea83a23ffb4e",
       "label": "SQLite + Drizzle",
-      "url": "/project-previews/0.5.0-749389f0498bd1961226/e2c49843018900f192dcfb2884552048e46c7fa1cf4fa17644e0ea83a23ffb4e.json"
+      "url": "/project-previews/0.5.1-192eca3e9b9cf497a5af/e2c49843018900f192dcfb2884552048e46c7fa1cf4fa17644e0ea83a23ffb4e.json"
     },
     {
       "config": {
@@ -545,7 +550,7 @@
       "id": "mongodb",
       "key": "89d4e032cad8242d1c596198c70fda501e2bedf8047d8a0742c041cb704994ed",
       "label": "MongoDB",
-      "url": "/project-previews/0.5.0-749389f0498bd1961226/89d4e032cad8242d1c596198c70fda501e2bedf8047d8a0742c041cb704994ed.json"
+      "url": "/project-previews/0.5.1-192eca3e9b9cf497a5af/89d4e032cad8242d1c596198c70fda501e2bedf8047d8a0742c041cb704994ed.json"
     },
     {
       "config": {
@@ -571,8 +576,8 @@
       "id": "redis",
       "key": "2826a6f35819a368bec65b0112a9a221988c643675c6af5097f2cba8ddacff12",
       "label": "Redis microservice",
-      "url": "/project-previews/0.5.0-749389f0498bd1961226/2826a6f35819a368bec65b0112a9a221988c643675c6af5097f2cba8ddacff12.json"
+      "url": "/project-previews/0.5.1-192eca3e9b9cf497a5af/2826a6f35819a368bec65b0112a9a221988c643675c6af5097f2cba8ddacff12.json"
     }
   ],
-  "version": "0.5.0-749389f0498bd1961226"
+  "version": "0.5.1-192eca3e9b9cf497a5af"
 }

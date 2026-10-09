@@ -7,7 +7,7 @@ export const builderMessages = {
     comingInV2: "Available in version 2.0",
     command: "Generation command",
     commandDescription:
-      "Configuration command recorded in nest-arch.jsonc. The current TUI requires interactive setup; these flags are not supported yet.",
+      "Run this command to generate a project with your selected configuration.",
     configure: "Configure your project",
     copied: "Command copied",
     copy: "Copy command",
@@ -82,7 +82,7 @@ export const builderMessages = {
     comingInV2: "Disponible en la versión 2.0",
     command: "Comando de generación",
     commandDescription:
-      "Comando de configuración registrado en nest-arch.jsonc. El TUI actual requiere configuración interactiva; todavía no admite estos flags.",
+      "Ejecuta este comando para generar un proyecto con la configuración seleccionada.",
     configure: "Configura tu proyecto",
     copied: "Comando copiado",
     copy: "Copiar comando",
@@ -158,7 +158,7 @@ export const builderMessages = {
     comingInV2: "Disponível na versão 2.0",
     command: "Comando de geração",
     commandDescription:
-      "Comando de configuração registrado em nest-arch.jsonc. O TUI atual exige configuração interativa; essas flags ainda não são suportadas.",
+      "Execute este comando para gerar um projeto com a configuração selecionada.",
     configure: "Configure seu projeto",
     copied: "Comando copiado",
     copy: "Copiar comando",

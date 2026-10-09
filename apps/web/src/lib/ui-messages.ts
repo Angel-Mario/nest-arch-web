@@ -6,6 +6,7 @@ export interface UiMessages {
   metaDescription: string;
   header: {
     language: string;
+    navigation: string;
     toggleTheme: string;
     nestArchHome: string;
     nav: {
@@ -134,6 +135,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
         roadmap: "Roadmap",
         workflow: "Workflow",
       },
+      navigation: "Navigation menu",
       nestArchHome: "Nest Arch home",
       toggleTheme: "Toggle theme",
     },
@@ -268,6 +270,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
         roadmap: "Hoja de ruta",
         workflow: "Flujo",
       },
+      navigation: "Menú de navegación",
       nestArchHome: "Inicio de Nest Arch",
       toggleTheme: "Cambiar tema",
     },
@@ -404,6 +407,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
         roadmap: "Roadmap",
         workflow: "Fluxo",
       },
+      navigation: "Menu de navegação",
       nestArchHome: "Início do Nest Arch",
       toggleTheme: "Alternar tema",
     },

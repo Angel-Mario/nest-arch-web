@@ -27,17 +27,17 @@ export class Todo {
   id: string;
   {{/if}}
 
-  @Column({ type: "varchar", length: 255, nullable: true })
+  @Column({ length: 255, nullable: true, type: "varchar" })
   description?: string;
 
-  @Column({ type: "varchar", length: 255 })
+  @Column({ length: 255, type: "varchar" })
   title: string;
 
   @Column({ default: false, name: "is_completed", type: "{{#if hasSqlserver}}bit{{else}}boolean{{/if}}" })
   completed: boolean;
 
 {{#if hasAuth}}
-  @Column({ type: "varchar", nullable: true })
+  @Column({ nullable: true, type: "varchar" })
   authorId?: string;
 {{/if}}
 
