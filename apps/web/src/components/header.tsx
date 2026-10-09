@@ -11,6 +11,7 @@ import * as React from "react";
 
 import { useUi } from "@/components/locale-provider";
 import { LocaleSelect } from "@/components/locale-select";
+import { builderMessages } from "@/lib/builder-messages";
 
 import { ModeToggle } from "./mode-toggle";
 
@@ -45,6 +46,11 @@ const Header = () => {
       id: "features",
       label: t.header.nav.features,
     },
+    {
+      href: `/${locale}/builder`,
+      id: "builder",
+      label: builderMessages[locale].nav,
+    },
     { href: undefined, id: "undefined", label: "|" },
     {
       href: `/${locale}/roadmap`,
@@ -63,6 +69,11 @@ const Header = () => {
   const [active, setActive] = React.useState<string>("");
 
   React.useEffect(() => {
+    if (pathname === `/${locale}/builder`) {
+      setActive("builder");
+      return;
+    }
+
     if (pathname === `/${locale}/roadmap`) {
       setActive("roadmap");
       return;
@@ -141,6 +152,7 @@ const Header = () => {
             ) : (
               <Link
                 key={href}
+                aria-current={isActive ? "page" : undefined}
                 href={href as Route}
                 className={`rounded-lg border px-3 py-1.5 font-mono text-xs transition-colors ${isActive ? "border-red-500/40 bg-red-500/10 text-red-600 dark:text-red-300" : "text-foreground/60 hover:border-border hover:bg-muted/50 hover:text-foreground dark:text-muted-foreground border-transparent"}`}
               >
@@ -151,12 +163,21 @@ const Header = () => {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          <Link
+            href={`/${locale}/builder` as Route}
+            aria-current={
+              pathname === `/${locale}/builder` ? "page" : undefined
+            }
+            className="text-foreground rounded-md border px-2 py-1.5 font-mono text-xs md:hidden"
+          >
+            {builderMessages[locale].nav}
+          </Link>
           <LocaleSelect />
           <Link
             href="https://www.npmjs.com/package/@nest-arch/tui"
             target="_blank"
             rel="noopener noreferrer"
-            className="border-border text-foreground/60 hover:text-foreground dark:text-muted-foreground flex flex-row items-center gap-1.5 rounded-lg border px-2.5 py-1.5 font-mono text-[11px] transition-colors hover:border-red-500/40"
+            className="border-border text-foreground/60 hover:text-foreground dark:text-muted-foreground hidden flex-row items-center gap-1.5 rounded-lg border px-2.5 py-1.5 font-mono text-[11px] transition-colors hover:border-red-500/40 sm:flex"
           >
             <Image
               src="/icons/npm-wordmark.svg"
@@ -172,7 +193,7 @@ const Header = () => {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
-            className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-black/5 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white"
+            className="hidden h-8 w-8 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-black/5 hover:text-zinc-900 sm:flex dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white"
           >
             <GithubIcon className="h-4 w-4" />
           </Link>

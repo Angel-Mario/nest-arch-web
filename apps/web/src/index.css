@@ -10,34 +10,80 @@
   user-select: none;
 }
 
+html,
 .preview-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--muted-foreground) 22%, transparent)
+  scrollbar-color: color-mix(in srgb, var(--muted-foreground) 16%, transparent)
     transparent;
   scrollbar-gutter: stable;
 }
 
 .preview-scrollbar:hover,
 .preview-scrollbar:focus-within {
-  scrollbar-color: color-mix(in srgb, var(--muted-foreground) 40%, transparent)
+  scrollbar-color: color-mix(in srgb, var(--muted-foreground) 28%, transparent)
     transparent;
 }
 
+html::-webkit-scrollbar,
 .preview-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 
+html::-webkit-scrollbar-track,
+html::-webkit-scrollbar-corner,
 .preview-scrollbar::-webkit-scrollbar-track,
 .preview-scrollbar::-webkit-scrollbar-corner {
   background: transparent;
 }
 
+html::-webkit-scrollbar-thumb,
 .preview-scrollbar::-webkit-scrollbar-thumb {
   border-radius: 999px;
-  background: color-mix(in srgb, var(--muted-foreground) 22%, transparent);
+  background: color-mix(in srgb, var(--muted-foreground) 16%, transparent);
 }
 
 .preview-scrollbar:hover::-webkit-scrollbar-thumb {
-  background: color-mix(in srgb, var(--muted-foreground) 40%, transparent);
+  background: color-mix(in srgb, var(--muted-foreground) 28%, transparent);
+}
+
+/* Technology colors are shared by logos and the selected stack pills. */
+.technology-icon-dark {
+  display: none;
+}
+.dark .technology-icon-light {
+  display: none;
+}
+.dark .technology-icon-dark {
+  display: block;
+}
+
+.technology-pill {
+  border-color: color-mix(in srgb, var(--technology-color) 32%, transparent);
+  background: color-mix(in srgb, var(--technology-color) 10%, transparent);
+  color: color-mix(in srgb, var(--technology-color) 70%, var(--foreground));
+}
+.dark .technology-pill {
+  color: color-mix(in srgb, var(--technology-color) 75%, white);
+}
+
+.builder-option[data-slot="field-label"] {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition:
+    border-color 150ms,
+    background-color 150ms,
+    box-shadow 150ms;
+}
+.builder-option[data-slot="field-label"][data-selected="true"] {
+  border-color: color-mix(in srgb, var(--primary) 28%, transparent);
+  background: color-mix(in srgb, var(--primary) 3%, var(--background));
+  box-shadow: none;
+}
+
+.builder-section-nav {
+  scrollbar-width: none;
+}
+.builder-section-nav::-webkit-scrollbar {
+  display: none;
 }

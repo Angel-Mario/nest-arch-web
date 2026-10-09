@@ -12,6 +12,8 @@ import * as React from "react";
 import dynamic from "next/dynamic";
 import { trackAnalyticsEvent } from "@/lib/analytics";
 import { useUi } from "@/components/locale-provider";
+import { ProjectCommand } from "@/components/project-command";
+import { buildProjectCommand } from "@/lib/project-command";
 import { previewMessages } from "@/lib/project-preview/messages";
 
 const ProjectExplorer = dynamic(() => import("@/components/project-explorer"), { ssr: false });
@@ -21,7 +23,7 @@ const ProjectExplorer = dynamic(() => import("@/components/project-explorer"), {
 // ==========================================
 
 export type PackageManager = "pnpm" | "npm" | "yarn" | "bun";
-export type FormatterOption = "biome" | "oxlint-oxfmt" | "none";
+export type FormatterOption = "biome" | "oxlint-oxfmt" | "eslint-prettier-no-stylelint" | "none";
 export type HttpProvider = "express" | "fastify";
 export type ProjectType = "single" | "monorepo";
 export type Architecture = "nest-api" | "nest-gateway" | "nest-microservice";
@@ -149,6 +151,7 @@ const PACKAGE_MANAGER_OPTIONS: WizardOption<PackageManager>[] = [
 ];
 
 const FORMATTER_OPTIONS: WizardOption<FormatterOption>[] = [
+  { description: "Lint with ESLint and format with Prettier", label: "ESLint + Prettier", value: "eslint-prettier-no-stylelint" },
   {
     description: "The modern, all-in-one toolchain written in Rust",
     label: "Biome",
@@ -1128,6 +1131,7 @@ export const InteractiveTerminalWizard = ({
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isExplorerOpen) return;
+      if (e.target instanceof Element && e.target.closest("button, a, dialog, [role=button]")) return;
       // Don't intercept if typing in text input unless Enter
       if (stepId === "projectName") {
         if (e.key === "Enter") {
@@ -1389,7 +1393,13 @@ export const InteractiveTerminalWizard = ({
     >
       {/* Terminal Title Bar */}
       <div className="bg-muted relative flex shrink-0 items-center justify-between border-b px-4 py-1.5">
-        {isExplorerOpen && <ProjectExplorer state={{ ...state }} projectName={resolveProjectName(state.projectName)} onClose={() => setIsExplorerOpen(false)} />}
+        {isExplorerOpen && <ProjectExplorer state={{ ...state }} projectName={resolveProjectName(state.projectName)} onPresetSelect={(config) => setState((current) => ({
+          ...current,
+          ...config,
+          ultraciteEditors: config.ultraciteEditors.filter((value): value is UltraciteEditor => ULTRACITE_EDITOR_OPTIONS.some((option) => option.value === value)),
+          ultraciteAgents: config.ultraciteAgents.filter((value): value is UltraciteAgent => ULTRACITE_AGENT_OPTIONS.some((option) => option.value === value)),
+          ultraciteHooks: config.ultraciteHooks.filter((value): value is UltraciteHook => ULTRACITE_HOOK_OPTIONS.some((option) => option.value === value)),
+        }))} onClose={() => setIsExplorerOpen(false)} />}
         <div className="border-border bg-muted/60 flex items-center gap-2">
           <span className="inline-block h-2.5 w-2.5 rounded-full bg-red-500/80" />
           <span className="inline-block h-2.5 w-2.5 rounded-full bg-amber-500/80" />
@@ -1489,6 +1499,7 @@ export const InteractiveTerminalWizard = ({
               <div className="flex items-center gap-2.5 rounded-lg border border-white/15 bg-white/[0.03] px-3.5 py-2.5 text-zinc-100 focus-within:border-red-400">
                 <span className="font-mono font-bold text-red-400">&gt;</span>
                 <input
+                  aria-label="Project name"
                   ref={inputRef}
                   type="text"
                   value={projectNameInput}
@@ -1666,6 +1677,7 @@ export const InteractiveTerminalWizard = ({
                 </div>
               </div>
 
+              <ProjectCommand command={buildProjectCommand(state)} />
               <div className="shrink-0 pt-1">
                 <button type="button" onClick={() => setIsExplorerOpen(true)} className="mr-3 inline-flex items-center gap-2 rounded-md border border-white/20 px-4 py-2 font-mono text-xs font-semibold text-zinc-200 hover:bg-white/10">
                   {previewMessages[locale].explore}
@@ -1785,6 +1797,7 @@ export const InteractiveTerminalWizard = ({
                   </p>
                 </div>
 
+                <ProjectCommand command={buildProjectCommand(state)} />
                 {/* Next steps card */}
                 <div className="rounded-lg border border-red-500/40 bg-red-500/[0.05] p-3 text-xs">
                   <p className="font-bold text-zinc-100">🚀 NEXT STEPS</p>
@@ -1801,7 +1814,10 @@ export const InteractiveTerminalWizard = ({
                 </div>
               </div>
 
-              <div className="flex shrink-0 items-center gap-3 pt-1">
+              <div className="flex shrink-0 flex-wrap items-center gap-3 pt-1">
+                <button type="button" onClick={() => setIsExplorerOpen(true)} className="inline-flex items-center gap-2 rounded-md border border-white/20 px-3 py-1.5 font-mono text-xs text-zinc-200 hover:bg-white/10">
+                  {previewMessages[locale].explore}
+                </button>
                 <button
                   type="button"
                   onClick={handleRestart}

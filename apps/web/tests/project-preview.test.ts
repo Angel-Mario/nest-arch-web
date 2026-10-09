@@ -304,3 +304,20 @@ test("preview matches real generator output, including programmatic authenticati
     await rm(directory, { force: true, recursive: true });
   }
 });
+
+test("ESLint and Prettier can be selected together and previewed", async () => {
+  const config = normalizePreviewConfig({
+    formatter: "eslint-prettier-no-stylelint",
+  });
+  const result = await generatePreview(
+    config,
+    manifest.version,
+    "eslint-prettier-test",
+    manifest.generatorVersion
+  );
+  assert.ok(result.files.some((file) => file.path === "package.json"));
+  const metadata = result.files.find((file) => file.path === "nest-arch.jsonc");
+  assert.ok(
+    metadata?.content.includes('"formatter": "eslint-prettier-no-stylelint"')
+  );
+});

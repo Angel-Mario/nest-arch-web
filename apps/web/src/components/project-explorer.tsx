@@ -116,12 +116,14 @@ const FileTree = ({
 interface ProjectExplorerProps {
   state?: Record<string, unknown>;
   projectName?: string;
+  onPresetSelect?: (config: PreviewConfig) => void;
   onClose: () => void;
 }
 
 const ProjectExplorer = ({
   state,
   projectName = "my-nest-app",
+  onPresetSelect,
   onClose,
 }: ProjectExplorerProps) => {
   const { locale } = useUi();
@@ -391,7 +393,9 @@ const ProjectExplorer = ({
                 size="xs"
                 className="cursor-pointer"
                 onClick={() => {
-                  setConfig(normalizePreviewConfig(preset.config));
+                  const presetConfig = normalizePreviewConfig(preset.config);
+                  setConfig(presetConfig);
+                  onPresetSelect?.(presetConfig);
                   setSelected("package.json");
                   setCopiedPath(null);
                 }}

@@ -44,7 +44,9 @@ export const previewConfigSchema = z
       "todo-example",
       "typescript-7",
     ]).default([]),
-    formatter: z.enum(["none", "biome", "oxlint-oxfmt"]).default("none"),
+    formatter: z
+      .enum(["none", "biome", "oxlint-oxfmt", "eslint-prettier-no-stylelint"])
+      .default("none"),
     httpProvider: z.enum(["express", "fastify"]).default("express"),
     microservices: selection([
       "redis",
