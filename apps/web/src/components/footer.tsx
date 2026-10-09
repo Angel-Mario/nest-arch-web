@@ -56,9 +56,10 @@ const Footer = () => {
               <Image
                 src={nestArchLogo}
                 alt=""
-                width={458}
-                height={393}
+                width={600}
+                height={600}
                 className="h-auto w-7"
+                unoptimized
               />
               <span className="text-foreground font-mono text-lg font-semibold tracking-[-0.04em]">
                 nest<span className="text-red-600 dark:text-red-400">/</span>

@@ -70,6 +70,7 @@ export default async function LocaleLayout({
                     height={26}
                     src={nestArchLogo}
                     width={26}
+                    unoptimized
                   />
                   <span className="font-semibold tracking-tight">
                     {appName}
