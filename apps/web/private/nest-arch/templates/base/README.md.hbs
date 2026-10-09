@@ -1,0 +1,252 @@
+# {{projectName}}
+
+{{description}}
+
+## Setup
+
+{{#if setupInstructions}}
+{{{setupInstructions}}}
+{{else}}
+```bash
+# Install dependencies
+{{#if isPnpm}}pnpm install{{else if isYarn}}yarn install{{else if isBun}}bun install{{else}}npm install{{/if}}
+```
+{{/if}}
+
+## Running the App
+
+```bash
+# development mode (live reload)
+{{#if isPnpm}}pnpm dev{{else if isYarn}}yarn dev{{else if isBun}}bun run dev{{else}}npm run dev{{/if}}
+
+# build and production mode
+{{#if isPnpm}}pnpm build
+pnpm start{{else if isYarn}}yarn build
+yarn start{{else if isBun}}bun run build
+bun run start{{else}}npm run build
+npm run start{{/if}}
+```
+
+## Testing
+
+```bash
+# unit tests
+{{#if isPnpm}}pnpm test{{else if isYarn}}yarn test{{else if isBun}}bun run test{{else}}npm test{{/if}}
+
+# e2e tests
+{{#if isPnpm}}pnpm test:e2e{{else if isYarn}}yarn test:e2e{{else if isBun}}bun run test:e2e{{else}}npm run test:e2e{{/if}}
+
+# test coverage
+{{#if isPnpm}}pnpm test:cov{{else if isYarn}}yarn test:cov{{else if isBun}}bun run test:cov{{else}}npm run test:cov{{/if}}
+```
+
+{{#if hasRateLimiting}}
+## Reverse Proxy
+
+Set `TRUSTED_PROXY_IPS` to the IP addresses or CIDRs of your trusted reverse proxies. Leave it empty when clients connect directly. The application uses this allowlist when reading forwarded client IP headers for rate limiting.
+{{/if}}
+
+{{#if usePrisma}}
+## Database Setup
+
+This project uses **Prisma** as the ORM. Available commands:
+
+```bash
+{{#if isPnpm}}pnpm prisma:generate{{else if isYarn}}yarn prisma:generate{{else if isBun}}bun run prisma:generate{{else}}npm run prisma:generate{{/if}}
+{{#if isPnpm}}pnpm prisma:push{{else if isYarn}}yarn prisma:push{{else if isBun}}bun run prisma:push{{else}}npm run prisma:push{{/if}}
+{{#if isPnpm}}pnpm prisma:studio{{else if isYarn}}yarn prisma:studio{{else if isBun}}bun run prisma:studio{{else}}npm run prisma:studio{{/if}}
+{{#if isPnpm}}pnpm prisma:migrate{{else if isYarn}}yarn prisma:migrate{{else if isBun}}bun run prisma:migrate{{else}}npm run prisma:migrate{{/if}}
+{{#if isPnpm}}pnpm prisma:migrate:deploy{{else if isYarn}}yarn prisma:migrate:deploy{{else if isBun}}bun run prisma:migrate:deploy{{else}}npm run prisma:migrate:deploy{{/if}}
+```
+{{#if hasSqlserver}}
+
+Set `SQLSERVER_HOST`, `SQLSERVER_PORT`, `SQLSERVER_DATABASE`, `SQLSERVER_USER`, and `SQLSERVER_PASSWORD` in `.env` before running Prisma commands. The SQL Server database must already exist. The generated password is a development-only example that satisfies SQL Server's password policy; replace it with a unique secret before sharing the project or deploying it. For local development, set `SQLSERVER_TRUST_SERVER_CERTIFICATE=true` when using a self-signed certificate; keep certificate validation enabled for production.
+{{/if}}
+{{/if}}
+
+{{#if useDrizzle}}
+## Database Setup
+
+This project uses **Drizzle** as the ORM. Available commands:
+
+```bash
+{{#if isPnpm}}pnpm db:generate{{else if isYarn}}yarn db:generate{{else if isBun}}bun run db:generate{{else}}npm run db:generate{{/if}}
+{{#if isPnpm}}pnpm db:migrate{{else if isYarn}}yarn db:migrate{{else if isBun}}bun run db:migrate{{else}}npm run db:migrate{{/if}}
+{{#if isPnpm}}pnpm db:studio{{else if isYarn}}yarn db:studio{{else if isBun}}bun run db:studio{{else}}npm run db:studio{{/if}}
+{{#if isPnpm}}pnpm db:push{{else if isYarn}}yarn db:push{{else if isBun}}bun run db:push{{else}}npm run db:push{{/if}}
+```
+{{/if}}
+
+{{#if useTypeorm}}
+## Database Setup
+
+This project uses **TypeORM** as the ORM. Available commands:
+
+```bash
+{{#if isPnpm}}pnpm typeorm:run{{else if isYarn}}yarn typeorm:run{{else if isBun}}bun run typeorm:run{{else}}npm run typeorm:run{{/if}}
+{{#if isPnpm}}pnpm typeorm:revert{{else if isYarn}}yarn typeorm:revert{{else if isBun}}bun run typeorm:revert{{else}}npm run typeorm:revert{{/if}}
+{{#if isPnpm}}pnpm typeorm:generate{{else if isYarn}}yarn typeorm:generate{{else if isBun}}bun run typeorm:generate{{else}}npm run typeorm:generate{{/if}}
+{{#if isPnpm}}pnpm typeorm:create{{else if isYarn}}yarn typeorm:create{{else if isBun}}bun run typeorm:create{{else}}npm run typeorm:create{{/if}}
+```
+{{/if}}
+
+{{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless"))}}
+## Auth Setup
+
+{{#if (eq auth "better-auth:stateless")}}
+This project uses **Better Auth** with encrypted stateless cookie sessions and an external OpenID Connect provider. Set `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `OIDC_PROVIDER_ID`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET`, and `OIDC_DISCOVERY_URL` in `.env`. Register `${BETTER_AUTH_URL}/api/auth/callback/${OIDC_PROVIDER_ID}` with the provider, then begin the authorization-code flow through Better Auth's social sign-in endpoint. The generated configuration uses discovery, PKCE, and issuer validation.
+
+No local registration, password login, database migration, or immediate server-side revocation is included in this profile.
+{{else}}
+This project uses **Better Auth** with database-backed sessions. Set `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL` in `.env` before running the generated scripts.
+
+Run `auth:generate` with your package manager. The script uses the installed CLI version.
+{{#if usePrisma}}
+{{#if hasMongodb}}
+`auth:generate` normalizes MongoDB IDs and writes auth models to `src/database/orm/prisma/auth.prisma`, using `auth-schema.prisma` as intermediate CLI output. Then run `prisma:push` and `prisma:generate`, as shown in Setup.
+{{else}}
+`auth:generate` updates auth models in `src/database/orm/prisma/schema.prisma`. For local development, run `prisma:push` and then `prisma:generate`, as shown in Setup. For a workflow with migration history, use `prisma:migrate --name auth` instead of pushing the schema and then regenerate the client. For deployments, apply the committed migrations with `prisma:migrate:deploy`.
+{{/if}}
+Inspect the schema diff after changing plugins.
+{{else if useDrizzle}}
+For local development, run `db:push`, as shown in Setup. For a workflow with migration history, use `db:generate` and `db:migrate` instead. Auth owns `src/database/orm/drizzle/auth-schema.ts`; application tables remain in `schema.ts`. Commit generated migration files. SQLite requires no Docker service.
+{{else}}
+Then run `auth:migrate` and `build`.
+{{/if}}
+
+The runtime auth module receives the database client owned by Nest. CLI schema discovery uses separate configuration. `GET /api/auth-profile` is a protected example for the Prisma and Drizzle profiles.
+{{/if}}
+
+### Usage
+
+Access the authenticated user's session in any controller with full type safety (including better-auth plugins):
+
+```typescript
+import { Controller, Get } from "@nestjs/common";
+import { Session } from "@thallesp/nestjs-better-auth";
+import type { UserSession } from "./auth/auth.js";
+
+@Controller()
+export class AppController {
+  @Get()
+  getSession(@Session() session: UserSession): UserSession {
+    return session;
+  }
+}
+```
+{{/if}}
+{{#if hasTrpc}}
+## tRPC Setup
+
+This project uses **nestjs-trpc** with decorator-based routing.
+
+### Generating tRPC Types
+
+After creating or modifying routers, generate the tRPC types:
+
+```bash
+{{#if isPnpm}}pnpm trpc:generate{{else if isYarn}}yarn trpc:generate{{else if isBun}}bun run trpc:generate{{else}}npm run trpc:generate{{/if}}
+```
+
+For watch mode (auto-regenerates on changes):
+
+```bash
+{{#if isPnpm}}pnpm trpc:watch{{else if isYarn}}yarn trpc:watch{{else if isBun}}bun run trpc:watch{{else}}npm run trpc:watch{{/if}}
+```
+
+{{#if hasTrpcAndAuth}}
+### Router Example (with Auth)
+
+Routers are defined using the `@Router` decorator from `nestjs-trpc`. **Router names must start with a lowercase letter.**
+
+```typescript
+import { Router, Query, UseMiddlewares, Ctx } from "nestjs-trpc";
+import z from "zod";
+
+import { AppService } from "./app.service.js";
+import type { UserSession } from "./auth/auth.js";
+import { AuthTRPCMiddleware } from "./libs/middlewares/auth.trpc.middleware.js";
+import type { InnerContext } from "./libs/trpc/inner.context.js";
+
+@Router({ alias: "appRouter" })
+export class AppRouterClass {
+  constructor(private readonly appService: AppService) {}
+
+  @Query()
+  @UseMiddlewares(AuthTRPCMiddleware)
+  testAuth(@Ctx() ctx: InnerContext): UserSession {
+    return ctx.session!;
+  }
+
+  @Query({ output: z.string() })
+  getHello(): string {
+    return this.appService.getHello();
+  }
+}
+```
+{{else}}
+### Router Example
+
+Routers are defined using the `@Router` decorator from `nestjs-trpc`. **Router names must start with a lowercase letter.**
+
+```typescript
+import { Router, Query } from "nestjs-trpc";
+import z from "zod";
+
+@Router({ alias: "appRouter" })
+export class AppRouterClass {
+  constructor(private readonly appService: AppService) {}
+
+  @Query({ output: z.string() })
+  getHello(): string {
+    return this.appService.getHello();
+  }
+}
+```
+{{/if}}
+
+Import the router in your module:
+
+```typescript
+import { AppRouterClass as AppRouter } from "./app.router.js";
+
+@Module({
+  providers: [AppRouter],
+})
+export class AppModule {}
+```
+{{/if}}
+
+{{#if isPassportAuth}}
+## Passport authentication
+
+{{#if hasDatabase}}
+Set a random `JWT_ACCESS_SECRET` of at least 32 characters. Configure `JWT_ISSUER`, `JWT_AUDIENCE`, and `JWT_KEY_ID` consistently across instances. Apply Prisma migrations before starting.
+
+Register with `POST /api/auth/register` and sign in with `POST /api/auth/login`, using `{ "email": "user@example.com", "password": "a-long-unique-password" }`. Send the returned access token in `Authorization: Bearer <token>` to `GET /api/auth/profile`. Access tokens expire after 15 minutes. Passwords are hashed with bcrypt; token payloads contain no password or role supplied by the client.
+
+Refresh with `POST /api/auth/refresh` and `{ "refreshToken": "..." }`. Refresh tokens rotate on every use and expire seven days after login. Reusing a consumed token revokes the entire login session, including access tokens. Concurrent refresh requests therefore require client-side serialization. `POST /api/auth/logout` takes the same body and revokes that login session. Tokens are returned in JSON; no cookie transport is generated.
+
+Only hashes of refresh tokens are stored. Schedule deletion of expired refresh-token families according to your retention policy. Secret replacement invalidates existing access tokens; overlapping signing keys are not implemented in this baseline.
+{{else}}
+Configure `OIDC_JWKS_URI`, `OIDC_ISSUER`, and `OIDC_AUDIENCE` for your trusted identity provider. Send its RS256 access token in `Authorization: Bearer <token>` to `GET /api/auth/profile`. The API verifies the signature using the provider's cached, rate-limited JWKS keys and checks the issuer, audience, and expiration. This API does not accept passwords or issue local tokens.
+{{/if}}
+{{/if}}
+{{#if hasGraphql}}
+## GraphQL
+
+Send queries to `POST /graphql`. `{ hello }` is always available. With the Todo example, `todos`, `createTodo`, `updateTodo`, and `deleteTodo` operate on PostgreSQL. The first profile is unauthenticated; it does not include subscriptions or federation.
+{{/if}}
+{{#if hasMongodb}}
+## MongoDB
+
+Set `MONGODB_URL` including the database name. The native client connects and pings MongoDB during startup and closes with the Nest application. No Prisma migration commands are required. Todo identifiers are serialized ObjectId strings; malformed IDs return 400 and missing mutation targets return 404. Listing returns at most 100 items in identifier order. This baseline performs single-document writes and does not promise multi-document transactions.
+{{/if}}
+{{#if docker}}
+## Docker Compose
+
+Start the application and its database with `docker compose up --build`. Compose publishes the API on `127.0.0.1:3000` by default (Fastify uses `3001`). If that host port is already in use or reserved, set `APP_PORT` to a free host port before starting; the container's internal port stays unchanged. In PowerShell, for example: `$env:APP_PORT = "3100"; docker compose up --build`.
+{{#if hasSqlserver}}
+Compose also publishes SQL Server on `127.0.0.1:1433` so Prisma commands run on the host can connect. The API container uses the internal `sqlserver:1433` address. If host port 1433 is occupied, change `SQLSERVER_PORT` in `.env`; keep the API container's internal database port at 1433.
+{{/if}}
+{{/if}}

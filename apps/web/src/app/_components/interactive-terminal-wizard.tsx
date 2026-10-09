@@ -9,8 +9,12 @@ import {
   Sparkles,
 } from "lucide-react";
 import * as React from "react";
+import dynamic from "next/dynamic";
 import { trackAnalyticsEvent } from "@/lib/analytics";
 import { useUi } from "@/components/locale-provider";
+import { previewMessages } from "@/lib/project-preview/messages";
+
+const ProjectExplorer = dynamic(() => import("@/components/project-explorer"), { ssr: false });
 
 // ==========================================
 // Types & Interfaces
@@ -21,7 +25,7 @@ export type FormatterOption = "biome" | "oxlint-oxfmt" | "none";
 export type HttpProvider = "express" | "fastify";
 export type ProjectType = "single" | "monorepo";
 export type Architecture = "nest-api" | "nest-gateway" | "nest-microservice";
-export type Database = "postgresql" | "mysql" | "sqlite" | "mongodb";
+export type Database = "postgresql" | "mysql" | "sqlite" | "mongodb" | "sqlserver";
 export type Orm = "prisma" | "typeorm" | "drizzle";
 export type ApiOption = "rest" | "trpc" | "graphql";
 export type AuthOption =
@@ -37,7 +41,7 @@ export type ExtraOption =
   | "packages/shared"
   | "todo-example"
   | "typescript-7";
-export type AddonOption = "agent-skills" | "husky" | "ultracite" | "scalar-ui";
+export type AddonOption = "agent-skills" | "husky" | "ultracite" | "scalar-ui" | "nestjs-zod";
 export type MicroserviceOption =
   | "redis"
   | "mqtt"
@@ -181,11 +185,6 @@ const PROJECT_TYPE_OPTIONS: WizardOption<ProjectType>[] = [
     label: "Single project",
     value: "single",
   },
-  {
-    description: "Multiple apps and shared packages",
-    label: "Monorepo (Turborepo)",
-    value: "monorepo",
-  },
 ];
 
 const ARCHITECTURE_OPTIONS: WizardOption<Architecture>[] = [
@@ -207,6 +206,7 @@ const ARCHITECTURE_OPTIONS: WizardOption<Architecture>[] = [
 ];
 
 const DATABASE_OPTIONS: WizardOption<Database>[] = [
+  { description: "Microsoft SQL Server", label: "SQL Server", value: "sqlserver" },
   {
     description: "Relational database with strong ecosystem",
     label: "PostgreSQL",
@@ -329,6 +329,7 @@ const EXTRA_OPTIONS: WizardOption<ExtraOption>[] = [
 ];
 
 const ADDON_OPTIONS: WizardOption<AddonOption>[] = [
+  { description: "Zod-based DTO validation", label: "NestJS-Zod", value: "nestjs-zod" },
   {
     description: "Cursor agent skills library (.agents/skills)",
     label: "Agent Skills",
@@ -601,13 +602,14 @@ function validateProjectName(name: string): string | null {
 
 function getVisibleSteps(state: CreateProjectWizardState): WizardStepId[] {
   return WIZARD_STEP_ORDER.filter((step) => {
+    if (step === "projectType") return false;
     if (step === "orm" && state.database.length === 0) {
       return false;
     }
     if (step === "auth" && state.api.length === 0) {
       return false;
     }
-    if (step === "microservices" && state.architecture !== "nest-gateway") {
+    if (step === "microservices" && state.architecture !== "nest-microservice") {
       return false;
     }
     if (
@@ -714,7 +716,7 @@ const INITIAL_STATE: CreateProjectWizardState = {
   orm: [],
   packageManager: null,
   projectName: "",
-  projectType: null,
+  projectType: "single",
   ultraciteAgents: [],
   ultraciteEditors: [],
   ultraciteHooks: [],
@@ -729,6 +731,7 @@ export const InteractiveTerminalWizard = ({
   onClose,
 }: InteractiveTerminalWizardProps) => {
   const { locale } = useUi();
+  const [isExplorerOpen, setIsExplorerOpen] = React.useState(false);
   const [state, setState] =
     React.useState<CreateProjectWizardState>(INITIAL_STATE);
   const [stepId, setStepId] = React.useState<WizardStepId>("projectName");
@@ -817,7 +820,7 @@ export const InteractiveTerminalWizard = ({
           value: "none",
         };
         const ormOpts = state.database.includes("mongodb")
-          ? ORM_OPTIONS.filter((o) => o.value !== "drizzle")
+          ? []
           : ORM_OPTIONS;
         return {
           isMulti: false,
@@ -850,7 +853,7 @@ export const InteractiveTerminalWizard = ({
       case "extras":
         return {
           isMulti: true,
-          options: EXTRA_OPTIONS,
+          options: EXTRA_OPTIONS.filter((option) => option.value !== "packages/shared"),
           prompt: "Select extras (optional)",
         };
       case "microservices":
@@ -1124,6 +1127,7 @@ export const InteractiveTerminalWizard = ({
   // Keyboard navigation
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (isExplorerOpen) return;
       // Don't intercept if typing in text input unless Enter
       if (stepId === "projectName") {
         if (e.key === "Enter") {
@@ -1196,6 +1200,8 @@ export const InteractiveTerminalWizard = ({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [
+    isExplorerOpen,
+    onClose,
     stepId,
     currentStepConfig,
     focusedIndex,
@@ -1383,6 +1389,7 @@ export const InteractiveTerminalWizard = ({
     >
       {/* Terminal Title Bar */}
       <div className="bg-muted relative flex shrink-0 items-center justify-between border-b px-4 py-1.5">
+        {isExplorerOpen && <ProjectExplorer state={{ ...state }} projectName={resolveProjectName(state.projectName)} onClose={() => setIsExplorerOpen(false)} />}
         <div className="border-border bg-muted/60 flex items-center gap-2">
           <span className="inline-block h-2.5 w-2.5 rounded-full bg-red-500/80" />
           <span className="inline-block h-2.5 w-2.5 rounded-full bg-amber-500/80" />
@@ -1660,6 +1667,9 @@ export const InteractiveTerminalWizard = ({
               </div>
 
               <div className="shrink-0 pt-1">
+                <button type="button" onClick={() => setIsExplorerOpen(true)} className="mr-3 inline-flex items-center gap-2 rounded-md border border-white/20 px-4 py-2 font-mono text-xs font-semibold text-zinc-200 hover:bg-white/10">
+                  {previewMessages[locale].explore}
+                </button>
                 <button
                   type="button"
                   onClick={() => setStepId("installing")}

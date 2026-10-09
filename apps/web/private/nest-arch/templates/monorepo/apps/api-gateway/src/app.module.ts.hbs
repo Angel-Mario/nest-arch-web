@@ -1,0 +1,106 @@
+import { Module } from "@nestjs/common";
+{{#if (or hasDatabase hasOrm)}}
+{{#if isMonorepo}}
+import { DbModule } from "@repo/db";
+{{else}}
+import { DbModule } from "./database/db.module.js";
+{{/if}}
+import { env } from "@repo/env/api-gateway";
+{{/if}}
+{{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless"))}}
+import { AuthModule } from "./auth/auth.module.js";
+{{/if}}
+{{#if hasGraphql}}
+import { GraphqlAppModule } from "./graphql/graphql.module.js";
+{{/if}}
+{{#if hasTrpc}}
+import { TRPCModule } from "nestjs-trpc";
+import { AppRouterClass as AppRouter } from "./app.router.js";
+import { AppContext } from "./libs/trpc/context.js";
+import { AppErrorHandler } from "./libs/trpc/error.handler.js";
+{{#if hasTrpcAndAuth}}
+import { AuthTRPCMiddleware } from "./libs/middlewares/auth.trpc.middleware.js";
+{{/if}}
+{{#if (and hasTrpc hasRateLimiting)}}
+import { RateLimitTRPCMiddleware } from "./libs/middlewares/rate-limit.trpc.middleware.js";
+{{/if}}
+{{/if}}
+{{#if hasRateLimiting}}
+import { APP_GUARD } from "@nestjs/core";
+import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+{{/if}}
+
+import { AppController } from "./app.controller.js";
+{{#if (and hasTodoExample (or hasRest hasTrpc))}}
+import { TodoModule } from "./api/todo/todo.module.js";
+{{/if}}
+{{#if (and hasTrpc hasTodoExample hasRest)}}
+import { TodoRouter } from "./api/todo/todo.router.js";
+{{/if}}
+import { AppService } from "./app.service.js";
+
+@Module({
+  controllers: [
+    AppController,
+  ],
+  imports: [
+    {{#if (or hasDatabase hasOrm)}}
+    DbModule.forRoot({
+      {{#if hasPostgres}}postgresUrl: env.POSTGRES_URL,{{/if}}
+      {{#if hasMysql}}mysqlUrl: env.MYSQL_URL,{{/if}}
+      {{#if hasSqlite}}sqlitePath: env.SQLITE_PATH,{{/if}}
+      {{#if hasMongodb}}mongodbUrl: env.MONGODB_URL,{{/if}}
+    }),
+    {{/if}}
+    {{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless"))}}
+    AuthModule,
+    {{/if}}
+    {{#if hasGraphql}}
+    GraphqlAppModule,
+    {{/if}}
+    {{#if hasTrpc}}
+    TRPCModule.forRoot({
+      context: AppContext,
+      onError: AppErrorHandler,
+      {{#if hasRateLimiting}}
+      globalMiddlewares: [RateLimitTRPCMiddleware],
+      {{/if}}
+    }),
+    {{/if}}
+    {{#if hasRateLimiting}}
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60_000,
+        limit: 60,
+      },
+    ]),
+    {{/if}}
+    {{#if (and hasTodoExample (or hasRest hasTrpc))}}
+    TodoModule,
+    {{/if}}
+  ],
+  providers: [
+    AppService,
+    {{#if hasTrpc}}
+    {{#if hasTrpcAndAuth}}
+    AuthTRPCMiddleware,
+    {{/if}}
+    {{#if hasRateLimiting}}
+    RateLimitTRPCMiddleware,
+    {{/if}}
+    AppContext,
+    AppErrorHandler,
+    AppRouter,
+    {{#if (and hasTrpc hasTodoExample hasRest)}}
+    TodoRouter,
+    {{/if}}
+    {{/if}}
+    {{#if hasRateLimiting}}
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+    {{/if}}
+  ],
+})
+export class AppModule {}

@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package app;
+
+service AppService {
+  rpc Ping (PingRequest) returns (PingResponse);
+  rpc Log (LogRequest) returns (LogResponse);
+  {{#if (and hasDatabase hasTodoExample)}}
+  rpc CreateTodo (CreateTodoRequest) returns (StorageResponse);
+  rpc ListTodos (PingRequest) returns (StorageResponse);
+  {{/if}}
+}
+
+message PingRequest {}
+{{#if (and hasDatabase hasTodoExample)}}
+message CreateTodoRequest {
+  string title = 1;
+}
+
+message StorageResponse {
+  string json = 1;
+}
+{{/if}}
+
+message PingResponse {
+  string message = 1;
+}
+
+message LogRequest {
+  string id = 1;
+  string source = 2;
+  string payload = 3;
+}
+
+message LogResponse {
+  string id = 1;
+  string source = 2;
+  string payload = 3;
+}

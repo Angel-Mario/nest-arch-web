@@ -1,0 +1,578 @@
+{
+  "generatorVersion": "0.5.0",
+  "options": {
+    "STEP_LABELS": {
+      "addons": "Addons",
+      "apiLayer": "API layer",
+      "architecture": "Architecture",
+      "auth": "Authentication",
+      "database": "Database",
+      "done": "Done",
+      "extras": "Extras",
+      "formatter": "Formatter",
+      "httpProvider": "HTTP provider",
+      "initGit": "Git repository",
+      "installDependencies": "Install dependencies",
+      "installing": "Installing",
+      "microservices": "Microservices communication",
+      "orm": "ORM",
+      "packageManager": "Package manager",
+      "prismaVersion": "Prisma version",
+      "projectName": "Project name",
+      "projectType": "Project type",
+      "summary": "Summary",
+      "ultraciteAgents": "Ultracite agents",
+      "ultraciteEditors": "Ultracite editors",
+      "ultraciteHooks": "Ultracite hooks",
+      "ultraciteInstallSkill": "Ultracite skill"
+    },
+    "addonOptions": [
+      {
+        "description": "Cursor agent skills library (.agents/skills)",
+        "label": "Agent Skills",
+        "value": "agent-skills"
+      },
+      {
+        "description": "Git hooks for pre-commit checks",
+        "label": "Husky",
+        "value": "husky"
+      },
+      {
+        "description": "Configurate ultracite for your developer tools",
+        "label": "Ultracite",
+        "value": "ultracite"
+      },
+      {
+        "description": "Zod-based DTO validation",
+        "label": "NestJS-Zod",
+        "value": "nestjs-zod"
+      },
+      {
+        "description": "Modern OpenAPI documentation UI",
+        "label": "Scalar UI (Recommended)",
+        "value": "scalar-ui"
+      }
+    ],
+    "apiOptions": [
+      {
+        "description": "Express with PostgreSQL/Prisma 7 (no authentication)",
+        "label": "GraphQL",
+        "value": "graphql"
+      },
+      {
+        "description": "RESTful HTTP endpoints",
+        "label": "REST",
+        "value": "rest"
+      },
+      {
+        "description": "End-to-end typesafe APIs",
+        "label": "tRPC",
+        "value": "trpc"
+      }
+    ],
+    "architectureOptions": [
+      {
+        "description": "Standard REST or GraphQL API application",
+        "label": "NestJS API",
+        "value": "nest-api"
+      },
+      {
+        "description": "Gateway routing for microservices (monorepo only)",
+        "label": "NestJS API Gateway",
+        "value": "nest-gateway"
+      },
+      {
+        "description": "Message-based or RPC microservice",
+        "label": "NestJS Microservice",
+        "value": "nest-microservice"
+      }
+    ],
+    "authOptions": [
+      {
+        "description": "Express/REST with PostgreSQL/Prisma 7",
+        "label": "Passport",
+        "value": "passport"
+      },
+      {
+        "description": "No authentication scaffolding",
+        "label": "None",
+        "value": "none"
+      },
+      {
+        "description": "Database-backed sessions with native PostgreSQL, Prisma 7/PostgreSQL, or Drizzle/SQLite",
+        "label": "Better Auth",
+        "value": "better-auth"
+      },
+      {
+        "description": "Database-free OIDC sessions stored in encrypted cookies",
+        "label": "Better Auth (stateless)",
+        "value": "better-auth:stateless"
+      }
+    ],
+    "databaseOptions": [
+      {
+        "description": "Native MongoDB with Express/REST (no ORM or authentication)",
+        "label": "MongoDB",
+        "value": "mongodb"
+      },
+      {
+        "description": "Relational database with strong ecosystem",
+        "label": "PostgreSQL",
+        "value": "postgresql"
+      },
+      {
+        "description": "Popular relational database",
+        "label": "MySQL",
+        "value": "mysql"
+      },
+      {
+        "description": "Microsoft SQL Server with Prisma 7",
+        "label": "SQL Server",
+        "value": "sqlserver"
+      },
+      {
+        "description": "Embedded database for local development",
+        "label": "Better SQLite",
+        "value": "sqlite"
+      }
+    ],
+    "extraOptions": [
+      {
+        "description": "Dockerfile and docker-compose setup",
+        "label": "Docker",
+        "value": "docker"
+      },
+      {
+        "description": "Terminus health check endpoints",
+        "label": "Health Check",
+        "value": "health-check"
+      },
+      {
+        "description": "Request throttling middleware",
+        "label": "Rate Limiting",
+        "value": "rate-limiting"
+      },
+      {
+        "description": "OpenAPI documentation",
+        "label": "Swagger",
+        "value": "swagger"
+      },
+      {
+        "description": "Shared packages for API types in a monorepo",
+        "label": "packages/shared",
+        "value": "packages/shared"
+      },
+      {
+        "description": "Scaffold a Todo CRUD example for a supported API/database combination",
+        "label": "Todo Example",
+        "value": "todo-example"
+      },
+      {
+        "description": "Latest TypeScript compiler — faster checking and new language features (default: TypeScript 6)",
+        "label": "TypeScript 7",
+        "value": "typescript-7"
+      }
+    ],
+    "formatterOptions": [
+      {
+        "description": "The modern, all-in-one toolchain written in Rust",
+        "label": "Biome",
+        "value": "biome"
+      },
+      {
+        "description": "The fastest linter available, 50-100x faster than ESLint",
+        "label": "Oxlint + Oxfmt",
+        "value": "oxlint-oxfmt"
+      },
+      {
+        "description": "No formatter and no linter. Welcome to the jungle",
+        "label": "(None)",
+        "value": "none"
+      }
+    ],
+    "httpProviderOptions": [
+      {
+        "description": "Default NestJS HTTP adapter",
+        "label": "Express",
+        "value": "express"
+      },
+      {
+        "description": "High-performance HTTP adapter",
+        "label": "Fastify",
+        "value": "fastify"
+      }
+    ],
+    "initGitOptions": [
+      {
+        "description": "Run git init and create initial commit",
+        "label": "Yes",
+        "value": "yes"
+      },
+      {
+        "description": "Skip git initialization",
+        "label": "No",
+        "value": "no"
+      }
+    ],
+    "installDependencyOptions": [
+      {
+        "description": "Install all project dependencies using the selected package manager",
+        "label": "Yes (Recommended)",
+        "value": "yes"
+      },
+      {
+        "description": "Skip dependency installation",
+        "label": "No",
+        "value": "no"
+      }
+    ],
+    "microserviceCommunicationOptions": [
+      {
+        "description": "Pub/sub or streaming protocol",
+        "label": "Redis",
+        "value": "redis"
+      },
+      {
+        "description": "Lightweight MQTT messaging",
+        "label": "MQTT",
+        "value": "mqtt"
+      },
+      {
+        "description": "Cloud-native messaging broker",
+        "label": "NATS",
+        "value": "nats"
+      },
+      {
+        "description": "Enterprise messaging with RabbitMQ",
+        "label": "RabbitMQ",
+        "value": "rabbitmq"
+      },
+      {
+        "description": "Highly scalable Kafka streaming",
+        "label": "Kafka",
+        "value": "kafka"
+      },
+      {
+        "description": "RPC-style gRPC communication",
+        "label": "gRPC",
+        "value": "grpc"
+      }
+    ],
+    "ormOptions": [
+      {
+        "description": "Prisma 7 with schema and migrations for PostgreSQL, MySQL, SQLite, and SQL Server",
+        "label": "Prisma",
+        "value": "prisma"
+      },
+      {
+        "description": "Decorator-based ORM for TypeScript",
+        "label": "TypeORM",
+        "value": "typeorm"
+      },
+      {
+        "description": "Lightweight SQL ORM (SQL only)",
+        "label": "Drizzle",
+        "value": "drizzle"
+      }
+    ],
+    "packageManagerOptions": [
+      {
+        "description": "Fast, disk-efficient package manager (recommended)",
+        "label": "pnpm",
+        "value": "pnpm"
+      },
+      {
+        "description": "Default Node.js package manager",
+        "label": "npm",
+        "value": "npm"
+      },
+      {
+        "description": "Classic alternative with workspaces support",
+        "label": "yarn",
+        "value": "yarn"
+      },
+      {
+        "description": "A superfast Node.js-compatible package manager",
+        "label": "bun",
+        "value": "bun"
+      }
+    ],
+    "prismaVersionOptions": [
+      {
+        "description": "Classic Prisma ORM with driver adapters for PostgreSQL, MySQL, and SQLite",
+        "label": "Prisma 7",
+        "value": "7"
+      }
+    ],
+    "projectTypeOptions": [
+      {
+        "description": "Standalone NestJS application",
+        "label": "Single project",
+        "value": "single"
+      }
+    ],
+    "ultraciteAgentOptions": [
+      {
+        "description": "Universal (creates AGENTS.md for Codex, Jules, Devin, and more)",
+        "label": ".agents (Universal)",
+        "value": "universal"
+      },
+      {
+        "description": "Claude (creates .claude/CLAUDE.md)",
+        "label": "Claude",
+        "value": "claude"
+      },
+      {
+        "description": "Replit (creates replit.md)",
+        "label": "Replit",
+        "value": "replit"
+      },
+      {
+        "description": "Aider (creates ultracite.md)",
+        "label": "Aider",
+        "value": "aider"
+      },
+      {
+        "description": "Gemini (creates GEMINI.md)",
+        "label": "Gemini",
+        "value": "gemini"
+      },
+      {
+        "description": "Roo (creates .roo/rules/ultracite.md)",
+        "label": "Roo",
+        "value": "roo-code"
+      },
+      {
+        "description": "Amazon Q CLI (creates .amazonq/rules/ultracite.md)",
+        "label": "Amazon Q CLI",
+        "value": "amazon-q-cli"
+      },
+      {
+        "description": "Firebender (creates firebender.json)",
+        "label": "Firebender",
+        "value": "firebender"
+      }
+    ],
+    "ultraciteEditorOptions": [
+      {
+        "description": "Universal (creates .vscode/settings.json for Visual Studio Code, Cursor, Windsurf, and more)",
+        "label": "Universal",
+        "value": "universal"
+      },
+      {
+        "description": "Zed (creates .zed/settings.json)",
+        "label": "Zed",
+        "value": "zed"
+      }
+    ],
+    "ultraciteHookOptions": [
+      {
+        "description": "Cursor agent hooks",
+        "label": "Cursor",
+        "value": "cursor"
+      },
+      {
+        "description": "Windsurf agent hooks",
+        "label": "Windsurf",
+        "value": "windsurf"
+      },
+      {
+        "description": "CodeBuddy agent hooks",
+        "label": "CodeBuddy",
+        "value": "codebuddy"
+      },
+      {
+        "description": "Claude agent hooks",
+        "label": "Claude",
+        "value": "claude"
+      }
+    ],
+    "ultraciteInstallSkillOptions": [
+      {
+        "description": "Install the reusable Ultracite skill after setup",
+        "label": "Yes",
+        "value": "yes"
+      },
+      {
+        "description": "Skip installing the Ultracite skill",
+        "label": "No",
+        "value": "no"
+      }
+    ]
+  },
+  "presets": [
+    {
+      "config": {
+        "addons": [],
+        "api": [
+          "rest"
+        ],
+        "architecture": "nest-api",
+        "auth": "none",
+        "database": [],
+        "extras": [],
+        "formatter": "none",
+        "httpProvider": "express",
+        "microservices": [],
+        "orm": [],
+        "packageManager": "pnpm",
+        "projectType": "single",
+        "ultraciteAgents": [],
+        "ultraciteEditors": [],
+        "ultraciteHooks": [],
+        "ultraciteInstallSkill": "no"
+      },
+      "id": "rest",
+      "key": "6bf11d286ad0fbd72be92164c709413bc9ec34ce28457421a871ef27e90a5808",
+      "label": "NestJS REST",
+      "url": "/project-previews/0.5.0-749389f0498bd1961226/6bf11d286ad0fbd72be92164c709413bc9ec34ce28457421a871ef27e90a5808.json"
+    },
+    {
+      "config": {
+        "addons": [],
+        "api": [
+          "rest"
+        ],
+        "architecture": "nest-api",
+        "auth": "none",
+        "database": [
+          "postgresql"
+        ],
+        "extras": [],
+        "formatter": "none",
+        "httpProvider": "express",
+        "microservices": [],
+        "orm": [
+          "prisma"
+        ],
+        "packageManager": "pnpm",
+        "projectType": "single",
+        "ultraciteAgents": [],
+        "ultraciteEditors": [],
+        "ultraciteHooks": [],
+        "ultraciteInstallSkill": "no",
+        "prismaVersion": "7"
+      },
+      "id": "postgresql",
+      "key": "c55b236121d5be0de18915cbaf25038f12a7957c90bd54a755d988732898abcd",
+      "label": "PostgreSQL + Prisma",
+      "url": "/project-previews/0.5.0-749389f0498bd1961226/c55b236121d5be0de18915cbaf25038f12a7957c90bd54a755d988732898abcd.json"
+    },
+    {
+      "config": {
+        "addons": [],
+        "api": [
+          "rest"
+        ],
+        "architecture": "nest-api",
+        "auth": "none",
+        "database": [
+          "sqlserver"
+        ],
+        "extras": [],
+        "formatter": "none",
+        "httpProvider": "express",
+        "microservices": [],
+        "orm": [
+          "prisma"
+        ],
+        "packageManager": "pnpm",
+        "projectType": "single",
+        "ultraciteAgents": [],
+        "ultraciteEditors": [],
+        "ultraciteHooks": [],
+        "ultraciteInstallSkill": "no",
+        "prismaVersion": "7"
+      },
+      "id": "sqlserver",
+      "key": "ed9e3bf44ee33e60855da0224ba01fa828aff6959d712a548edb34543a35c1c2",
+      "label": "SQL Server + Prisma",
+      "url": "/project-previews/0.5.0-749389f0498bd1961226/ed9e3bf44ee33e60855da0224ba01fa828aff6959d712a548edb34543a35c1c2.json"
+    },
+    {
+      "config": {
+        "addons": [],
+        "api": [
+          "rest"
+        ],
+        "architecture": "nest-api",
+        "auth": "none",
+        "database": [
+          "sqlite"
+        ],
+        "extras": [],
+        "formatter": "none",
+        "httpProvider": "express",
+        "microservices": [],
+        "orm": [
+          "drizzle"
+        ],
+        "packageManager": "pnpm",
+        "projectType": "single",
+        "ultraciteAgents": [],
+        "ultraciteEditors": [],
+        "ultraciteHooks": [],
+        "ultraciteInstallSkill": "no"
+      },
+      "id": "sqlite",
+      "key": "e2c49843018900f192dcfb2884552048e46c7fa1cf4fa17644e0ea83a23ffb4e",
+      "label": "SQLite + Drizzle",
+      "url": "/project-previews/0.5.0-749389f0498bd1961226/e2c49843018900f192dcfb2884552048e46c7fa1cf4fa17644e0ea83a23ffb4e.json"
+    },
+    {
+      "config": {
+        "addons": [],
+        "api": [
+          "rest"
+        ],
+        "architecture": "nest-api",
+        "auth": "none",
+        "database": [
+          "mongodb"
+        ],
+        "extras": [],
+        "formatter": "none",
+        "httpProvider": "express",
+        "microservices": [],
+        "orm": [],
+        "packageManager": "pnpm",
+        "projectType": "single",
+        "ultraciteAgents": [],
+        "ultraciteEditors": [],
+        "ultraciteHooks": [],
+        "ultraciteInstallSkill": "no"
+      },
+      "id": "mongodb",
+      "key": "89d4e032cad8242d1c596198c70fda501e2bedf8047d8a0742c041cb704994ed",
+      "label": "MongoDB",
+      "url": "/project-previews/0.5.0-749389f0498bd1961226/89d4e032cad8242d1c596198c70fda501e2bedf8047d8a0742c041cb704994ed.json"
+    },
+    {
+      "config": {
+        "addons": [],
+        "api": [],
+        "architecture": "nest-microservice",
+        "auth": "none",
+        "database": [],
+        "extras": [],
+        "formatter": "none",
+        "httpProvider": "express",
+        "microservices": [
+          "redis"
+        ],
+        "orm": [],
+        "packageManager": "pnpm",
+        "projectType": "single",
+        "ultraciteAgents": [],
+        "ultraciteEditors": [],
+        "ultraciteHooks": [],
+        "ultraciteInstallSkill": "no"
+      },
+      "id": "redis",
+      "key": "2826a6f35819a368bec65b0112a9a221988c643675c6af5097f2cba8ddacff12",
+      "label": "Redis microservice",
+      "url": "/project-previews/0.5.0-749389f0498bd1961226/2826a6f35819a368bec65b0112a9a221988c643675c6af5097f2cba8ddacff12.json"
+    }
+  ],
+  "version": "0.5.0-749389f0498bd1961226"
+}

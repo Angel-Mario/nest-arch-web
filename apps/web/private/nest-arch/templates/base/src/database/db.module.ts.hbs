@@ -1,0 +1,283 @@
+{{#if isPrisma8}}
+import { DynamicModule, Global, Module } from "@nestjs/common";
+import { DbService } from "./db.service.js";
+
+@Global()
+@Module({})
+export class DbModule {
+  static forRoot(_options?: unknown): DynamicModule {
+    return { exports: [DbService], module: DbModule, providers: [DbService] };
+  }
+}
+{{else}}
+import { DynamicModule, Module, Global, Provider } from '@nestjs/common';
+import { DbService } from './db.service.js';
+
+{{#if usePrisma}}
+{{#if isMonorepo}}
+{{#if isPrisma6}}
+import { PrismaClient } from '@prisma/client';
+{{else}}
+import { PrismaClient } from './database/orm/prisma/generated/client.js';
+{{/if}}
+{{else}}
+{{#if isPrisma6}}
+import { PrismaClient } from '@prisma/client';
+{{else}}
+import { PrismaClient } from '../database/orm/prisma/generated/client.js';
+{{/if}}
+{{/if}}
+  {{#if (or hasPostgres hasMysql hasSqlite hasSqlserver)}}
+import { PrismaSqlAdapter } from './adapters/sql/prisma-sql.adapter.js';
+  {{/if}}
+  {{#if hasPostgres}}
+import { PrismaPg } from '@prisma/adapter-pg';
+  {{/if}}
+  {{#if hasMysql}}
+import { PrismaMariaDb } from '@prisma/adapter-mariadb';
+  {{/if}}
+  {{#if hasSqlite}}
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+  {{/if}}
+  {{#if hasSqlserver}}
+import { PrismaMssql } from '@prisma/adapter-mssql';
+  {{/if}}
+  {{#if hasMongodb}}
+import { PrismaMongoAdapter } from './adapters/mongo/prisma-mongo.adapter.js';
+  {{/if}}
+{{/if}}
+
+{{#if useDrizzle}}
+import { DrizzleSqlAdapter } from './adapters/sql/drizzle-sql.adapter.js';
+{{#if isMonorepo}}
+import * as schema from './database/orm/drizzle/schema.js';
+{{else}}
+import * as schema from './orm/drizzle/schema.js';
+{{/if}}
+  {{#if hasPostgres}}
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from "pg"
+  {{/if}}
+  {{#if hasMysql}}
+import { drizzle } from 'drizzle-orm/mysql2';
+import mysql from 'mysql2/promise';
+  {{/if}}
+  {{#if hasSqlite}}
+import { drizzle } from 'drizzle-orm/better-sqlite3';
+import Database from 'better-sqlite3';
+  {{/if}}
+{{#if hasSqlserver}}
+import { drizzle } from 'drizzle-orm/node-mssql';
+import sql from 'mssql';
+  {{/if}}
+{{/if}}
+
+{{#if useTypeorm}}
+{{#if hasMongodb}}
+import { TypeormMongoAdapter } from './adapters/mongo/typeorm-mongo.adapter.js';
+{{else}}
+import { TypeormSqlAdapter } from './adapters/sql/typeorm-sql.adapter.js';
+{{/if}}
+import { AppDataSource } from "./orm/typeorm/data-source.js";
+{{/if}}
+
+{{#if useRawSql}}
+  {{#if (or hasPostgres hasMysql hasSqlite)}}
+import { RawSqlAdapter } from './adapters/sql/raw-sql.adapter.js';
+    {{#if hasPostgres}}
+import { Pool } from "pg"
+    {{/if}}
+    {{#if hasMysql}}
+import mysql from 'mysql2';
+    {{/if}}
+    {{#if hasSqlite}}
+import Database from 'better-sqlite3';
+    {{/if}}
+  {{/if}}
+  {{#if hasMongodb}}
+import { RawMongoAdapter } from './adapters/mongo/raw-mongo.adapter.js';
+import { MongoClient } from 'mongodb';
+  {{/if}}
+{{/if}}
+
+export interface DbModuleOptions {
+  {{#if hasPostgres}}
+  postgresUrl?: string;
+  {{/if}}
+  {{#if hasMysql}}
+  mysqlUrl?: string;
+  {{/if}}
+  {{#if hasSqlite}}
+  sqlitePath?: string;
+  {{/if}}
+  {{#if hasSqlserver}}
+  sqlserver?: { server: string; port: number; database: string; user: string; password: string; options: { encrypt: boolean; trustServerCertificate: boolean } };
+  {{/if}}
+  {{#if hasMongodb}}
+  mongodbUrl?: string;
+  {{/if}}
+  {{#if useTypeorm}}
+  entities?: string[];
+  {{/if}}
+}
+
+@Global()
+@Module({})
+export class DbModule {
+  {{#if (or usePrisma useDrizzle useRawSql)}}
+  static forRoot(options: DbModuleOptions): DynamicModule {
+  {{else}}
+  static forRoot(_options: DbModuleOptions): DynamicModule {
+  {{/if}}
+    const initialProviders: Provider[] = [DbService];
+    const providers = initialProviders;
+
+    {{#if usePrisma}}
+      {{#if (or hasPostgres hasMysql hasSqlite hasSqlserver)}}
+        {{#if hasPostgres}}
+    const sqlAdapter = new PrismaPg({
+      connectionString: options.postgresUrl,
+    });
+    const prismaSql = new PrismaClient({ adapter: sqlAdapter });
+        {{/if}}
+        {{#if hasMysql}}
+    if (!options.mysqlUrl) {
+      throw new Error("A MySQL URL is required to initialize Prisma");
+    }
+    const sqlAdapter = new PrismaMariaDb(options.mysqlUrl);
+    const prismaSql = new PrismaClient({ adapter: sqlAdapter });
+        {{/if}}
+        {{#if hasSqlite}}
+    const sqlAdapter = new PrismaBetterSqlite3({
+      url: options.sqlitePath || ':memory:',
+    });
+    const prismaSql = new PrismaClient({ adapter: sqlAdapter });
+        {{/if}}
+        {{#if hasSqlserver}}
+    if (!options.sqlserver) {
+      throw new Error("SQL Server connection settings are required to initialize Prisma");
+    }
+    const sqlAdapter = new PrismaMssql(options.sqlserver);
+    const prismaSql = new PrismaClient({ adapter: sqlAdapter });
+        {{/if}}
+    providers.push({
+      provide: 'PRISMA_SQL_CLIENT',
+      useValue: prismaSql,
+    }, {
+      provide: 'SQL_ADAPTER',
+      useClass: PrismaSqlAdapter,
+    });
+      {{/if}}
+
+      {{#if hasMongodb}}
+    const prismaMongo = new PrismaClient({
+      datasources: {
+        db: {
+          url: options.mongodbUrl,
+        },
+      },
+    }, {
+      provide: 'PRISMA_MONGO_CLIENT',
+      useValue: prismaMongo,
+    }, {
+      provide: 'MONGO_ADAPTER',
+      useClass: PrismaMongoAdapter,
+    });
+      {{/if}}
+    {{/if}}
+
+    {{#if useDrizzle}}
+    providers.push({
+      provide: 'DRIZZLE_CLIENT',
+      useFactory: {{#if hasSqlserver}}async {{/if}}() => {
+        {{#if hasPostgres}}
+        const client = new Pool({ connectionString: options.postgresUrl });
+        return drizzle({ client, schema });
+        {{else if hasMysql}}
+        const client = mysql.createPool({ uri: options.mysqlUrl });
+        return drizzle(client, { schema, mode: "default" });
+        {{else if hasSqlserver}}
+        const client = await new sql.ConnectionPool({
+          server: options.sqlserver?.server ?? 'localhost',
+          port: options.sqlserver?.port ?? 1433,
+          database: options.sqlserver?.database ?? 'app_db',
+          user: options.sqlserver?.user ?? 'sa',
+          password: options.sqlserver?.password ?? 'DevOnly_Strong_Password_2026!X9',
+          options: options.sqlserver?.options ?? { encrypt: true, trustServerCertificate: true },
+        }).connect();
+        return drizzle({ client, schema });
+        {{else}}
+        const client = new Database(options.sqlitePath || ':memory:');
+        return drizzle({ client, schema });
+        {{/if}}
+      },
+    }, { provide: 'SQL_ADAPTER', useClass: DrizzleSqlAdapter });
+    {{/if}}
+
+    {{#if useTypeorm}}
+    providers.push({
+      provide: 'TYPEORM_DATA_SOURCE',
+      useFactory: () => AppDataSource.initialize(),
+    }, {
+      {{#if hasMongodb}}
+      provide: 'MONGO_ADAPTER',
+      useClass: TypeormMongoAdapter,
+      {{else}}
+      provide: 'SQL_ADAPTER',
+      useClass: TypeormSqlAdapter,
+      {{/if}}
+    });
+    {{/if}}
+
+    {{#if useRawSql}}
+      {{#if (or hasPostgres hasMysql hasSqlite)}}
+        {{#if hasPostgres}}
+    const pool = new Pool({
+      connectionString: options.postgresUrl,
+    }, {
+      provide: 'SQL_CLIENT',
+      useValue: pool,
+    });
+        {{/if}}
+        {{#if hasMysql}}
+    const pool = mysql.createPool({
+      uri: options.mysqlUrl,
+    }, {
+      provide: 'SQL_CLIENT',
+      useValue: pool,
+    });
+        {{/if}}
+        {{#if hasSqlite}}
+    const sqliteDb = new Database(options.sqlitePath || ':memory:');
+    providers.push({
+      provide: 'SQL_CLIENT',
+      useValue: sqliteDb,
+    });
+        {{/if}}
+
+    providers.push({
+      provide: 'SQL_ADAPTER',
+      useClass: RawSqlAdapter,
+    });
+      {{/if}}
+
+      {{#if hasMongodb}}
+    if (!options.mongodbUrl) throw new Error("A MongoDB URL is required");
+    providers.push({
+      provide: 'MONGODB_CLIENT',
+      useFactory: () => new MongoClient(options.mongodbUrl!, { serverSelectionTimeoutMS: 5000 }),
+    }, {
+      provide: 'MONGO_ADAPTER',
+      useClass: RawMongoAdapter,
+    });
+      {{/if}}
+    {{/if}}
+
+    return {
+      exports: [DbService],
+      module: DbModule,
+      providers,
+    };
+  }
+}
+{{/if}}

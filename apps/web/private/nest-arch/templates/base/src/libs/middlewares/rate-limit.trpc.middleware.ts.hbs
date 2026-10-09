@@ -1,0 +1,44 @@
+{{#if hasRateLimiting}}
+import { Inject, Injectable } from "@nestjs/common";
+import { ThrottlerStorage } from "@nestjs/throttler";
+import type { ThrottlerStorage as ThrottlerStorageService } from "@nestjs/throttler";
+import { TRPCError } from "@trpc/server";
+import {
+  MiddlewareOptions,
+  MiddlewareResponse,
+  TRPCMiddleware,
+} from "nestjs-trpc";
+import type { ContextOptions } from "nestjs-trpc";
+
+@Injectable()
+export class RateLimitTRPCMiddleware implements TRPCMiddleware {
+  constructor(
+    @Inject(ThrottlerStorage)
+    private readonly storage: ThrottlerStorageService
+  ) {}
+
+  async use(
+    opts: MiddlewareOptions<ContextOptions>
+  ): Promise<MiddlewareResponse> {
+    const request = opts.ctx.req as {
+      ip?: string;
+      socket?: { remoteAddress?: string };
+    };
+    const clientIp = request.ip ?? request.socket?.remoteAddress ?? "unknown";
+    const result = await this.storage.increment(
+      `trpc:${clientIp}`,
+      60_000,
+      60,
+      60_000,
+      "trpc"
+    );
+    if (result.isBlocked) {
+      throw new TRPCError({
+        code: "TOO_MANY_REQUESTS",
+        message: "Too many requests",
+      });
+    }
+    return opts.next();
+  }
+}
+{{/if}}

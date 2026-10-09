@@ -1,0 +1,41 @@
+// oxlint-disable oxc/no-barrel-file
+// biome-ignore-all lint/performance/noBarrelFile: Public entry point shared with the monorepo database package.
+export * from './db.module.js';
+export * from './db.service.js';
+{{#if usePrisma}}
+{{#if isPrisma6}}
+export type { PrismaClient } from '@prisma/client';
+{{#if hasTodoExample}}
+export type { Todo } from '@prisma/client';
+{{/if}}
+{{else}}
+{{#unless isPrisma8}}
+{{#if isMonorepo}}
+export type { PrismaClient } from './database/orm/prisma/generated/client.js';
+{{#if hasTodoExample}}
+export type { Todo } from './database/orm/prisma/generated/client.js';
+{{/if}}
+{{else}}
+export type { PrismaClient } from './orm/prisma/generated/client.js';
+{{#if hasTodoExample}}
+export type { Todo } from './orm/prisma/generated/client.js';
+{{/if}}
+{{/if}}
+{{/unless}}
+{{/if}}
+{{/if}}
+export * from './adapters/interfaces/db-adapter.interface.js';
+{{#if useDrizzle}}
+{{#if isMonorepo}}
+export * from './database/orm/drizzle/schema.js';
+{{else}}
+export * from './orm/drizzle/schema.js';
+{{/if}}
+{{/if}}
+{{#if useTypeorm}}
+{{#if isMonorepo}}
+export * from './database/orm/typeorm/data-source.js';
+{{else}}
+export * from './orm/typeorm/data-source.js';
+{{/if}}
+{{/if}}

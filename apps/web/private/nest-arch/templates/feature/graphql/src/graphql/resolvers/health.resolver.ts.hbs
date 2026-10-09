@@ -1,0 +1,14 @@
+import { Query, Resolver } from "@nestjs/graphql";
+{{#if isBetterAuth}}
+import { AllowAnonymous } from "@thallesp/nestjs-better-auth";
+{{/if}}
+{{#if isBetterAuth}}
+@AllowAnonymous()
+{{/if}}
+@Resolver()
+export class HealthResolver {
+  @Query(() => String)
+  hello(): string {
+    return "Hello GraphQL!";
+  }
+}

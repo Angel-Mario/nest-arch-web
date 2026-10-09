@@ -1,24 +1,9 @@
-import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { cookies } from "next/headers";
 import type * as React from "react";
 
 import LayoutWrapper from "@/components/layout-wrapper";
 import type { Locale } from "@/lib/i18n";
 import { getUiMessages } from "@/lib/ui-messages";
-
-import "../../index.css";
-
-const geistSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
-
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
-});
 
 const LOCALE_MAP: Record<Locale, string> = {
   en: "en_US",
@@ -56,33 +41,8 @@ export const generateMetadata = async ({
   };
 };
 
-const RootLayout = async ({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
-}) => {
-  const { locale: localeParam } = await params;
-  const locale = localeParam as Locale;
-  const cookieStore = await cookies();
-  const theme = cookieStore.get("theme")?.value;
+const LocaleLayout = ({ children }: { children: React.ReactNode }) => (
+  <LayoutWrapper>{children}</LayoutWrapper>
+);
 
-  return (
-    <html
-      lang={locale}
-      className={theme === "dark" || theme === "light" ? theme : undefined}
-      suppressHydrationWarning
-    >
-      <head />
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <LayoutWrapper>{children}</LayoutWrapper>
-        <Analytics />
-      </body>
-    </html>
-  );
-};
-
-export default RootLayout;
+export default LocaleLayout;

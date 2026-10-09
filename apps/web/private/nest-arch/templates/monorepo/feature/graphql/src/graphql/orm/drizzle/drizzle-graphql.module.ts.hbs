@@ -1,0 +1,16 @@
+import { Module } from "@nestjs/common";
+import { buildSchema } from "drizzle-graphql";
+import { db } from "@repo/db";
+
+const schema = buildSchema(db);
+
+@Module({
+  providers: [
+    {
+      provide: "DRIZZLE_GRAPHQL_SCHEMA",
+      useValue: schema,
+    },
+  ],
+  exports: ["DRIZZLE_GRAPHQL_SCHEMA"],
+})
+export class DrizzleGraphqlModule {}

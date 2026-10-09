@@ -1,0 +1,150 @@
+{{#if isPrisma8}}
+import { Injectable } from "@nestjs/common";
+{{#if isMonorepo}}
+import { db as prismaDb } from "../prisma/db.js";
+{{else}}
+import { db as prismaDb } from "../prisma/db.js";
+{{/if}}
+
+@Injectable()
+export class DbService {
+  get prisma() {
+    return prismaDb;
+  }
+
+  get raw() {
+    return { sql: prismaDb };
+  }
+}
+{{else}}
+import { Injectable, Inject } from '@nestjs/common';
+{{#if (or hasPostgres hasMysql hasSqlite hasSqlserver)}}
+import type { ISqlAdapter } from './adapters/interfaces/db-adapter.interface.js';
+{{/if}}
+{{#if hasMongodb}}
+import type { IMongoAdapter } from './adapters/interfaces/db-adapter.interface.js';
+{{/if}}
+{{#if usePrisma}}
+{{#if isMonorepo}}
+{{#if isPrisma6}}
+import type { PrismaClient } from '@prisma/client';
+{{else}}
+import type { PrismaClient } from './database/orm/prisma/generated/client.js';
+{{/if}}
+{{else}}
+{{#if isPrisma6}}
+import type { PrismaClient } from '@prisma/client';
+{{else}}
+import type { PrismaClient } from './orm/prisma/generated/client.js';
+{{/if}}
+{{/if}}
+{{/if}}
+{{#if useDrizzle}}
+  {{#if hasPostgres}}
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+  {{/if}}
+  {{#if hasMysql}}
+import type { MySql2Database } from 'drizzle-orm/mysql2';
+  {{/if}}
+  {{#if hasSqlite}}
+import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
+  {{/if}}
+  {{#if hasSqlserver}}
+import type { NodeMsSqlDatabase } from 'drizzle-orm/node-mssql';
+  {{/if}}
+{{#if isMonorepo}}
+import type * as schema from './database/orm/drizzle/schema.js';
+{{else}}
+import type * as schema from './orm/drizzle/schema.js';
+{{/if}}
+{{/if}}
+{{#if useTypeorm}}
+import type { DataSource } from 'typeorm';
+{{/if}}
+
+{{#if (or hasPostgres hasMysql hasSqlite hasSqlserver)}}
+  {{#if usePrisma}}
+type SqlClient = PrismaClient;
+  {{else if useTypeorm}}
+type SqlClient = DataSource;
+  {{else if useDrizzle}}
+type DrizzleClient = {{#if hasPostgres}}NodePgDatabase{{/if}}{{#if hasMysql}}MySql2Database{{/if}}{{#if hasSqlite}}BetterSQLite3Database{{/if}}{{#if hasSqlserver}}NodeMsSqlDatabase<typeof schema>{{/if}}{{#unless hasSqlserver}}<typeof schema>{{/unless}};
+type SqlClient = DrizzleClient;
+  {{else if hasPostgres}}
+type SqlClient = import('pg').Pool;
+  {{else}}
+type SqlClient = unknown;
+  {{/if}}
+{{/if}}
+{{#if hasMongodb}}
+  {{#if usePrisma}}
+type MongoClient = PrismaClient;
+  {{else if useTypeorm}}
+type MongoClient = DataSource;
+  {{else}}
+type MongoClient = import('mongodb').Db;
+  {{/if}}
+{{/if}}
+
+{{#if isPrisma8}}
+{{#if isMonorepo}}
+import { db as prismaDb } from '../prisma/db.js';
+{{else}}
+import { db as prismaDb } from './prisma/db.js';
+{{/if}}
+{{/if}}
+
+@Injectable()
+export class DbService {
+  constructor(
+{{#if (or hasPostgres hasMysql hasSqlite hasSqlserver)}}
+    @Inject('SQL_ADAPTER') readonly sql: ISqlAdapter<SqlClient>{{#if hasMongodb}},{{/if}}
+    {{/if}}
+    {{#if hasMongodb}}
+    @Inject('MONGO_ADAPTER') readonly mongo: IMongoAdapter<MongoClient>
+    {{/if}}
+  ) {}
+
+  get raw() {
+    return {
+      {{#if (or hasPostgres hasMysql hasSqlite hasSqlserver)}}
+      sql: this.sql.getClient(),
+      {{/if}}
+      {{#if hasMongodb}}
+      mongo: this.mongo.getClient(),
+      {{/if}}
+    };
+  }
+{{#if isPrisma8}}
+  get prisma() {
+    return prismaDb;
+  }
+{{else if usePrisma}}
+  {{#if (or hasPostgres hasMysql hasSqlite hasSqlserver)}}
+  get prisma(): PrismaClient {
+    return this.sql.getClient();
+  }
+  {{else if hasMongodb}}
+  get prisma(): PrismaClient {
+    return this.mongo.getClient();
+  }
+  {{/if}}
+{{/if}}
+{{#if useDrizzle}}
+  {{#if (or hasPostgres hasMysql hasSqlite hasSqlserver)}}
+  get drizzle(): DrizzleClient {
+    return this.sql.getClient();
+  }
+  {{/if}}
+{{/if}}
+{{#if useTypeorm}}
+  get typeorm(): DataSource {
+    {{#if hasMongodb}}
+    return this.mongo.getClient();
+    {{else}}
+    return this.sql.getClient();
+    {{/if}}
+  }
+{{/if}}
+}
+{{/if}}

@@ -1,0 +1,10 @@
+[install]
+trusted = [
+  "@nestjs/core"{{#if swagger}},
+  "@scarf/scarf"{{/if}}{{#if hasGraphql}},
+  "@apollo/protobufjs"{{/if}}{{#if usePrisma}},
+  "prisma",
+  "@prisma/engines"{{/if}}{{#if (and (eq auth "passport") hasDatabase)}},
+  "bcrypt"{{/if}}{{#if hasSqlite}},
+  "better-sqlite3"{{/if}},
+]

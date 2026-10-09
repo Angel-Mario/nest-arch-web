@@ -1,0 +1,43 @@
+{{#if isMonorepo}}
+import { env } from "@repo/env/api-gateway";
+{{else}}
+import { env } from "./src/config/env.js";
+{{/if}}
+{{#if isPrisma8}}
+import { definePrismaConfig } from "prisma/config";
+{{#if hasMongodb}}
+import { defineConfig as ormConfig } from "@prisma/orm-mongo/config";
+{{else}}
+import { defineConfig as ormConfig } from "@prisma/orm-postgres/config";
+{{/if}}
+
+export default definePrismaConfig({
+  skills: {
+    agents: ["claude", "cursor", "agents", "devin"],
+  },
+  orm: ormConfig({
+    contract: "./src/prisma/contract.prisma",
+    db: {
+      connection: {{#if hasMongodb}}env.MONGODB_URL{{else}}env.POSTGRES_URL{{/if}},
+    },
+  }),
+});
+{{else}}
+import { defineConfig } from "prisma/config";
+
+export default defineConfig({
+  datasource: {
+    {{#if hasPostgres}}url: env.POSTGRES_URL,{{/if}}
+    {{#if hasMysql}}url: env.MYSQL_URL,{{/if}}
+    {{#if hasSqlite}}url: env.SQLITE_PATH,{{/if}}
+    {{#if hasSqlserver}}url: `sqlserver://${env.SQLSERVER_HOST}:${env.SQLSERVER_PORT};database=${env.SQLSERVER_DATABASE};user={${env.SQLSERVER_USER.replaceAll("}", "}}")}};password={${env.SQLSERVER_PASSWORD.replaceAll("}", "}}")}};encrypt=${env.SQLSERVER_ENCRYPT};trustServerCertificate=${env.SQLSERVER_TRUST_SERVER_CERTIFICATE}`,{{/if}}
+    {{#if hasMongodb}}url: env.MONGODB_URL,{{/if}}
+  },
+  {{#unless isMonorepo}}
+  migrations: {
+    path: "src/database/orm/prisma/migrations",
+  },
+  {{/unless}}
+  schema: "src/database/orm/prisma{{#unless isBetterAuth}}/schema.prisma{{/unless}}",
+});
+{{/if}}

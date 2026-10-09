@@ -9,5 +9,8 @@ export default defineConfig({
     "packages/ui/src/**",
     "packages/backend/convex/**",
     "**/interactive-terminal-wizard.tsx",
+    "apps/web/private/nest-arch/**",
+    "apps/web/public/project-previews/**",
+    "apps/web/src/lib/project-preview/generated/**",
   ],
 });

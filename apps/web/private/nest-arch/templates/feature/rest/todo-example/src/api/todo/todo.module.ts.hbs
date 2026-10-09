@@ -1,0 +1,22 @@
+import { Module } from "@nestjs/common";
+{{#if hasRest}}
+import { TodoController } from "./todo.controller.js";
+{{/if}}
+import { TodoService } from "./todo.service.js";
+{{#unless hasRest}}
+import { TodoRouter } from "./todo.router.js";
+{{/unless}}
+
+@Module({
+  {{#if hasRest}}
+  controllers: [TodoController],
+  {{/if}}
+  exports: [TodoService],
+  providers: [
+    TodoService,
+    {{#unless hasRest}}
+    TodoRouter,
+    {{/unless}}
+  ],
+})
+export class TodoModule {}

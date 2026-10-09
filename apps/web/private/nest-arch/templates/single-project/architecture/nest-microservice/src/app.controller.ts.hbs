@@ -1,0 +1,112 @@
+{{#if (includes microservices "grpc")}}
+import { Controller, Get } from "@nestjs/common";
+import { GrpcMethod } from "@nestjs/microservices";
+{{else}}
+import { Controller, Get, Logger, Param } from "@nestjs/common";
+import { EventPattern, MessagePattern } from "@nestjs/microservices";
+{{/if}}
+
+import { AppService } from "./app.service.js";
+
+{{#unless (includes microservices "grpc")}}
+interface AuditEvent {
+  id: string;
+  payload: Record<string, unknown>;
+  source: string;
+}
+
+const isAuditEvent = (value: unknown): value is AuditEvent => {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return (
+    typeof candidate.id === "string" &&
+    candidate.id.trim().length > 0 &&
+    typeof candidate.source === "string" &&
+    candidate.source.trim().length > 0 &&
+    typeof candidate.payload === "object" &&
+    candidate.payload !== null &&
+    !Array.isArray(candidate.payload)
+  );
+};
+{{/unless}}
+
+@Controller()
+export class AppController {
+  {{#unless (includes microservices "grpc")}}
+  private readonly logger = new Logger(AppController.name);
+  {{/unless}}
+
+  constructor(private readonly appService: AppService) {}
+
+  {{#if (and hasDatabase hasTodoExample)}}
+  {{#if (includes microservices "grpc")}}
+  @GrpcMethod("AppService", "CreateTodo")
+  async createTodo(data: { title: string }): Promise<{ json: string }> {
+    return { json: JSON.stringify(await this.appService.createTodo(data)) };
+  }
+
+  @GrpcMethod("AppService", "ListTodos")
+  async listTodos(): Promise<{ json: string }> {
+    return { json: JSON.stringify(await this.appService.findTodos()) };
+  }
+  {{else}}
+  @MessagePattern("todo.create")
+  createTodo(data: { title: string }) {
+    return this.appService.createTodo(data);
+  }
+
+  @MessagePattern("todo.list")
+  listTodos() {
+    return this.appService.findTodos();
+  }
+  {{/if}}
+  {{/if}}
+
+  @Get()
+  getHello(): string {
+    return this.appService.getHello();
+  }
+
+  {{#unless (includes microservices "grpc")}}
+  @Get("events/:id")
+  getAuditEvent(
+    @Param("id") id: string
+  ): { id: string; payload: Record<string, unknown>; source: string } | null {
+    return this.appService.getAuditEvent(id);
+  }
+
+  @EventPattern("audit")
+  handleAuditEvent(data: unknown): void {
+    if (!isAuditEvent(data)) {
+      this.logger.warn("Discarded malformed audit event payload");
+      return;
+    }
+    this.appService.recordAuditEvent(data);
+  }
+  {{/unless}}
+
+  {{#if (includes microservices "grpc")}}
+  @GrpcMethod("AppService", "Ping")
+  handleGrpcPing(): { message: string } {
+    return { message: this.appService.handlePing() };
+  }
+  @GrpcMethod("AppService", "Log")
+  handleGrpcLog(data: { id: string; source: string; payload: string }): { id: string; source: string; payload: string } {
+    return data;
+  }
+  {{else}}
+  @MessagePattern("ping")
+  handlePing(): string {
+    return this.appService.handlePing();
+  }
+  {{/if}}
+
+  {{#unless (includes microservices "grpc")}}
+  @MessagePattern("log")
+  handleLog(data: Record<string, unknown>): { received: Record<string, unknown> } {
+    return this.appService.handleLog(data);
+  }
+  {{/unless}}
+}

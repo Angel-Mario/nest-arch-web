@@ -1,0 +1,49 @@
+// ═════════════════════════════════════════════════════════════════════
+//  Example TypeORM entity — Todo
+// ═════════════════════════════════════════════════════════════════════
+
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  {{#if hasMongodb}}
+  ObjectIdColumn,
+  {{else}}
+  PrimaryGeneratedColumn,
+  {{/if}}
+  UpdateDateColumn,
+} from "typeorm";
+{{#if hasMongodb}}
+import type { ObjectId } from "mongodb";
+{{/if}}
+
+@Entity("todos")
+export class Todo {
+  {{#if hasMongodb}}
+  @ObjectIdColumn()
+  id: ObjectId;
+  {{else}}
+  @PrimaryGeneratedColumn("{{#if hasSqlserver}}increment{{else}}uuid{{/if}}")
+  id: string;
+  {{/if}}
+
+  @Column({ type: "varchar", length: 255, nullable: true })
+  description?: string;
+
+  @Column({ type: "varchar", length: 255 })
+  title: string;
+
+  @Column({ default: false, name: "is_completed", type: "{{#if hasSqlserver}}bit{{else}}boolean{{/if}}" })
+  completed: boolean;
+
+{{#if hasAuth}}
+  @Column({ type: "varchar", nullable: true })
+  authorId?: string;
+{{/if}}
+
+  @CreateDateColumn({ name: "created_at" })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: "updated_at" })
+  updatedAt: Date;
+}

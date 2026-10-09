@@ -1,0 +1,9 @@
+[install]
+trusted = [
+  "@nestjs/core",
+  "esbuild"{{#if swagger}},
+  "@scarf/scarf"{{/if}}{{#if hasGraphql}},
+  "@apollo/protobufjs"{{/if}}{{#if (and (eq auth "passport") hasDatabase)}},
+  "bcrypt"{{/if}}{{#if hasSqlite}},
+  "better-sqlite3"{{/if}},
+]

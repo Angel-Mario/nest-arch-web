@@ -1,0 +1,125 @@
+import { NestFactory } from "@nestjs/core";
+{{#if (eq httpProvider "fastify")}}
+import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
+{{/if}}
+{{#if (includes addons "nestjs-zod")}}
+import { Logger } from "@nestjs/common";
+import { ZodValidationPipe } from "nestjs-zod";
+{{else}}
+import { Logger, StandardSchemaValidationPipe } from "@nestjs/common";
+{{/if}}
+
+import { AppModule } from "./app.module.js";
+import { env } from "./config/env.js";
+{{#if isPrisma8}}
+import { connectDatabase } from "./prisma/db.js";
+{{/if}}
+{{#if swagger}}
+import { createDocs } from "./docs/create-docs.js";
+{{/if}}
+{{#if (and swagger useSwaggerScalar)}}
+import { apiReference } from "@scalar/nestjs-api-reference";
+{{/if}}
+{{#if (and swagger (eq useSwaggerScalar false))}}
+import { SwaggerModule } from "@nestjs/swagger";
+{{/if}}
+{{#if (and swagger (or (eq auth "better-auth") (eq auth "better-auth:stateless") hasBetterAuthWithoutRest))}}
+import { AuthService } from "@thallesp/nestjs-better-auth";
+{{/if}}
+
+async function bootstrap() {
+  const trustedProxyIps = env.TRUSTED_PROXY_IPS
+    .split(",")
+    .map((ip) => ip.trim())
+    .filter(Boolean);
+  {{#if isPrisma8}}
+  await connectDatabase();
+  {{/if}}
+  const app = await NestFactory.create{{#if (eq httpProvider "fastify")}}<NestFastifyApplication>(AppModule, new FastifyAdapter({ trustProxy: trustedProxyIps }){{else}}(AppModule{{/if}}{{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless") hasBetterAuthWithoutRest)}}, { bodyParser: false }{{/if}});
+  {{#unless (eq httpProvider "fastify")}}
+  if (trustedProxyIps.length > 0) {
+    app.getHttpAdapter().getInstance().set("trust proxy", trustedProxyIps);
+  }
+  {{/unless}}
+  app.enableCors({
+    origin: env.CORS_ORIGIN,
+  });
+  {{#if hasRest}}
+  app.setGlobalPrefix("api");
+  {{/if}}
+{{#if (includes addons "nestjs-zod")}}
+  app.useGlobalPipes(new ZodValidationPipe());
+{{else}}
+  app.useGlobalPipes(new StandardSchemaValidationPipe());
+{{/if}}
+  app.enableShutdownHooks();
+  {{#if swagger}}
+  const docsPath = "/docs";
+  {{#if useSwaggerScalar}}
+  app.use(
+    docsPath,
+    apiReference({
+      content: await createDocs(app, {
+        description: "{{description}}",
+        integrations: {
+          {{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless") hasBetterAuthWithoutRest)}}
+          betterAuth: {
+            auth: app.get(AuthService).instance,
+            pathPrefix: "/api/auth",
+          },
+          {{/if}}
+          {{#if (includes apis "trpc")}}
+          trpc: {
+            pathPrefix: "/trpc",
+            routerFilePath: "./{{trpcGeneratePath}}/server.ts",
+          },
+          {{/if}}
+          zod: {
+            withFastify: {{#if (eq httpProvider "fastify")}}true{{else}}false{{/if}},
+          },
+        },
+        title: "{{projectNamePascalCase}} API",
+        version: "1.0.0",
+      }),
+      {{#if (eq httpProvider "fastify")}}withFastify: true,{{/if}}
+      pageTitle: "{{projectNamePascalCase}} API Docs",
+      theme: "default",
+    }),
+  );
+  {{else}}
+  const document = await createDocs(app, {
+    description: "{{description}}",
+    integrations: {
+      {{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless") hasBetterAuthWithoutRest)}}
+      betterAuth: {
+        auth: app.get(AuthService).instance,
+        pathPrefix: "/api/auth",
+      },
+      {{/if}}
+      {{#if (includes apis "trpc")}}
+      trpc: {
+        pathPrefix: "/trpc",
+        routerFilePath: "./{{trpcGeneratePath}}/server.ts",
+      },
+      {{/if}}
+      zod: {
+        withFastify: {{#if (eq httpProvider "fastify")}}true{{else}}false{{/if}},
+      },
+    },
+    title: "{{projectNamePascalCase}} API",
+    version: "1.0.0",
+  });
+  SwaggerModule.setup(docsPath, app, document);
+  {{/if}}
+  Logger.log(`Swagger documentation available at http://localhost:${env.PORT}${docsPath}`, "SwaggerDocs");
+  {{/if}}
+  await app.listen(env.PORT, "0.0.0.0");
+  {{#if hasRest}}
+  Logger.log(`Started backend server on http://localhost:${env.PORT}/api`, "Main");
+  {{else if hasTrpc}}
+  Logger.log(`Started trpc server on http://localhost:${env.PORT}/trpc`, "Main");
+  {{else}}
+  Logger.log(`Started server on http://localhost:${env.PORT}`, "Main");
+  {{/if}}
+}
+await bootstrap();

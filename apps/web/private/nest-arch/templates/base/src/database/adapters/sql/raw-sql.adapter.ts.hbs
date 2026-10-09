@@ -1,0 +1,86 @@
+{{#if hasPostgres}}
+import { Inject, Injectable } from "@nestjs/common";
+import type { Pool } from "pg";
+
+import type { ISqlAdapter } from "../interfaces/db-adapter.interface.js";
+
+@Injectable()
+export class RawSqlAdapter implements ISqlAdapter<Pool> {
+  constructor(@Inject("SQL_CLIENT") private readonly db: Pool) {}
+
+  async query<T = unknown>(queryString: string, params: unknown[] = []): Promise<T[]> {
+    const result = await this.db.query(queryString, params);
+    return result.rows as T[];
+  }
+
+  execute(queryString: string, params: unknown[] = []): Promise<unknown> {
+    return this.db.query(queryString, params);
+  }
+
+  getClient(): Pool {
+    return this.db;
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    await this.db.end();
+  }
+}
+{{else}}
+import { Injectable, Inject } from '@nestjs/common';
+import { ISqlAdapter } from '../interfaces/db-adapter.interface.js';
+
+@Injectable()
+export class RawSqlAdapter implements ISqlAdapter {
+  constructor(
+    @Inject('SQL_CLIENT') private readonly db: any
+  ) {}
+
+  async query<T = any>(queryString: string, params: any[] = []): Promise<T[]> {
+    if (typeof this.db.query === 'function') {
+      const result = await this.db.query(queryString, params);
+      return result.rows ?? result[0] ?? [];
+    }
+
+    if (typeof this.db.execute === 'function') {
+      const result = await this.db.execute(queryString, params);
+      return result[0] ?? result.rows ?? [];
+    }
+
+    if (typeof this.db.prepare === 'function') {
+      const stmt = this.db.prepare(queryString);
+      return stmt.all(...params) as T[];
+    }
+
+    throw new Error('Unsupported SQL client for raw SQL adapter');
+  }
+
+  async execute(queryString: string, params: any[] = []): Promise<any> {
+    if (typeof this.db.query === 'function') {
+      return this.db.query(queryString, params);
+    }
+
+    if (typeof this.db.execute === 'function') {
+      return this.db.execute(queryString, params);
+    }
+
+    if (typeof this.db.prepare === 'function') {
+      const stmt = this.db.prepare(queryString);
+      return stmt.run(...params);
+    }
+
+    throw new Error('Unsupported SQL client for raw SQL adapter');
+  }
+
+  getClient(): any {
+    return this.db;
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    if (typeof this.db.end === 'function') {
+      await this.db.end();
+    } else if (typeof this.db.close === 'function') {
+      await this.db.close();
+    }
+  }
+}
+{{/if}}

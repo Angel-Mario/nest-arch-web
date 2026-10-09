@@ -1,0 +1,49 @@
+// oxlint-disable vitest/require-mock-type-parameters
+import type { TestingModule } from "@nestjs/testing";
+import { Test } from "@nestjs/testing";
+import { beforeEach, describe, expect, it{{#if (or hasDatabase hasOrm)}}, vi{{/if}} } from "vitest";
+
+import { AppController } from "./app.controller.js";
+import { AppService } from "./app.service.js";
+{{#if (or hasDatabase hasOrm)}}
+{{#if isMonorepo}}
+import type { ISqlAdapter } from "@repo/db";
+import { DbService } from "@repo/db";
+{{else}}
+import type { ISqlAdapter } from "./database/adapters/interfaces/db-adapter.interface.js";
+import { DbService } from "./database/db.service.js";
+{{/if}}
+{{/if}}
+
+{{#if (or hasDatabase hasOrm)}}
+const mockSqlAdapter: ISqlAdapter = {
+  execute: vi.fn().mockResolvedValue(null),
+  getClient: vi.fn().mockReturnValue({}),
+  query: vi.fn().mockResolvedValue([]),
+};
+{{/if}}
+
+describe(AppController, () => {
+  let appController: AppController;
+
+  beforeEach(async () => {
+    const app: TestingModule = await Test.createTestingModule({
+      controllers: [AppController],
+      providers: [
+        AppService,
+        {{#if (or hasDatabase hasOrm)}}
+        DbService,
+        { provide: "SQL_ADAPTER", useValue: mockSqlAdapter },
+        {{/if}}
+      ],
+    }).compile();
+
+    appController = app.get<AppController>(AppController);
+  });
+
+  describe("root", () => {
+    it('should return "Hello World!"', () => {
+      expect(appController.getHello()).toBe("Hello World!");
+    });
+  });
+});

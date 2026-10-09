@@ -1,0 +1,28 @@
+import { Injectable, Inject } from '@nestjs/common';
+import type { DataSource } from 'typeorm';
+import type { ISqlAdapter } from '../interfaces/db-adapter.interface.js';
+
+@Injectable()
+export class TypeormSqlAdapter implements ISqlAdapter<DataSource> {
+  constructor(
+    @Inject('TYPEORM_DATA_SOURCE') private readonly dataSource: DataSource
+  ) {}
+
+  query<T = unknown>(sql: string, params: unknown[] = []): Promise<T[]> {
+    return this.dataSource.query(sql, params);
+  }
+
+  execute(sql: string, params: unknown[] = []): Promise<unknown> {
+    return this.dataSource.query(sql, params);
+  }
+
+  getClient(): DataSource {
+    return this.dataSource;
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    if (this.dataSource.isInitialized) {
+      await this.dataSource.destroy();
+    }
+  }
+}

@@ -1,1 +1,43 @@
 @import "@nest-arch-web/ui/globals.css";
+
+.preview-code-line::before {
+  content: attr(data-line-number);
+  display: inline-block;
+  width: 3ch;
+  margin-right: 2rem;
+  color: color-mix(in srgb, var(--muted-foreground) 55%, transparent);
+  text-align: right;
+  user-select: none;
+}
+
+.preview-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--muted-foreground) 22%, transparent)
+    transparent;
+  scrollbar-gutter: stable;
+}
+
+.preview-scrollbar:hover,
+.preview-scrollbar:focus-within {
+  scrollbar-color: color-mix(in srgb, var(--muted-foreground) 40%, transparent)
+    transparent;
+}
+
+.preview-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.preview-scrollbar::-webkit-scrollbar-track,
+.preview-scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.preview-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted-foreground) 22%, transparent);
+}
+
+.preview-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--muted-foreground) 40%, transparent);
+}

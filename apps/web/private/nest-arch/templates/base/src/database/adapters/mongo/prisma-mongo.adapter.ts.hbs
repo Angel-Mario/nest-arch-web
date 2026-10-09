@@ -1,0 +1,57 @@
+import { Injectable, Inject } from '@nestjs/common';
+import { IMongoAdapter } from '../interfaces/db-adapter.interface.js';
+{{#if isPrisma8}}
+{{#if isMonorepo}}
+import { db } from '../../../prisma/db.js';
+{{else}}
+import { db } from '../../prisma/db.js';
+{{/if}}
+{{else}}
+{{#if isMonorepo}}
+{{#if isPrisma6}}
+import type { Prisma, PrismaClient } from '@prisma/client';
+{{else}}
+import type { Prisma, PrismaClient } from '../../database/orm/prisma/generated/client.js';
+{{/if}}
+{{else}}
+{{#if isPrisma6}}
+import type { Prisma, PrismaClient } from '@prisma/client';
+{{else}}
+import type { Prisma, PrismaClient } from '../../orm/prisma/generated/client.js';
+{{/if}}
+{{/if}}
+{{/if}}
+
+@Injectable()
+export class PrismaMongoAdapter implements IMongoAdapter {
+{{#if isPrisma8}}
+  readonly client = db;
+
+  collection<T = unknown>(name: string): T {
+    return ((this.client as any).orm as any)?.[name] as T;
+  }
+
+  runCommand(command: unknown): Promise<unknown> {
+    return (this.client as { query?: (input: unknown) => Promise<unknown> }).query?.(command) ?? Promise.resolve(undefined);
+  }
+
+  getClient() {
+    return this.client;
+  }
+{{else}}
+  constructor(
+    @Inject('PRISMA_MONGO_CLIENT') private readonly prisma: PrismaClient
+  ) {}
+  collection<T = unknown>(name: string): T {
+    return this.prisma[name as keyof PrismaClient] as T;
+  }
+
+  runCommand(command: Prisma.InputJsonObject): Promise<unknown> {
+    return this.prisma.$runCommandRaw(command);
+  }
+
+  getClient(): PrismaClient {
+    return this.prisma;
+  }
+{{/if}}
+}

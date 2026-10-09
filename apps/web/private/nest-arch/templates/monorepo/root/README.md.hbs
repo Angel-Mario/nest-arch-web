@@ -1,0 +1,65 @@
+# {{projectName}}
+
+{{description}}
+
+## Setup
+
+{{#if setupInstructions}}
+{{{setupInstructions}}}
+{{else}}
+```bash
+# Install dependencies
+{{#if isPnpm}}pnpm install{{else if isYarn}}yarn install{{else if isBun}}bun install{{else}}npm install{{/if}}
+```
+{{/if}}
+
+## Running the App
+
+```bash
+# development mode (live reload)
+{{#if isPnpm}}pnpm dev{{else if isYarn}}yarn dev{{else if isBun}}bun run dev{{else}}npm run dev{{/if}}
+
+# build and production mode
+{{#if isPnpm}}pnpm build{{else if isYarn}}yarn build{{else if isBun}}bun run build{{else}}npm run build{{/if}}
+```
+
+## Testing
+
+```bash
+# unit tests
+{{#if isPnpm}}pnpm test{{else if isYarn}}yarn test{{else if isBun}}bun run test{{else}}npm test{{/if}}
+
+# e2e tests
+{{#if isPnpm}}pnpm test:e2e{{else if isYarn}}yarn test:e2e{{else if isBun}}bun run test:e2e{{else}}npm run test:e2e{{/if}}
+
+# test coverage
+{{#if isPnpm}}pnpm test:cov{{else if isYarn}}yarn test:cov{{else if isBun}}bun run test:cov{{else}}npm run test:cov{{/if}}
+```
+
+{{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless"))}}
+## Auth Setup
+
+{{#if (eq auth "better-auth:stateless")}}
+Configure the Better Auth secret, URL and external OIDC provider settings. Register the callback URL with your provider. Stateless auth requires no authentication schema generation or database migration.
+{{else}}
+Follow the ordered steps in Setup. Run the generated `auth:generate` script in `apps/api-gateway` before applying the database schema and regenerating Prisma Client in `packages/db`. The script uses the installed CLI version and preserves application-owned models.
+{{/if}}
+
+### Usage
+
+Access the authenticated user's session in any controller with full type safety (including better-auth plugins):
+
+```typescript
+import { Controller, Get } from "@nestjs/common";
+import { Session } from "@thallesp/nestjs-better-auth";
+import type { UserSession } from "./auth/auth.js";
+
+@Controller()
+export class AppController {
+  @Get()
+  getSession(@Session() session: UserSession): UserSession {
+    return session;
+  }
+}
+```
+{{/if}}

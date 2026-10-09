@@ -1,0 +1,25 @@
+import { z } from "zod";
+
+{{#if (includes addons "nestjs-zod")}}
+import { createZodDto } from "nestjs-zod";
+
+const updateTodoSchema = z.object({
+  completed: z.boolean().optional(),
+  description: z.string().optional(),
+  title: z.string().min(1).optional(),
+});
+
+export class UpdateTodoDto extends createZodDto(updateTodoSchema) {}
+{{else}}
+export class UpdateTodoDto {
+  static schema = z.object({
+    completed: z.boolean().optional(),
+    description: z.string().optional(),
+    title: z.string().min(1).optional(),
+  });
+
+  title?: string;
+  description?: string;
+  completed?: boolean;
+}
+{{/if}}

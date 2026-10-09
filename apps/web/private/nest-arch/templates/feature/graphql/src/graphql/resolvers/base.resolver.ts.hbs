@@ -1,0 +1,50 @@
+import { Args, ID, Mutation, Query } from "@nestjs/graphql";
+{{#if useTypeorm}}
+import { GraphRelationBuilder } from "typeorm-relations-graphql";
+import { GraphQLResolveInfo } from "graphql";
+{{/if}}
+
+export abstract class BaseResolver<T, C, U> {
+  protected abstract get dbService(): unknown;
+
+  @Query(() => [Object])
+  async findAll({{#if useTypeorm}}info: GraphQLResolveInfo{{/if}}): Promise<T[]> {
+    {{#if useTypeorm}}
+    const builder = new GraphRelationBuilder(this.dbService.getDataSource());
+    const relations = builder.buildForQuery(this.getEntityClass(), info);
+    return this.dbService.getRepository(this.getEntityClass()).find({ relations });
+    {{else}}
+    return [];
+    {{/if}}
+  }
+
+  @Mutation(() => Object)
+  async create(
+    @Args("input") input: C{{#if useTypeorm}}, info: GraphQLResolveInfo{{/if}}
+  ): Promise<T> {
+    {{#if useTypeorm}}
+    const entity = this.dbService.getRepository(this.getEntityClass()).create(input);
+    const saved = await this.dbService.getRepository(this.getEntityClass()).save(entity);
+    const builder = new GraphRelationBuilder(this.dbService.getDataSource());
+    const relations = builder.buildForQuery(this.getEntityClass(), info);
+    return this.dbService.getRepository(this.getEntityClass()).findOneOrFail({
+      where: { id: saved.id },
+      relations,
+    });
+    {{else}}
+    return input as unknown as T;
+    {{/if}}
+  }
+
+  @Mutation(() => Boolean)
+  async delete(@Args("id", { type: () => ID }) id: string): Promise<boolean> {
+    {{#if useTypeorm}}
+    const result = await this.dbService.getRepository(this.getEntityClass()).delete(id);
+    return (result.affected ?? 0) > 0;
+    {{else}}
+    return true;
+    {{/if}}
+  }
+
+  protected abstract getEntityClass(): new () => T;
+}

@@ -1,0 +1,40 @@
+packages:
+  - apps/*
+  - packages/*
+allowBuilds:
+{{#if useDrizzle}}
+  esbuild: true
+{{/if}}
+  protobufjs: true
+  '@nestjs/core': true
+  esbuild: true
+{{#if usePrisma}}
+  prisma: true
+  '@prisma/engines': true
+{{/if}}
+{{#if swagger}}
+  '@scarf/scarf': true
+{{/if}}
+{{#if hasGraphql}}
+  '@apollo/protobufjs': true
+{{/if}}
+{{#if (and (eq auth "passport") hasDatabase)}}
+  bcrypt: true
+{{/if}}
+{{#if hasSqlite}}
+  better-sqlite3: true
+{{/if}}
+{{#if isPrisma8}}
+  esbuild: true
+  msgpackr-extract: true
+  workerd: true
+{{/if}}
+catalog:
+  "@nestjs/common": ^12.0.1
+  "@nestjs/core": ^12.0.1
+  "@types/node": ^24.0.0
+  dotenv: ^17.2.2
+  reflect-metadata: ^0.2.2
+  rxjs: ^7.8.1
+  typescript: {{#if useTypescript7}}^7.0.0{{else}}^6.0.2{{/if}}
+  zod: ^4.4.3

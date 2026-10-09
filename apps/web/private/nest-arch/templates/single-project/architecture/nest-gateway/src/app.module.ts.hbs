@@ -1,0 +1,31 @@
+import { Module } from "@nestjs/common";
+import { HttpModule } from "@nestjs/axios";
+{{#if (or hasDatabase hasOrm)}}
+import { DbModule } from "./database/db.module.js";
+import { env } from "./config/env.js";
+{{/if}}
+{{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless"))}}
+import { AuthModule } from "./auth/auth.module.js";
+{{/if}}
+
+import { AppController } from "./app.controller.js";
+import { AppService } from "./app.service.js";
+
+@Module({
+  controllers: [AppController],
+  imports: [
+    HttpModule{{#if (or hasDatabase hasOrm)}},
+    DbModule.forRoot({
+      {{#if hasPostgres}}postgresUrl: env.POSTGRES_URL,{{/if}}
+      {{#if hasMysql}}mysqlUrl: env.MYSQL_URL,{{/if}}
+      {{#if hasSqlite}}sqlitePath: env.SQLITE_PATH,{{/if}}
+      {{#if hasMongodb}}mongodbUrl: env.MONGODB_URL,{{/if}}
+    }),
+    {{/if}}
+    {{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless"))}}
+    AuthModule,
+    {{/if}}
+  ],
+  providers: [AppService],
+})
+export class AppModule {}

@@ -6,13 +6,19 @@ import { CodeBlock } from "@nest-arch-web/ui/components/code-block";
 import { TerminalWindow } from "@nest-arch-web/ui/components/terminal-window";
 import { useQuery } from "convex/react";
 import { ArrowRight, Check, Play, Terminal } from "lucide-react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import * as React from "react";
 
 import { useUi } from "@/components/locale-provider";
 import { trackAnalyticsEvent } from "@/lib/analytics";
+import { previewMessages } from "@/lib/project-preview/messages";
 
 import { InteractiveTerminalWizard } from "./interactive-terminal-wizard";
+
+const ProjectExplorer = dynamic(() => import("@/components/project-explorer"), {
+  ssr: false,
+});
 
 const ASCII_CAT = `   ,-.       _,---._ __   /\\
   /  )    .-'       \`./  /  \\
@@ -36,6 +42,7 @@ const ASCII_BANNER = ` _   _ _____ ____ _____     _    ____   ____ _   _
 export const HeroSection = () => {
   const { t, locale } = useUi();
   const [isLiveDemo, setIsLiveDemo] = React.useState(false);
+  const [isExplorerOpen, setIsExplorerOpen] = React.useState(false);
   const packageVersion = useQuery(api.crons.getLatestNpmPackageVersion, {});
   const totalDownloads = useQuery(api.ossStats.getNpmPackage, {
     name: "@nest-arch/tui",
@@ -60,6 +67,9 @@ export const HeroSection = () => {
       className="relative isolate grid grid-cols-1 items-start gap-10 pt-2 pb-6 md:grid-cols-2 md:items-center md:gap-6 lg:grid-cols-12 lg:gap-8 lg:pt-4 lg:pb-10"
       id="home"
     >
+      {isExplorerOpen && (
+        <ProjectExplorer onClose={() => setIsExplorerOpen(false)} />
+      )}
       <div className="pointer-events-none absolute -inset-x-96 -top-24 -bottom-24 -z-10 bg-[radial-gradient(ellipse_at_14%_40%,rgba(220,38,38,0.16),transparent_50%),radial-gradient(ellipse_at_84%_46%,rgba(220,38,38,0.08),transparent_46%)]" />
 
       {/* Left Column: Hero Copy & Value Proposition (Fixed 6 columns to prevent layout shift) */}
@@ -104,6 +114,14 @@ export const HeroSection = () => {
         </div>
 
         <div className="mt-6 flex flex-wrap items-center gap-4">
+          <button
+            type="button"
+            onClick={() => setIsExplorerOpen(true)}
+            className="border-border text-foreground hover:bg-muted inline-flex items-center gap-2 rounded-lg border px-3.5 py-2 font-mono text-xs font-semibold sm:text-sm"
+          >
+            <Terminal className="size-4" aria-hidden="true" />
+            {previewMessages[locale].explore}
+          </button>
           <button
             type="button"
             onClick={() => {

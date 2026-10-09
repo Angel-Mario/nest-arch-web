@@ -1,0 +1,74 @@
+import { INestApplication } from "@nestjs/common";
+import { Test, TestingModule } from "@nestjs/testing";
+{{#if (eq httpProvider "fastify")}}
+import { FastifyAdapter } from "@nestjs/platform-fastify";
+{{/if}}
+import request from "supertest";
+import { afterEach, beforeEach, describe, it } from "vitest";
+{{#if (eq auth "better-auth")}}
+import { expect } from "vitest";
+{{/if}}
+import type { App } from "supertest/types";
+
+import { AppModule } from "./../src/app.module.js";
+
+describe("AppController (e2e)", () => {
+  let app: INestApplication<App>;
+
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+{{#if (eq httpProvider "fastify")}}
+    app = moduleFixture.createNestApplication(new FastifyAdapter());
+{{else}}
+    app = moduleFixture.createNestApplication();
+{{/if}}
+    await app.init();
+{{#if (eq httpProvider "fastify")}}
+    await app.getHttpAdapter().getInstance().ready();
+{{/if}}
+  });
+
+  it("/ (GET)", () => {
+    return request(app.getHttpServer()).get("/").expect(200).expect("Hello World!");
+  });
+
+  it("returns 404 for an unknown route", async () => {
+    await request(app.getHttpServer()).get("/__missing_route__").expect(404);
+  });
+
+  it("rejects unsupported methods", async () => {
+    await request(app.getHttpServer()).post("/").send({ unexpected: true }).expect(404);
+  });
+
+  {{#if (eq auth "better-auth")}}
+  it("creates a user and resolves the authenticated session", async () => {
+    const email = `monorepo-${Date.now()}@example.com`;
+    const signup = await request(app.getHttpServer())
+      .post("/api/auth/sign-up/email")
+      .set("origin", "http://localhost:3000")
+      .send({ email, name: "Monorepo Scenario", password: "Scenario-password-123!" })
+      .expect(200);
+    const cookies = (signup.headers["set-cookie"] ?? []).map((cookie) => cookie.split(";")[0]);
+    expect(cookies.length).toBeGreaterThan(0);
+
+    const session = await request(app.getHttpServer())
+      .get("/api/auth/get-session")
+      .set("cookie", cookies.join("; "))
+      .expect(200);
+    expect(session.body.user.email).toBe(email);
+
+    const profile = await request(app.getHttpServer())
+      .get("/auth-profile")
+      .set("cookie", cookies.join("; "))
+      .expect(200);
+    expect(profile.body).toEqual({ id: session.body.user.id, email });
+  });
+  {{/if}}
+
+  afterEach(async () => {
+    await app?.close();
+  });
+});

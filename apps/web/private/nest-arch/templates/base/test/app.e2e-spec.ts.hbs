@@ -1,0 +1,1075 @@
+import { INestApplication{{#unless (includes addons "nestjs-zod")}}, StandardSchemaValidationPipe{{/unless}} } from "@nestjs/common";
+{{#if (includes addons "nestjs-zod")}}
+import { ZodValidationPipe } from "nestjs-zod";
+{{/if}}
+import { Test, TestingModule } from "@nestjs/testing";
+{{#if (or (eq auth "better-auth:stateless") (and isPassportAuth (not hasDatabase)))}}
+import { createServer } from "node:http";
+import { generateKeyPairSync, createSign } from "node:crypto";
+import { once } from "node:events";
+{{/if}}
+{{#if (and hasTrustedProxy isPassportAuth hasRateLimiting hasDatabase)}}
+import { createServer, request as httpRequest } from "node:http";
+{{/if}}
+{{#if hasTrustedProxy}}
+import { env } from "../src/config/env.js";
+{{/if}}
+{{#if (eq httpProvider "fastify")}}
+import { FastifyAdapter } from "@nestjs/platform-fastify";
+{{/if}}
+import request from "supertest";
+import { afterAll, beforeAll{{#if (and hasAuth hasRateLimiting (not (eq httpProvider "fastify")))}}, beforeEach{{/if}}, describe, expect, it{{#if (and hasHealthCheck hasDatabase (or usePrisma useTypeorm useDrizzle))}}, vi{{/if}} } from "vitest";
+import type { App } from "supertest/types";
+{{#if swagger}}
+import { createDocs } from "../src/docs/create-docs.js";
+{{#if isBetterAuth}}
+import { AuthService } from "@thallesp/nestjs-better-auth";
+{{/if}}
+{{/if}}
+{{#if (and swagger useSwaggerScalar)}}
+import { apiReference } from "@scalar/nestjs-api-reference";
+{{/if}}
+
+{{#unless (or (eq auth "better-auth:stateless") (and isPassportAuth (not hasDatabase)))}}
+import { AppModule } from "./../src/app.module.js";
+{{/unless}}
+{{#if (and useDrizzle (eq auth "none") (not hasSqlserver) hasTodoExample)}}
+import { DbService } from "../src/database/db.service.js";
+import { todos } from "../src/database/orm/drizzle/schema.js";
+import { eq } from "drizzle-orm";
+{{else if (and hasHealthCheck hasDatabase (or usePrisma useTypeorm useDrizzle))}}
+import { DbService } from "../src/database/db.service.js";
+{{/if}}
+{{#if (and hasMongodb useTypeorm hasHealthCheck)}}
+import { Todo } from "../src/database/entities/todo.entity.js";
+{{/if}}
+
+describe("AppController (e2e)", () => {
+  let app: INestApplication<App>;
+{{#if (and hasAuth hasRateLimiting (not (eq httpProvider "fastify")))}}
+  let activeRateLimitTestIp = "198.51.100.1";
+  let rateLimitTestIp = 1;
+  beforeEach(() => {
+    activeRateLimitTestIp = `198.51.100.${rateLimitTestIp}`;
+    rateLimitTestIp = (rateLimitTestIp % 254) + 1;
+  });
+{{/if}}
+{{#if swagger}}
+  let generatedOpenApi: Awaited<ReturnType<typeof createDocs>>;
+{{/if}}
+{{#if (eq httpProvider "fastify")}}
+  let fastifyPort = 0;
+{{/if}}
+  function getRequestTarget(_server = app.getHttpServer()) {
+{{#if (eq httpProvider "fastify")}}
+    return `http://127.0.0.1:${fastifyPort}`;
+{{else}}
+    return _server;
+{{/if}}
+  }
+{{#if (and hasAuth hasRateLimiting (eq httpProvider "fastify") (not hasTrustedProxy))}}
+  let activeRateLimitTestIp = "198.51.100.1";
+  let rateLimitTestIp = 1;
+  beforeEach(() => {
+    activeRateLimitTestIp = `198.51.100.${rateLimitTestIp}`;
+    rateLimitTestIp = (rateLimitTestIp % 254) + 1;
+  });
+{{/if}}
+{{#if (eq auth "better-auth:stateless")}}
+  const oidcOrigin = "http://127.0.0.1:4010";
+  const { privateKey, publicKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
+  const publicJwk = publicKey.export({ format: "jwk" });
+  let authorizationNonce = "";
+  let oidcServer: ReturnType<typeof createServer>;
+
+  function signIdToken(nonce: string): string {
+    const encodedHeader = Buffer.from(JSON.stringify({ alg: "RS256", kid: "scenario-key", typ: "JWT" })).toString("base64url");
+    const encodedPayload = Buffer.from(JSON.stringify({ aud: "generated-scenario-client", email: "oidc-scenario@example.com", exp: Math.floor(Date.now() / 1000) + 300, iat: Math.floor(Date.now() / 1000), iss: oidcOrigin, name: "OIDC Scenario", nonce, sub: "oidc-scenario-user" })).toString("base64url");
+    const signingInput = `${encodedHeader}.${encodedPayload}`;
+    const signer = createSign("RSA-SHA256");
+    signer.update(signingInput);
+    signer.end();
+    return `${signingInput}.${signer.sign(privateKey).toString("base64url")}`;
+  }
+
+  async function startOidcFixture(): Promise<void> {
+    oidcServer = createServer((incomingRequest, response) => {
+      const url = new URL(incomingRequest.url ?? "/", oidcOrigin);
+      if (url.pathname === "/.well-known/openid-configuration") {
+        response.setHeader("content-type", "application/json");
+        response.end(JSON.stringify({ authorization_endpoint: `${oidcOrigin}/authorize`, issuer: oidcOrigin, jwks_uri: `${oidcOrigin}/jwks`, token_endpoint: `${oidcOrigin}/token`, userinfo_endpoint: `${oidcOrigin}/userinfo` }));
+        return;
+      }
+      if (url.pathname === "/jwks") {
+        response.setHeader("content-type", "application/json");
+        response.end(JSON.stringify({ keys: [{ ...publicJwk, alg: "RS256", kid: "scenario-key", use: "sig" }] }));
+        return;
+      }
+      if (url.pathname === "/authorize") {
+        authorizationNonce = url.searchParams.get("nonce") ?? "";
+        const redirect = new URL(url.searchParams.get("redirect_uri") ?? "");
+        redirect.searchParams.set("code", "scenario-code");
+        redirect.searchParams.set("state", url.searchParams.get("state") ?? "");
+        response.writeHead(302, { location: redirect.toString() });
+        response.end();
+        return;
+      }
+      if (url.pathname === "/token") {
+        let body = "";
+        incomingRequest.on("data", (chunk: Buffer) => { body += chunk.toString(); });
+        incomingRequest.on("end", () => {
+          response.setHeader("content-type", "application/json");
+          response.end(JSON.stringify({ access_token: "scenario-access-token", id_token: signIdToken(authorizationNonce), token_type: "Bearer" }));
+        });
+        return;
+      }
+      if (url.pathname === "/userinfo") {
+        response.setHeader("content-type", "application/json");
+        response.end(JSON.stringify({ email: "oidc-scenario@example.com", name: "OIDC Scenario", sub: "oidc-scenario-user" }));
+        return;
+      }
+      response.writeHead(404);
+      response.end();
+    });
+    oidcServer.listen(4010, "127.0.0.1");
+    await once(oidcServer, "listening");
+  }
+{{/if}}
+{{#if (and isPassportAuth (not hasDatabase))}}
+  const identityIssuer = "http://127.0.0.1:4011/";
+  const identityAudience = "generated-resource-server";
+  const { privateKey, publicKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
+  const publicJwk = publicKey.export({ format: "jwk" });
+  let identityServer: ReturnType<typeof createServer>;
+
+  function signAccessToken(claims: Record<string, unknown> = {}): string {
+    const issuedAt = Math.floor(Date.now() / 1000);
+    const encodedHeader = Buffer.from(JSON.stringify({ alg: "RS256", kid: "scenario-key", typ: "at+jwt" })).toString("base64url");
+    const encodedPayload = Buffer.from(JSON.stringify({ aud: identityAudience, email: "external-user@example.com", exp: issuedAt + 300, iat: issuedAt, iss: identityIssuer, sub: "external-user-1", ...claims })).toString("base64url");
+    const signingInput = `${encodedHeader}.${encodedPayload}`;
+    const signer = createSign("RSA-SHA256");
+    signer.update(signingInput);
+    signer.end();
+    return `${signingInput}.${signer.sign(privateKey).toString("base64url")}`;
+  }
+
+  function startIdentityProvider(): Promise<void> {
+    identityServer = createServer((incomingRequest, response) => {
+      if (incomingRequest.url !== "/.well-known/jwks.json") {
+        response.writeHead(404);
+        response.end();
+        return;
+      }
+      response.setHeader("content-type", "application/json");
+      response.end(JSON.stringify({ keys: [{ ...publicJwk, alg: "RS256", kid: "scenario-key", use: "sig" }] }));
+    });
+    identityServer.listen(4011, "127.0.0.1");
+    return once(identityServer, "listening").then(() => {
+      if (!identityServer.listening) {
+        throw new Error("OIDC identity fixture failed to start");
+      }
+    });
+  }
+{{/if}}
+
+  async function startApplication() {
+{{#if (eq auth "better-auth:stateless")}}
+    process.env.OIDC_CLIENT_ID = "generated-scenario-client";
+    process.env.OIDC_CLIENT_SECRET = "generated-scenario-secret";
+    process.env.OIDC_DISCOVERY_URL = `${oidcOrigin}/.well-known/openid-configuration`;
+    process.env.OIDC_PROVIDER_ID = "scenario-oidc";
+    const { AppModule } = await import("./../src/app.module.js");
+{{/if}}
+{{#if (and isPassportAuth (not hasDatabase))}}
+    process.env.OIDC_AUDIENCE = identityAudience;
+    process.env.OIDC_ISSUER = identityIssuer;
+    process.env.OIDC_JWKS_URI = `${identityIssuer}.well-known/jwks.json`;
+    const { AppModule } = await import("./../src/app.module.js");
+{{/if}}
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+{{#if (eq httpProvider "fastify")}}
+    app = moduleFixture.createNestApplication(new FastifyAdapter({{#if (and hasAuth hasRateLimiting)}}{ trustProxy: true }{{/if}}){{#if isBetterAuth}}, { bodyParser: false }{{/if}});
+{{else}}
+    app = moduleFixture.createNestApplication({{#if isBetterAuth}}{ bodyParser: false }{{/if}});
+{{/if}}
+{{#if (and hasAuth hasRateLimiting (not hasTrustedProxy) (not (eq httpProvider "fastify")))}}
+    app.getHttpAdapter().getInstance().set("trust proxy", true);
+    app.use((incomingRequest, _response, next) => {
+      incomingRequest.headers["x-forwarded-for"] = activeRateLimitTestIp;
+      next();
+    });
+{{/if}}
+{{#if (and hasAuth hasRateLimiting (eq httpProvider "fastify") (not hasTrustedProxy))}}
+    app.getHttpAdapter().getInstance().addHook("onRequest", (incomingRequest, _reply, done) => {
+      incomingRequest.headers["x-forwarded-for"] = activeRateLimitTestIp;
+      done();
+    });
+{{/if}}
+{{#if hasTrustedProxy}}
+{{#unless (eq httpProvider "fastify")}}
+    const trustedProxyIps = env.TRUSTED_PROXY_IPS.split(",").map((ip) => ip.trim()).filter(Boolean);
+    app.getHttpAdapter().getInstance().set("trust proxy", trustedProxyIps);
+{{/unless}}
+{{/if}}
+{{#if (includes addons "nestjs-zod")}}
+    app.useGlobalPipes(new ZodValidationPipe());
+{{else}}
+    app.useGlobalPipes(new StandardSchemaValidationPipe());
+{{/if}}
+{{#if swagger}}
+    generatedOpenApi = await createDocs(app, {
+      integrations: {
+{{#if isBetterAuth}}
+        betterAuth: { auth: app.get(AuthService).instance, pathPrefix: "/api/auth" },
+{{/if}}
+{{#if isPassportAuth}}
+        bearerAuth: true,
+{{/if}}
+        zod: { withFastify: false },
+      },
+      title: "Generated API",
+    });
+{{#if useSwaggerScalar}}
+    app.use("/docs", apiReference({
+      content: generatedOpenApi,
+      theme: "default",
+      {{#if (eq httpProvider "fastify")}}withFastify: true,{{/if}}
+    }));
+{{/if}}
+{{/if}}
+{{#if (eq httpProvider "fastify")}}
+    await app.init();
+{{else}}
+    return app.init();
+{{/if}}
+{{#if (eq httpProvider "fastify")}}
+    await app.listen(fastifyPort, "127.0.0.1");
+    const address = app.getHttpAdapter().getInstance().server.address();
+    if (!address || typeof address === "string") {
+      throw new Error("Could not allocate a Fastify test port.");
+    }
+    fastifyPort = address.port;
+{{/if}}
+  }
+{{#if (eq auth "better-auth:stateless")}}
+  beforeAll(async () => {
+    await startOidcFixture();
+    await startApplication();
+  });
+{{else if (and isPassportAuth (not hasDatabase))}}
+  beforeAll(startIdentityProvider);
+  beforeAll(startApplication, 30_000);
+{{else}}
+  beforeAll(startApplication, 30_000);
+{{/if}}
+
+{{#if (and isPassportAuth (not hasDatabase))}}
+  it("accepts only RS256 access tokens from the configured external issuer", async () => {
+    const server = app.getHttpServer();
+    await request(getRequestTarget(server)).get("/auth/profile").expect(401);
+    await request(getRequestTarget(server)).post("/auth/login").send({ id: "attacker" }).expect(404);
+    const authenticated = await request(getRequestTarget(server))
+      .get("/auth/profile")
+      .set("Authorization", `Bearer ${signAccessToken()}`)
+      .expect(200);
+    expect(authenticated.body).toMatchObject({
+      email: "external-user@example.com",
+      id: "external-user-1",
+      issuer: identityIssuer,
+      userId: "external-user-1",
+    });
+
+    const invalidClaimResponses = await Promise.all(
+      [
+        { iss: "http://attacker.example/" },
+        { aud: "another-resource-server" },
+        { exp: Math.floor(Date.now() / 1000) - 30 },
+      ].map((claims) =>
+        request(getRequestTarget(server))
+          .get("/auth/profile")
+          .set("Authorization", `Bearer ${signAccessToken(claims)}`)
+      )
+    );
+    expect(invalidClaimResponses.every((response) => response.status === 401)).toBe(true);
+  });
+{{/if}}
+
+{{#if swagger}}
+  it("generates authenticated OpenAPI docs and serves the Scalar reference", {{#if useSwaggerScalar}}async {{/if}}() => {
+    expect(generatedOpenApi.openapi).toMatch(/^3\./u);
+{{#if isBetterAuth}}
+    expect(generatedOpenApi.paths?.["/api/auth/sign-up/email"]).toBeDefined();
+{{else if isPassportAuth}}
+{{#if (not hasDatabase)}}
+    expect(generatedOpenApi.paths?.["/auth/profile"]).toBeDefined();
+{{else if (and usePrisma hasRest (not hasMongodb))}}
+    expect(generatedOpenApi.paths?.["/auth/register"]).toBeDefined();
+{{else}}
+    expect(generatedOpenApi.paths?.["/auth/signup"]).toBeDefined();
+{{/if}}
+    expect(generatedOpenApi.components?.securitySchemes?.bearer).toBeDefined();
+{{/if}}
+{{#if (and hasTodoExample hasRest)}}
+    expect(generatedOpenApi.paths?.["/todos"]?.post?.requestBody).toBeDefined();
+{{else if (and hasHealthCheck (not hasRest))}}
+    expect(generatedOpenApi.paths?.["/health"]?.get).toBeDefined();
+{{/if}}
+{{#if useSwaggerScalar}}
+    const reference = await request(getRequestTarget()).get("/docs").expect(200);
+    expect(reference.text).toMatch(/scalar/u);
+{{/if}}
+  });
+{{/if}}
+
+{{#if hasRest}}
+  it("/ (GET)", async () => {
+    const response = await request(getRequestTarget()).get("/").expect(200);
+    expect(response.text).toBe("Hello World!");
+  });
+{{/if}}
+
+{{#if (and isPassportAuth hasTodoExample hasDatabase hasRest)}}
+  it("enforces REST todo ownership across two Passport users", async () => {
+    const server = app.getHttpServer();
+    const password = "Scenario-password-123!";
+    async function register(prefix: string) {
+      const email = `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}@example.com`;
+      await request(getRequestTarget(server)).post({{#if (and usePrisma hasRest (not hasMongodb))}}"/auth/register"{{else}}"/auth/signup"{{/if}})
+        .send({ email, password }).expect(201);
+      const response = await request(getRequestTarget(server)).post("/auth/login")
+        .send({ email, password }).expect(200);
+      expect(response.body.accessToken).toBeTruthy();
+      return response.body.accessToken as string;
+    }
+    const alice = await register("passport-alice");
+    const bob = await register("passport-bob");
+    const created = await request(getRequestTarget(server)).post("/todos")
+      .set("Authorization", `Bearer ${alice}`)
+      .send({ title: "Private Passport todo", completed: false }).expect(201);
+    const todo = Array.isArray(created.body) ? created.body[0] : created.body;
+    const { id } = todo;
+    const bobList = await request(getRequestTarget(server)).get("/todos")
+      .set("Authorization", `Bearer ${bob}`).expect(200);
+    expect(bobList.body).not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id })])
+    );
+    await request(getRequestTarget(server)).put(`/todos/${id}`)
+      .set("Authorization", `Bearer ${bob}`)
+      .send({ completed: true }).expect(404);
+    await request(getRequestTarget(server)).delete(`/todos/${id}`)
+      .set("Authorization", `Bearer ${bob}`).expect(404);
+    const aliceList = await request(getRequestTarget(server)).get("/todos")
+      .set("Authorization", `Bearer ${alice}`).expect(200);
+    expect(aliceList.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id, completed: false }),
+      ])
+    );
+  });
+{{/if}}
+
+{{#if (and isPassportAuth (not hasDatabase) hasTodoExample hasRest)}}
+  it("protects external-identity REST todos and isolates owners", async () => {
+    const server = app.getHttpServer();
+    await request(getRequestTarget(server)).get("/todos").expect(401);
+    const aliceToken = signAccessToken();
+    const bobToken = signAccessToken({ sub: "external-user-2" });
+    const created = await request(getRequestTarget(server))
+      .post("/todos")
+      .set("Authorization", `Bearer ${aliceToken}`)
+      .send({ title: "External identity todo", completed: false })
+      .expect(201);
+    const todo = created.body as { id: string };
+    const bobTodos = await request(getRequestTarget(server))
+      .get("/todos")
+      .set("Authorization", `Bearer ${bobToken}`)
+      .expect(200);
+    expect(bobTodos.body).toEqual([]);
+    const aliceTodos = await request(getRequestTarget(server))
+      .get("/todos")
+      .set("Authorization", `Bearer ${aliceToken}`)
+      .expect(200);
+    expect(aliceTodos.body).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: todo.id })])
+    );
+    await request(getRequestTarget(server))
+      .put(`/todos/${todo.id}`)
+      .set("Authorization", `Bearer ${aliceToken}`)
+      .send({ completed: true })
+      .expect(200);
+    await request(getRequestTarget(server))
+      .delete(`/todos/${todo.id}`)
+      .set("Authorization", `Bearer ${aliceToken}`)
+      .expect(200);
+  });
+{{/if}}
+
+{{#if hasHealthCheck}}
+  it("exposes unauthenticated health and readiness", async () => {
+    const response = await request(getRequestTarget()).get("/health").expect(200);
+    expect(response.body.status).toBe("ok");
+    expect(response.body.info.app.status).toBe("up");
+{{#if hasDatabase}}
+    expect(response.body.info.db.status).toBe("up");
+{{/if}}
+  });
+{{/if}}
+
+{{#if (and hasHealthCheck hasDatabase (or usePrisma useTypeorm useDrizzle))}}
+  it("reports database readiness failure with HTTP 503", async () => {
+    const db = app.get(DbService);
+    const database = {{#if hasMongodb}}{{#if useTypeorm}}db.typeorm.getMongoRepository(Todo){{else}}db.raw.mongo{{/if}}{{else if isPrisma8}}db.prisma.orm.public.Todo{{else if usePrisma}}db.prisma{{else if useTypeorm}}db.typeorm{{else}}db.drizzle{{/if}};
+    const query = vi.spyOn(database, {{#if hasMongodb}}{{#if usePrisma}}"$runCommandRaw"{{else if useTypeorm}}"countDocuments"{{else}}"command"{{/if}}{{else if isPrisma8}}"all"{{else if usePrisma}}"$queryRaw"{{else if useTypeorm}}"query"{{else if hasSqlite}}"get"{{else}}"execute"{{/if}})
+      .mockRejectedValue(new Error("scenario database outage"));
+    try {
+      const response = await request(getRequestTarget()).get("/health").expect(503);
+      expect(response.body.status).toBe("error");
+      expect(response.body.error.db.status).toBe("down");
+    } finally {
+      query.mockRestore();
+    }
+  });
+{{/if}}
+
+{{#if hasTrpc}}
+  it("executes a tRPC query through HTTP", async () => {
+    const response = await request(getRequestTarget())
+      .get("/trpc/appRouter.getHello")
+      .expect(200);
+    expect(response.body.result.data).toBe("Hello World!");
+  });
+{{/if}}
+
+{{#if (and hasTrpc hasTodoExample (eq auth "better-auth:stateless"))}}
+  it("protects stateless tRPC todo CRUD with an OIDC session", async () => {
+    const server = app.getHttpServer();
+    const call = (procedure: string, input?: unknown, cookies?: string[]) => {
+      const operation = procedure === "findAll"
+        ? request(getRequestTarget(server)).get("/trpc/todoRouter.findAll")
+        : request(getRequestTarget(server)).post(`/trpc/todoRouter.${procedure}`);
+      if (cookies) operation.set("Cookie", cookies);
+      if (input !== undefined) operation.send(input);
+      return operation;
+    };
+    await call("findAll").expect(401);
+    const signIn = await request(getRequestTarget(server)).post("/api/auth/sign-in/social")
+      .set("Origin", "http://localhost:3000")
+      .send({ callbackURL: "/", provider: "scenario-oidc" }).expect(200);
+    const authorization = new URL(signIn.body.url);
+    const providerResponse = await request(oidcServer)
+      .get(`${authorization.pathname}${authorization.search}`).expect(302);
+    const callback = new URL(providerResponse.headers.location);
+    const session = await request(getRequestTarget(server))
+      .get(`${callback.pathname}${callback.search}`)
+      .set("Cookie", signIn.headers["set-cookie"] as string[])
+      .set("Origin", "http://localhost:3000").expect(302);
+    const cookies = session.headers["set-cookie"] as string[];
+    expect(cookies).toBeTruthy();
+    const created = await call("create", { completed: false, title: "OIDC tRPC todo" }, cookies).expect(200);
+    const todo = (created.body.result?.data?.json ?? created.body.result?.data) as { id: string | number };
+    await call("findAll", undefined, cookies).expect(200);
+    await call("update", { data: { completed: true }, id: todo.id }, cookies).expect(200);
+    await call("delete", { id: todo.id }, cookies).expect(200);
+  });
+{{else if (and hasTrpc hasTodoExample hasAuth)}}
+  it("enforces todo ownership through authenticated tRPC procedures", async () => {
+    const server = app.getHttpServer();
+    const password = "Scenario-password-123!";
+    const call = (procedure: string, input?: unknown, credential?: { cookie?: string[]; token?: string }) => {
+      const operation = procedure === "findAll"
+        ? request(getRequestTarget(server)).get("/trpc/todoRouter.findAll")
+        : request(getRequestTarget(server)).post(`/trpc/todoRouter.${procedure}`);
+      if (credential?.cookie) operation.set("Cookie", credential.cookie);
+      if (credential?.token) operation.set("Authorization", `Bearer ${credential.token}`);
+      if (input !== undefined) operation.send(input);
+      return operation;
+    };
+{{#if isBetterAuth}}
+    async function register(prefix: string) {
+      const email = `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}@example.com`;
+      const origin = "http://localhost:3000";
+      const response = await request(getRequestTarget(server)).post("/api/auth/sign-up/email")
+        .set("Origin", origin).send({ email, password, name: prefix }).expect(200);
+      return { cookie: response.headers["set-cookie"] as string[] };
+    }
+{{else if isPassportAuth}}
+    async function register(prefix: string) {
+      const email = `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}@example.com`;
+      await request(getRequestTarget(server))
+        .post({{#if (and usePrisma hasRest (not hasMongodb))}}"/auth/register"{{else}}"/auth/signup"{{/if}})
+        {{#if usePrisma}}.send({ email, password }){{else}}.send({ email, password, name: prefix }){{/if}}
+        .expect(201);
+      const login = await request(getRequestTarget(server)).post("/auth/login").send({ email, password }).expect(200);
+      return { token: login.body.accessToken as string };
+    }
+{{/if}}
+    const anonymous = await call("findAll");
+    expect(anonymous.status).toBe(401);
+    const alice = await register("trpc-alice");
+    const bob = await register("trpc-bob");
+    const created = await call("create", { title: "Private tRPC todo", completed: false }, alice).expect(200);
+    const createdTodo = (created.body.result?.data?.json ?? created.body.result?.data) as { id: string; title: string };
+    expect(createdTodo.title).toBe("Private tRPC todo");
+    const id = createdTodo.id;
+    const aliceResponse = await call("findAll", undefined, alice).expect(200);
+    const aliceTodos = aliceResponse.body.result?.data?.json ?? aliceResponse.body.result?.data as { id: string }[];
+    expect(aliceTodos).toEqual(expect.arrayContaining([expect.objectContaining({ id })]));
+    const bobResponse = await call("findAll", undefined, bob).expect(200);
+    const bobTodos = bobResponse.body.result?.data?.json ?? bobResponse.body.result?.data as { id: string }[];
+    expect(bobTodos).not.toEqual(expect.arrayContaining([expect.objectContaining({ id })]));
+    await call("update", { id, data: { completed: true } }, bob).expect(404);
+    await call("delete", { id }, bob).expect(404);
+    const updated = await call("update", { id, data: { completed: true } }, alice).expect(200);
+    const updatedTodo = updated.body.result?.data?.json ?? updated.body.result?.data;
+    expect((updatedTodo as { completed: boolean }).completed).toBe(true);
+    await call("delete", { id }, alice).expect(200);
+  });
+{{/if}}
+
+{{#if (and hasTrpc hasTodoExample (not hasAuth))}}
+  it("creates, reads, updates, and deletes tRPC todos", async () => {
+    const server = app.getHttpServer();
+    const create = await request(getRequestTarget(server))
+      .post("/trpc/todoRouter.create")
+      .send({ completed: false, title: "Public tRPC todo" })
+      .expect(200);
+    const created = create.body.result?.data?.json ?? create.body.result?.data;
+    expect(created.title).toBe("Public tRPC todo");
+    const id = created.id as string | number;
+
+    const list = await request(getRequestTarget(server)).get("/trpc/todoRouter.findAll").expect(200);
+    const todos = list.body.result?.data?.json ?? list.body.result?.data;
+    expect(todos).toEqual(expect.arrayContaining([expect.objectContaining({ id })]));
+
+    const update = await request(getRequestTarget(server))
+      .post("/trpc/todoRouter.update")
+      .send({ data: { completed: true }, id })
+      .expect(200);
+    const updated = update.body.result?.data?.json ?? update.body.result?.data;
+    expect(updated.completed).toBe(true);
+
+    await request(getRequestTarget(server)).post("/trpc/todoRouter.delete").send({ id }).expect(200);
+  });
+{{/if}}
+
+{{#if (eq auth "better-auth")}}
+  it("registers, authenticates and revokes a persisted session", async () => {
+    const email = `scenario-${Date.now()}@example.com`;
+    const password = "Scenario-password-123!";
+    expect(password.length).toBeGreaterThanOrEqual(8);
+    const origin = "http://localhost:3000";
+    let server = app.getHttpServer();
+    const signedUp = await request(getRequestTarget(server)).post("/api/auth/sign-up/email")
+      .set("Origin", origin).send({ email, password, name: "Scenario" }).expect(200);
+    expect(signedUp.body.user.email).toBe(email);
+    expect(signedUp.body.user.password).toBeUndefined();
+    await request(getRequestTarget(server)).post("/api/auth/sign-up/email")
+      .set("Origin", origin).send({ email, password, name: "Duplicate" }).expect(422);
+    await request(getRequestTarget(server)).post("/api/auth/sign-in/email")
+      .set("Origin", origin).send({ email, password: "wrong-password" }).expect(401);
+    const signedIn = await request(getRequestTarget(server)).post("/api/auth/sign-in/email")
+      .set("Origin", origin).send({ email, password }).expect(200);
+    const cookies = signedIn.headers["set-cookie"];
+    expect(cookies).toBeTruthy();
+    const session = await request(getRequestTarget(server)).get("/api/auth/get-session")
+      .set("Cookie", cookies).expect(200);
+    expect(session.body.user.email).toBe(email);
+{{#if (or usePrisma useDrizzle)}}
+    await request(getRequestTarget(server)).get("/auth-profile").expect(401);
+    const protectedProfile = await request(getRequestTarget(server)).get("/auth-profile").set("Cookie", cookies).expect(200);
+    expect(protectedProfile.body.email).toBe(email);
+    await app.close();
+    await startApplication();
+    server = app.getHttpServer();
+    const persisted = await request(getRequestTarget()).get("/api/auth/get-session").set("Cookie", cookies).expect(200);
+    expect(persisted.body.user.email).toBe(email);
+{{/if}}
+{{#if hasTrpc}}
+    await request(getRequestTarget(server)).get("/trpc/appRouter.testAuth").expect(401);
+    const authenticated = await request(getRequestTarget(server)).get("/trpc/appRouter.testAuth")
+      .set("Cookie", cookies).expect(200);
+    expect(authenticated.body.result.data.user.email).toBe(email);
+{{/if}}
+    await request(getRequestTarget(server)).post("/api/auth/sign-out").set("Origin", origin)
+      .set("Cookie", cookies).send({}).expect(200);
+    const revoked = await request(getRequestTarget(server)).get("/api/auth/get-session")
+      .set("Cookie", cookies).expect(200);
+expect(revoked.body).toBeNull();
+  });
+{{/if}}
+
+{{#if (eq auth "better-auth:stateless")}}
+  it("completes an OIDC authorization-code flow without an application database", async () => {
+    const server = app.getHttpServer();
+    const signIn = await request(getRequestTarget(server)).post("/api/auth/sign-in/social")
+      .set("Origin", "http://localhost:3000")
+      .send({ callbackURL: "/", provider: "scenario-oidc" }).expect(200);
+    const authorization = new URL(signIn.body.url);
+    expect(authorization.origin).toBe(oidcOrigin);
+    const stateCookies = signIn.headers["set-cookie"];
+    expect(stateCookies).toBeTruthy();
+    const providerResponse = await request(oidcServer).get(`${authorization.pathname}${authorization.search}`).expect(302);
+    const callback = new URL(providerResponse.headers.location);
+    const session = await request(getRequestTarget(server)).get(`${callback.pathname}${callback.search}`)
+      .set("Cookie", stateCookies).set("Origin", "http://localhost:3000").expect(302);
+    const cookies = session.headers["set-cookie"];
+    expect(cookies).toBeTruthy();
+    const currentSession = await request(getRequestTarget(server)).get("/api/auth/get-session").set("Cookie", cookies).expect(200);
+    expect(currentSession.body.user.email).toBe("oidc-scenario@example.com");
+{{#if hasTrpc}}
+    await request(getRequestTarget(server)).get("/trpc/appRouter.testAuth").expect(401);
+    const authenticated = await request(getRequestTarget(server)).get("/trpc/appRouter.testAuth")
+      .set("Cookie", cookies).expect(200);
+    expect(authenticated.body.result.data.user.email).toBe("oidc-scenario@example.com");
+{{/if}}
+    await request(getRequestTarget(server)).get("/api/auth/callback/scenario-oidc?code=scenario-code&state=tampered")
+      .set("Origin", "http://localhost:3000").expect(302);
+  });
+{{/if}}
+
+{{#if hasGraphql}}
+  it("queries and mutates persisted GraphQL todos with input validation", async () => {
+    const server = app.getHttpServer();
+    const execute = (query: string, variables: Record<string, unknown> = {}) => request(getRequestTarget(server)).post("/graphql").send({ query, variables });
+    const hello = await execute("{ hello }");
+    expect(hello.body.errors).toBeUndefined();
+    expect(hello.body.data.hello).toBe("Hello GraphQL!");
+{{#if (and hasTodoExample (eq auth "none"))}}
+    const created = await execute('mutation($input: CreateTodoInput!) { createTodo(input: $input) { id title completed } }', { input: { title: "GraphQL integration" } });
+    expect(created.body.errors).toBeUndefined();
+    const { id } = created.body.data.createTodo;
+    const listed = await execute("{ todos { id title } }");
+    expect(listed.body.data.todos).toContainEqual({ id, title: "GraphQL integration" });
+    const updated = await execute('mutation($input: UpdateTodoInput!) { updateTodo(input: $input) { completed } }', { input: { id, completed: true } });
+    expect(updated.body.data.updateTodo.completed).toBe(true);
+    const invalid = await execute('mutation { createTodo(input: { title: " " }) { id } }');
+    expect(invalid.body.errors).toBeTruthy();
+    const deleted = await execute('mutation($id: String!) { deleteTodo(id: $id) }', { id });
+    expect(deleted.body.data.deleteTodo).toBe(true);
+    const missing = await execute('mutation($id: String!) { deleteTodo(id: $id) }', { id });
+    expect(missing.body.errors).toBeTruthy();
+{{/if}}
+  });
+{{/if}}
+
+{{#if (and hasGraphql hasTodoExample hasAuth)}}
+  it("rejects anonymous GraphQL todo access and isolates authenticated owners", async () => {
+    const server = app.getHttpServer();
+    const password = "Scenario-password-123!";
+{{#if isBetterAuth}}
+    const origin = "http://localhost:3000";
+{{/if}}
+    const execute = (
+      query: string,
+      variables: Record<string, unknown> = {},
+      credentials: { cookie?: string[]; token?: string } = {}
+    ) => {
+      const operation = request(getRequestTarget(server)).post("/graphql").send({ query, variables });
+      if (credentials.cookie) operation.set("Cookie", credentials.cookie);
+      if (credentials.token) operation.set("Authorization", `Bearer ${credentials.token}`);
+      return operation;
+    };
+{{#if isBetterAuth}}
+    async function register(prefix: string) {
+      const email = `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}@example.com`;
+      const response = await request(getRequestTarget(server)).post("/api/auth/sign-up/email")
+        .set("Origin", origin).send({ email, password, name: prefix }).expect(200);
+      return { cookie: response.headers["set-cookie"] };
+    }
+{{else if isPassportAuth}}
+    async function register(prefix: string) {
+      const email = `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}@example.com`;
+      const response = await request(getRequestTarget(server)).post({{#if (and usePrisma hasRest (not hasMongodb))}}"/auth/register"{{else}}"/auth/signup"{{/if}})
+        .send({ email, password }).expect(201);
+      return { token: response.body.accessToken as string };
+    }
+{{/if}}
+    const anonymous = await execute("{ todos { id title } }");
+    expect(anonymous.body.errors).toBeTruthy();
+    const firstUser = await register("graphql-owner-one");
+    const secondUser = await register("graphql-owner-two");
+    const created = await execute(
+      'mutation($input: CreateTodoInput!) { createTodo(input: $input) { id title } }',
+      { input: { title: "Private GraphQL todo" } },
+      firstUser
+    );
+    expect(created.body.errors).toBeUndefined();
+    const { id } = created.body.data.createTodo;
+    const firstList = await execute("{ todos { id title } }", {}, firstUser);
+    expect(firstList.body.data.todos).toContainEqual({ id, title: "Private GraphQL todo" });
+    const secondList = await execute("{ todos { id title } }", {}, secondUser);
+    expect(secondList.body.data.todos).toEqual([]);
+    const unauthorizedUpdate = await execute(
+      'mutation($input: UpdateTodoInput!) { updateTodo(input: $input) { id } }',
+      { input: { id, completed: true } },
+      secondUser
+    );
+    expect(unauthorizedUpdate.body.errors).toBeTruthy();
+    const unauthorizedDelete = await execute(
+      'mutation($id: String!) { deleteTodo(id: $id) }',
+      { id },
+      secondUser
+    );
+    expect(unauthorizedDelete.body.errors).toBeTruthy();
+    const ownerTodo = await execute("{ todos { id title } }", {}, firstUser);
+    expect(ownerTodo.body.data.todos).toContainEqual({ id, title: "Private GraphQL todo" });
+  });
+{{/if}}
+
+{{#if (and hasGraphql hasRateLimiting)}}
+  it("throttles repeated GraphQL requests to 429", async () => {
+    app.getHttpServer().setMaxListeners(100);
+    const responses = await Promise.all(
+      Array.from({ length: 80 }, () =>
+        request(getRequestTarget()).post("/graphql").send({ query: "{ hello }" })
+      )
+    );
+    const lastResponse = responses.at(-1);
+    const responseSummary = lastResponse
+      ? JSON.stringify({ errors: lastResponse.body.errors, status: lastResponse.status })
+      : "GraphQL rate-limit probe produced no responses";
+    const throttled = responses.some(
+      (response) =>
+        response.status === 429 ||
+        response.body.errors?.some(
+          (error: { message?: string; extensions?: { originalError?: { statusCode?: number } } }) =>
+            error.extensions?.originalError?.statusCode === 429 ||
+            error.message?.includes("ThrottlerException: Too Many Requests") === true
+        ) === true
+    );
+    expect(throttled, responseSummary).toBe(true);
+  }, 30_000);
+{{/if}}
+
+{{#if (and isPassportAuth hasRateLimiting hasDatabase)}}
+  it("keeps Passport sign-in usable and throttles repeated login attempts", async () => {
+    const server = app.getHttpServer();
+    const email = `passport-ratelimit-${Date.now()}@example.com`;
+    const password = "Scenario-password-123!";
+    await request(getRequestTarget(server)).post({{#if (and usePrisma hasRest (not hasMongodb))}}"/auth/register"{{else}}"/auth/signup"{{/if}}).send({ email, password }).expect(201);
+    await request(getRequestTarget(server)).post("/auth/login").send({ email, password }).expect(200);
+    async function tryLoginUntilThrottled(attemptsRemaining: number): Promise<boolean> {
+      if (attemptsRemaining === 0) {
+        return false;
+      }
+      const response = await request(getRequestTarget(server)).post("/auth/login").send({ email, password: "Invalid-password-123!" });
+      return response.status === 429 || tryLoginUntilThrottled(attemptsRemaining - 1);
+    }
+    const throttled = await tryLoginUntilThrottled(80);
+    expect(throttled).toBe(true);
+    await app.close();
+    await startApplication();
+  }, 30_000);
+{{/if}}
+
+{{#if (and hasTrpc hasRateLimiting)}}
+  it("throttles repeated tRPC procedure requests", async () => {
+    const server = app.getHttpServer();
+    server.setMaxListeners(100);
+    const procedure = () => request(getRequestTarget(server)).get(
+      "/trpc/appRouter.{{#if hasTrpcAndAuth}}testAuth{{else}}getHello{{/if}}"
+    );
+    const initialResponse = await procedure();
+    expect(initialResponse.status).toBe({{#if hasTrpcAndAuth}}401{{else}}200{{/if}});
+    const responses = await Promise.all(
+      Array.from({ length: 80 }, () => procedure())
+    );
+    expect(responses.some((response) => response.status === 429)).toBe(true);
+  }, 30_000);
+{{/if}}
+
+{{#if (and hasTrustedProxy isPassportAuth hasRateLimiting hasDatabase)}}
+  it("isolates rate limits by client IP behind a trusted reverse proxy", async () => {
+    const appServer = app.getHttpServer();
+    const email = `passport-proxy-${Date.now()}@example.com`;
+    const password = "Scenario-password-123!";
+    await request(getRequestTarget(appServer)).post({{#if (and usePrisma hasRest (not hasMongodb))}}"/auth/register"{{else}}"/auth/signup"{{/if}}).send({ email, password }).expect(201);
+{{#unless (eq httpProvider "fastify")}}
+    await new Promise<void>((resolve) => appServer.listen(0, "127.0.0.1", resolve));
+{{/unless}}
+    const appAddress = appServer.address();
+    if (!appAddress || typeof appAddress === "string") {
+      throw new Error("Application did not bind a TCP port for the proxy scenario");
+    }
+
+    const proxy = createServer((incoming, outgoing) => {
+      const forwardedClientIp = incoming.headers["x-scenario-client-ip"]?.toString() ?? "198.51.100.10";
+      const upstream = httpRequest({
+        headers: { ...incoming.headers, "x-forwarded-for": forwardedClientIp },
+        hostname: "127.0.0.1",
+        method: incoming.method,
+        path: incoming.url,
+        port: appAddress.port,
+      }, (upstreamResponse) => {
+        outgoing.writeHead(upstreamResponse.statusCode ?? 502, upstreamResponse.headers);
+        upstreamResponse.pipe(outgoing);
+      });
+      upstream.on("error", () => {
+        outgoing.writeHead(502);
+        outgoing.end();
+      });
+      incoming.pipe(upstream);
+    });
+    await new Promise<void>((resolve) => proxy.listen(0, "127.0.0.1", resolve));
+    const proxyAddress = proxy.address();
+    if (!proxyAddress || typeof proxyAddress === "string") {
+      throw new Error("Reverse proxy did not bind a TCP port");
+    }
+
+    const proxyLogin = async (clientIp: string, suppliedPassword: string): Promise<number> => {
+      const response = await fetch(`http://127.0.0.1:${proxyAddress.port}/auth/login`, {
+        body: JSON.stringify({ email, password: suppliedPassword }),
+        headers: {
+          "content-type": "application/json",
+          "x-scenario-client-ip": clientIp,
+        },
+        method: "POST",
+      });
+      return response.status;
+    };
+
+    expect(await proxyLogin("198.51.100.10", password)).toBe(200);
+    const invalidAttempts = await Promise.all(
+      Array.from({ length: 80 }, () => proxyLogin("198.51.100.10", "Invalid-password-123!"))
+    );
+    expect(invalidAttempts).toContain(429);
+    expect(await proxyLogin("198.51.100.20", password)).toBe(200);
+
+    await new Promise<void>((resolve, reject) => proxy.close((error) => error ? reject(error) : resolve()));
+    await app.close();
+  }, 30_000);
+{{/if}}
+
+{{#if (and isPassportAuth usePrisma hasRest)}}
+  it("registers, authenticates and refreshes Prisma Passport tokens", async () => {
+    const server = app.getHttpServer();
+    const email = `passport-${Date.now()}@example.com`;
+    const password = "Scenario-password-123!";
+    const registered = await request(getRequestTarget(server)).post({{#if (and usePrisma hasRest (not hasMongodb))}}"/auth/register"{{else}}"/auth/signup"{{/if}}).send({ email, password }).expect(201);
+{{#if (and usePrisma hasRest (not hasMongodb))}}
+    expect(registered.body.email).toBe(email);
+{{else}}
+    expect(registered.body.accessToken).toBeTruthy();
+{{/if}}
+    expect(registered.body.password).toBeUndefined();
+    await request(getRequestTarget(server)).post({{#if (and usePrisma hasRest (not hasMongodb))}}"/auth/register"{{else}}"/auth/signup"{{/if}}).send({ email, password }).expect(409);
+    await request(getRequestTarget(server)).post("/auth/login").send({ email, password: "wrong-password-123" }).expect(401);
+    const login = await request(getRequestTarget(server)).post("/auth/login").send({ email, password }).expect(200);
+    expect(login.body.accessToken).toBeTruthy();
+    expect(login.body.refreshToken).toBeTruthy();
+{{#if hasTodoExample}}
+    await request(getRequestTarget(server)).get("/todos").expect(401);
+    const todos = await request(getRequestTarget(server)).get("/todos")
+      .auth(login.body.accessToken, { type: "bearer" }).expect(200);
+    expect(todos.body).toEqual([]);
+    await request(getRequestTarget(server)).post("/todos").auth(login.body.accessToken, { type: "bearer" })
+      .send({ title: "" }).expect(400);
+{{/if}}
+{{#if (not hasMongodb)}}
+    await request(getRequestTarget(server)).get("/auth/profile").expect(401);
+    const profile = await request(getRequestTarget(server)).get("/auth/profile")
+      .auth(login.body.accessToken, { type: "bearer" }).expect(200);
+    expect(profile.body.email).toBe(email);
+{{/if}}
+    const rotated = await request(getRequestTarget(server)).post("/auth/refresh").send({{#if hasMongodb}}{ token: login.body.refreshToken }{{else}}{ refreshToken: login.body.refreshToken }{{/if}}).expect(200);
+    expect(rotated.body.accessToken).toBeTruthy();
+    expect(rotated.body.refreshToken).toBeTruthy();
+{{#if hasMongodb}}
+    await request(getRequestTarget(server)).post("/auth/refresh").send({ token: "invalid-refresh-token" }).expect(401);
+    const fresh = await request(getRequestTarget(server)).post("/auth/login").send({ email, password }).expect(200);
+    expect(fresh.body.refreshToken).toBeTruthy();
+{{else}}
+    await request(getRequestTarget(server)).post("/auth/refresh").send({ refreshToken: login.body.refreshToken }).expect(401);
+    const fresh = await request(getRequestTarget(server)).post("/auth/login").send({ email, password }).expect(200);
+    await request(getRequestTarget(server)).post("/auth/logout").send({ refreshToken: fresh.body.refreshToken }).expect(200);
+    await request(getRequestTarget(server)).post("/auth/refresh").send({ refreshToken: fresh.body.refreshToken }).expect(401);
+{{/if}}
+  });
+{{/if}}
+{{#if (and isPassportAuth (or useTypeorm useDrizzle))}}
+  it("registers, authenticates and refreshes passport sessions", async () => {
+    const server = app.getHttpServer();
+    const email = `passport-${Date.now()}@example.com`;
+    const password = "Scenario-password-123!";
+    const signedUp = await request(getRequestTarget(server)).post("/auth/signup").send({ email, password }).expect(201);
+    expect(signedUp.body.accessToken).toBeTruthy();
+    expect(signedUp.body.refreshToken).toBeTruthy();
+    await request(getRequestTarget(server)).post("/auth/signup").send({ email, password }).expect(409);
+    await request(getRequestTarget(server)).post("/auth/login").send({ email, password: "wrong-password-123" }).expect(401);
+    const login = await request(getRequestTarget(server)).post("/auth/login").send({ email, password }).expect(200);
+    const rotated = await request(getRequestTarget(server)).post("/auth/refresh").send({ token: login.body.refreshToken }).expect(200);
+    expect(rotated.body.accessToken).toBeTruthy();
+    expect(rotated.body.refreshToken).toBeTruthy();
+  });
+{{/if}}
+{{#if (and hasMongodb (eq auth "none"))}}
+  it("rejects malformed and missing MongoDB identifiers", async () => {
+    await request(getRequestTarget()).delete("/todos/invalid").expect(400);
+    await request(getRequestTarget()).delete("/todos/000000000000000000000000").expect(404);
+    await request(getRequestTarget()).post("/todos").send({ title: "" }).expect(400);
+  });
+{{/if}}
+
+  it("returns 404 for an unknown route", async () => {
+    await request(getRequestTarget()).get("/__missing_route__").expect(404);
+  });
+
+{{#if (and useDrizzle (eq auth "none") (not hasSqlserver) hasTodoExample)}}
+  it("writes and reads the migrated Drizzle schema", async () => {
+    const db = app.get(DbService).drizzle;
+    const title = `Drizzle integration ${Date.now()}`;
+    try {
+      await db.insert(todos).values({ title });
+      const rows = await db.select().from(todos).where(eq(todos.title, title));
+      expect(rows).toHaveLength(1);
+      expect(rows[0].title).toBe(title);
+    } finally {
+      await db.delete(todos).where(eq(todos.title, title));
+    }
+  });
+{{/if}}
+
+{{#if (and hasTodoExample hasRest (eq auth "none"))}}
+  it("persists, updates and deletes a todo through HTTP", async () => {
+    const created = await request(getRequestTarget()).post("/todos")
+      .send({ completed: false, title: "Database integration" }).expect(201);
+    const { id } = created.body;
+    expect(id).toBeTruthy();
+{{#if hasMongodb}}
+    await app.close();
+    await startApplication();
+{{/if}}
+    const listed = await request(getRequestTarget()).get("/todos").expect(200);
+    expect(listed.body).toEqual(expect.arrayContaining([expect.objectContaining({ id, title: "Database integration" })]));
+    await request(getRequestTarget()).put(`/todos/${id}`).send({ completed: true }).expect(200);
+    const updated = await request(getRequestTarget()).get("/todos").expect(200);
+    expect(updated.body).toEqual(expect.arrayContaining([expect.objectContaining({ completed: true, id })]));
+    await request(getRequestTarget()).delete(`/todos/${id}`).expect(200);
+    const deleted = await request(getRequestTarget()).get("/todos").expect(200);
+    expect(deleted.body).not.toEqual(expect.arrayContaining([expect.objectContaining({ id })]));
+  });
+{{/if}}
+
+{{#if (and (eq auth "better-auth") hasTodoExample hasDatabase hasRest)}}
+  it("enforces todo ownership across two authenticated users", async () => {
+    const server = app.getHttpServer();
+    const origin = "http://localhost:3000";
+    const password = "Scenario-password-123!";
+    async function register(prefix: string) {
+      const email = `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}@example.com`;
+      const response = await request(getRequestTarget(server)).post("/api/auth/sign-up/email")
+        .set("Origin", origin).send({ email, password, name: prefix }).expect(200);
+      const cookies = response.headers["set-cookie"];
+      expect(cookies).toBeTruthy();
+      return cookies;
+    }
+    const alice = await register("alice");
+    const bob = await register("bob");
+{{#if (includes addons "nestjs-zod")}}
+    await request(getRequestTarget(server)).post("/todos").set("Cookie", alice)
+      .send({ title: "" }).expect(400);
+{{/if}}
+    const created = await request(getRequestTarget(server)).post("/todos").set("Cookie", alice)
+      .send({ title: "Private alice todo", completed: false }).expect(201);
+    const { id } = created.body;
+    expect(id).toBeTruthy();
+    const bobList = await request(getRequestTarget(server)).get("/todos").set("Cookie", bob).expect(200);
+    expect(bobList.body).toEqual(expect.not.arrayContaining([expect.objectContaining({ id })]));
+    await request(getRequestTarget(server)).put(`/todos/${id}`).set("Cookie", bob)
+      .send({ completed: true }).expect(404);
+    await request(getRequestTarget(server)).delete(`/todos/${id}`).set("Cookie", bob).expect(404);
+    const aliceList = await request(getRequestTarget(server)).get("/todos").set("Cookie", alice).expect(200);
+    expect(aliceList.body).toEqual(expect.arrayContaining([expect.objectContaining({ id, completed: false })]));
+  });
+{{/if}}
+
+{{#if (and (eq auth "better-auth:stateless") hasTodoExample hasRest)}}
+  it("protects stateless REST todo CRUD with an OIDC session", async () => {
+    const server = app.getHttpServer();
+    await request(getRequestTarget(server)).get("/todos").expect(401);
+    const signIn = await request(getRequestTarget(server)).post("/api/auth/sign-in/social")
+      .set("Origin", "http://localhost:3000")
+      .send({ callbackURL: "/", provider: "scenario-oidc" }).expect(200);
+    const authorization = new URL(signIn.body.url);
+    const providerResponse = await request(oidcServer)
+      .get(`${authorization.pathname}${authorization.search}`).expect(302);
+    const callback = new URL(providerResponse.headers.location);
+    const session = await request(getRequestTarget(server))
+      .get(`${callback.pathname}${callback.search}`)
+      .set("Cookie", signIn.headers["set-cookie"] as string[])
+      .set("Origin", "http://localhost:3000").expect(302);
+    const cookies = session.headers["set-cookie"] as string[];
+    const created = await request(getRequestTarget(server)).post("/todos")
+      .set("Cookie", cookies)
+      .send({ title: "OIDC protected todo", completed: false }).expect(201);
+    const { id } = created.body;
+    const list = await request(getRequestTarget(server)).get("/todos")
+      .set("Cookie", cookies).expect(200);
+    expect(list.body).toEqual(expect.arrayContaining([expect.objectContaining({ id })]));
+    await request(getRequestTarget(server)).put(`/todos/${id}`)
+      .set("Cookie", cookies).send({ completed: true }).expect(200);
+    await request(getRequestTarget(server)).delete(`/todos/${id}`)
+      .set("Cookie", cookies).expect(200);
+  });
+{{/if}}
+
+{{#if (and isBetterAuth hasRateLimiting)}}
+  it("keeps normal sign-in usable and throttles repeated authentication requests", async () => {
+    const server = app.getHttpServer();
+{{#if (eq auth "better-auth:stateless")}}
+    const origin = "http://localhost:3000";
+    const signIn = () => request(getRequestTarget(server))
+      .post("/api/auth/sign-in/social")
+      .set("Origin", origin)
+      .send({ callbackURL: "/", provider: "scenario-oidc" });
+    await signIn().expect(200);
+    const responses = await Promise.all(
+      Array.from({ length: 80 }, () => signIn())
+    );
+    expect(responses.some((response) => response.status === 429)).toBe(true);
+{{else}}
+    const origin = "http://localhost:3000";
+    const email = `ratelimit-${Date.now()}@example.com`;
+    const password = "Scenario-password-123!";
+    await request(getRequestTarget(server)).post("/api/auth/sign-up/email")
+      .set("Origin", origin).send({ email, password, name: "Rate limit" }).expect(200);
+    await request(getRequestTarget(server)).post("/api/auth/sign-in/email")
+      .set("Origin", origin).send({ email, password }).expect(200);
+    const responses = await Promise.all(
+      Array.from({ length: 80 }, () =>
+        request(getRequestTarget(server))
+          .post("/api/auth/sign-in/email")
+          .set("Origin", origin)
+          .send({ email: "rate-limited@example.com", password: "wrong-password" })
+      )
+    );
+    expect(responses.some((response) => response.status === 429)).toBe(true);
+{{/if}}
+  }, 30_000);
+{{/if}}
+
+  it("rejects unsupported methods", async () => {
+    await request(getRequestTarget()).post("/").send({ unexpected: true }).expect(404);
+  });
+
+  afterAll(async () => {
+    await app?.close();
+{{#if (eq auth "better-auth:stateless")}}
+    if (oidcServer?.listening) {
+      const closed = once(oidcServer, "close");
+      oidcServer.close();
+      await closed;
+    }
+{{/if}}
+{{#if (and isPassportAuth (not hasDatabase))}}
+    if (identityServer?.listening) {
+      const closed = once(identityServer, "close");
+      identityServer.close();
+      await closed;
+    }
+{{/if}}
+  });
+});

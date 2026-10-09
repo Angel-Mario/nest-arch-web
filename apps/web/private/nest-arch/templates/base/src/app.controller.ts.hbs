@@ -1,0 +1,28 @@
+import { Controller, Get } from "@nestjs/common";
+{{#if swagger}}
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+{{/if}}
+{{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless"))}}
+import { AllowAnonymous } from "@thallesp/nestjs-better-auth";
+{{/if}}
+import { AppService } from "./app.service.js";
+
+{{#if swagger}}
+@ApiTags("App")
+{{/if}}
+@Controller()
+export class AppController {
+  constructor(private readonly appService: AppService) {}
+
+  {{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless"))}}
+  @AllowAnonymous()
+  {{/if}}
+  {{#if swagger}}
+  @ApiOperation({ summary: "/api" })
+  @ApiResponse({ description: "Returns a hello world message", status: 200 })
+  {{/if}}
+  @Get()
+  getHello(): string {
+    return this.appService.getHello();
+  }
+}

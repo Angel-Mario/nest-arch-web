@@ -1,0 +1,22 @@
+import type { INestApplication } from "@nestjs/common";
+{{#if (eq httpProvider "fastify")}}
+import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
+{{/if}}
+import { Test } from "@nestjs/testing";
+import { afterAll, expect, it } from "vitest";
+
+import { AppModule } from "../src/app.module.js";
+
+let app: INestApplication;
+
+it("serves the generated HTTP application", async () => {
+  const module = await Test.createTestingModule({ imports: [AppModule] }).compile();
+  app = module.createNestApplication{{#if (eq httpProvider "fastify")}}<NestFastifyApplication>(new FastifyAdapter()){{else}}(){{/if}};
+  app.setGlobalPrefix("api");
+  await app.init();
+  expect(app.getHttpServer()).toBeDefined();
+});
+
+afterAll(async () => {
+  await app?.close();
+});

@@ -1,0 +1,283 @@
+{{#if (and usePrisma (eq auth "none"))}}
+import { BadRequestException, NotFoundException } from "@nestjs/common";
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { DbService } from "../../database/db.service.js";
+import { CreateTodoInput } from "../dto/create-todo.input.js";
+import { UpdateTodoInput } from "../dto/update-todo.input.js";
+import { Todo } from "../models/todo.model.js";
+
+@Resolver(() => Todo)
+export class TodoResolver {
+  constructor(private readonly db: DbService) {}
+
+  @Query(() => [Todo])
+  todos() {
+    return this.db.prisma.todo.findMany({ orderBy: { createdAt: "asc" }, take: 100 });
+  }
+
+  @Mutation(() => Todo)
+  createTodo(@Args("input") input: CreateTodoInput) {
+    if (!input.title.trim()) throw new BadRequestException("Title must not be empty");
+    return this.db.prisma.todo.create({ data: input });
+  }
+
+  @Mutation(() => Todo)
+  async updateTodo(@Args("input") input: UpdateTodoInput) {
+    const { id, ...data } = input;
+    if (data.title !== undefined && !data.title.trim()) throw new BadRequestException("Title must not be empty");
+    const result = await this.db.prisma.todo.updateManyAndReturn({ where: { id }, data });
+    if (!result[0]) throw new NotFoundException("Todo not found");
+    return result[0];
+  }
+
+  @Mutation(() => Boolean)
+  async deleteTodo(@Args("id") id: string): Promise<boolean> {
+    const result = await this.db.prisma.todo.deleteMany({ where: { id } });
+    if (result.count === 0) throw new NotFoundException("Todo not found");
+    return true;
+  }
+}
+{{else}}
+{{#if (and hasAuth hasDatabase)}}
+import { BadRequestException, NotFoundException, UseGuards } from "@nestjs/common";
+import { UserEntity } from "../../auth/decorators/index.js";
+import { GqlAuthGuard } from "../../auth/guards/gql-auth.guard.js";
+{{else}}
+import { BadRequestException, NotFoundException } from "@nestjs/common";
+{{/if}}
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+{{#if (and hasDatabase useTypeorm)}}
+import { GraphQLResolveInfo } from "graphql";
+import { GraphRelationBuilder } from "typeorm-relations-graphql";
+import { Todo as TodoEntity } from "../../database/entities/todo.entity.js";
+{{/if}}
+{{#if (and hasDatabase useDrizzle)}}
+import { {{#if hasAuth}}and, {{/if}}eq } from "drizzle-orm";
+import * as schema from "../../database/orm/drizzle/schema.js";
+{{/if}}
+{{#if hasDatabase}}
+{{#if isMonorepo}}
+import { DbService } from "@repo/db";
+{{else}}
+import { DbService } from "../../database/db.service.js";
+{{/if}}
+{{/if}}
+import { CreateTodoInput } from "../dto/create-todo.input.js";
+import { UpdateTodoInput } from "../dto/update-todo.input.js";
+import { Todo } from "../models/todo.model.js";
+
+@Resolver(() => Todo)
+export class TodoResolver {
+{{#if hasDatabase}}
+  constructor(private readonly db: DbService) {}
+{{/if}}
+
+  @Query(() => String)
+  hello(): string {
+    return "Hello GraphQL!";
+  }{{#if hasDatabase}}
+
+  @Query(() => [Todo])
+  {{#if hasAuth}}
+  @UseGuards(GqlAuthGuard)
+  {{/if}}
+  todos({{#if useTypeorm}}info: GraphQLResolveInfo, {{/if}}{{#if hasAuth}}@UserEntity() user: { id: string }{{/if}}) {
+    {{#if useTypeorm}}
+    const builder = new GraphRelationBuilder(this.db.typeorm);
+    const relations = builder.buildForQuery(Todo, info, "todos");
+    {{#if hasAuth}}
+    return this.db.typeorm.getRepository(TodoEntity).find({ relations, where: { authorId: user.id } });
+    {{else}}
+    return this.db.typeorm.getRepository(TodoEntity).find({ relations });
+    {{/if}}
+    {{else if isPrisma8}}
+    {{#if hasAuth}}
+    return ((this.db.prisma.orm.public as any).Todo).where({ authorId: user.id }).all();
+    {{else}}
+    return ((this.db.prisma.orm.public as any).Todo).all();
+    {{/if}}
+    {{else if usePrisma}}
+    {{#if hasAuth}}
+    return this.db.prisma.todo.findMany({ where: { authorId: user.id } });
+    {{else}}
+    return this.db.prisma.todo.findMany();
+    {{/if}}
+    {{else if useDrizzle}}
+    {{#if hasAuth}}
+    return this.db.drizzle.select().from(schema.todos).where(eq(schema.todos.authorId, user.id));
+    {{else}}
+    return this.db.drizzle.select().from(schema.todos);
+    {{/if}}
+    {{else}}
+    return [];
+    {{/if}}
+  }
+
+  {{#if hasAuth}}
+  @UseGuards(GqlAuthGuard)
+  {{/if}}
+  @Mutation(() => Todo)
+  async createTodo(
+    {{#if hasAuth}}
+    @UserEntity() user: { id: string },
+    {{/if}}
+    @Args("input") input: CreateTodoInput{{#if useTypeorm}}, info: GraphQLResolveInfo{{/if}}
+  ) {
+    if (!input.title.trim()) throw new BadRequestException("Title must not be empty");
+    {{#if isPrisma8}}
+    {{#if hasAuth}}
+    return ((this.db.prisma.orm.public as any).Todo).create({ ...input, authorId: user.id });
+    {{else}}
+    return ((this.db.prisma.orm.public as any).Todo).create(input);
+    {{/if}}
+    {{else if usePrisma}}
+    {{#if hasAuth}}
+    const todo = await this.db.prisma.todo.create({ data: { ...input, authorId: user.id } });
+    {{else}}
+    const todo = await this.db.prisma.todo.create({ data: input });
+    {{/if}}
+    return todo;
+    {{else if useTypeorm}}
+    {{#if hasAuth}}
+    const entity = this.db.typeorm.getRepository(TodoEntity).create({ ...input, authorId: user.id });
+    {{else}}
+    const entity = this.db.typeorm.getRepository(TodoEntity).create(input);
+    {{/if}}
+    const saved = await this.db.typeorm.getRepository(TodoEntity).save(entity);
+    const builder = new GraphRelationBuilder(this.db.typeorm);
+    const relations = builder.buildForQuery(Todo, info, "createTodo");
+    return this.db.typeorm.getRepository(TodoEntity).findOneOrFail({
+      relations,
+      where: { id: saved.id },
+    });
+    {{else if useDrizzle}}
+    {{#if hasMysql}}
+    const [inserted] = await this.db.drizzle.insert(schema.todos).values({{#if hasAuth}}{ ...input, authorId: user.id }{{else}}input{{/if}}).$returningId();
+    if (!inserted) throw new NotFoundException("Todo not found");
+    const [todo] = await this.db.drizzle.select().from(schema.todos).where({{#if hasAuth}}and(eq(schema.todos.authorId, user.id), eq(schema.todos.id, inserted.id)){{else}}eq(schema.todos.id, inserted.id){{/if}});
+    if (!todo) throw new NotFoundException("Todo not found");
+    return todo;
+    {{else}}
+    {{#if hasAuth}}
+    const [todo] = await this.db.drizzle.insert(schema.todos).values({ ...input, authorId: user.id }).returning();
+    {{else}}
+    const [todo] = await this.db.drizzle.insert(schema.todos).values(input).returning();
+    {{/if}}
+    if (!todo) throw new NotFoundException("Todo not found");
+    return todo;
+    {{/if}}
+    {{else}}
+    return { id: "1", ...input };
+    {{/if}}
+  }
+
+  {{#if hasAuth}}
+  @UseGuards(GqlAuthGuard)
+  {{/if}}
+  @Mutation(() => Todo)
+  async updateTodo(
+    {{#if hasAuth}}
+    @UserEntity() user: { id: string },
+    {{/if}}
+    @Args("input") input: UpdateTodoInput{{#if useTypeorm}}, info: GraphQLResolveInfo{{/if}}
+  ) {
+    const { id, ...data } = input;
+    if (data.title !== undefined && !data.title.trim()) throw new BadRequestException("Title must not be empty");
+    {{#if isPrisma8}}
+    {{#if hasAuth}}
+    return ((this.db.prisma.orm.public as any).Todo).where({ authorId: user.id, id }).update(data);
+    {{else}}
+    return ((this.db.prisma.orm.public as any).Todo).where({ id }).update(data);
+    {{/if}}
+    {{else if usePrisma}}
+    {{#if hasAuth}}
+    const result = await this.db.prisma.todo.update({ data, where: { authorId: user.id, id } });
+    {{else}}
+    const result = await this.db.prisma.todo.update({ data, where: { id } });
+    {{/if}}
+    return result;
+    {{else if useTypeorm}}
+    {{#if hasAuth}}
+    const updateResult = await this.db.typeorm.getRepository(TodoEntity).update({ authorId: user.id, id }, data);
+    {{else}}
+    const updateResult = await this.db.typeorm.getRepository(TodoEntity).update(id, data);
+    {{/if}}
+    if ((updateResult.affected ?? 0) === 0) throw new NotFoundException("Todo not found");
+    const builder = new GraphRelationBuilder(this.db.typeorm);
+    const relations = builder.buildForQuery(Todo, info, "updateTodo");
+    return this.db.typeorm.getRepository(TodoEntity).findOneOrFail({
+      relations,
+      where: { id },
+    });
+    {{else if useDrizzle}}
+    {{#if hasMysql}}
+    await this.db.drizzle.update(schema.todos).set(data).where({{#if hasAuth}}and(eq(schema.todos.authorId, user.id), eq(schema.todos.id, Number(id))){{else}}eq(schema.todos.id, Number(id)){{/if}});
+    const [todo] = await this.db.drizzle.select().from(schema.todos).where({{#if hasAuth}}and(eq(schema.todos.authorId, user.id), eq(schema.todos.id, Number(id))){{else}}eq(schema.todos.id, Number(id)){{/if}});
+    {{else}}
+    {{#if hasAuth}}
+    const [todo] = await this.db.drizzle.update(schema.todos).set(data).where(and(eq(schema.todos.authorId, user.id), eq(schema.todos.id, Number(id)))).returning();
+    {{else}}
+    const [todo] = await this.db.drizzle.update(schema.todos).set(data).where(eq(schema.todos.id, Number(id))).returning();
+    {{/if}}
+    {{/if}}
+    if (!todo) throw new NotFoundException("Todo not found");
+    return todo;
+    {{else}}
+    return { id, ...data };
+    {{/if}}
+  }
+
+  {{#if hasAuth}}
+  @UseGuards(GqlAuthGuard)
+  {{/if}}
+  @Mutation(() => Boolean)
+  async deleteTodo(
+    {{#if hasAuth}}
+    @UserEntity() user: { id: string },
+    {{/if}}
+    @Args("id") id: string
+  ): Promise<boolean> {
+    {{#if isPrisma8}}
+    {{#if hasAuth}}
+    await ((this.db.prisma.orm.public as any).Todo).where({ authorId: user.id, id }).delete();
+    {{else}}
+    await ((this.db.prisma.orm.public as any).Todo).where({ id }).delete();
+    {{/if}}
+    return true;
+    {{else if usePrisma}}
+    {{#if hasAuth}}
+    const result = await this.db.prisma.todo.deleteMany({ where: { authorId: user.id, id } });
+    {{else}}
+    const result = await this.db.prisma.todo.deleteMany({ where: { id } });
+    {{/if}}
+    if (result.count === 0) throw new NotFoundException("Todo not found");
+    return true;
+    {{else if useTypeorm}}
+    {{#if hasAuth}}
+    const result = await this.db.typeorm.getRepository(TodoEntity).delete({ authorId: user.id, id });
+    {{else}}
+    const result = await this.db.typeorm.getRepository(TodoEntity).delete(id);
+    {{/if}}
+    if ((result.affected ?? 0) === 0) throw new NotFoundException("Todo not found");
+    return true;
+    {{else if useDrizzle}}
+    {{#if hasMysql}}
+    const [existing] = await this.db.drizzle.select().from(schema.todos).where({{#if hasAuth}}and(eq(schema.todos.authorId, user.id), eq(schema.todos.id, Number(id))){{else}}eq(schema.todos.id, Number(id)){{/if}});
+    if (!existing) throw new NotFoundException("Todo not found");
+    await this.db.drizzle.delete(schema.todos).where({{#if hasAuth}}and(eq(schema.todos.authorId, user.id), eq(schema.todos.id, Number(id))){{else}}eq(schema.todos.id, Number(id)){{/if}});
+    {{else}}
+    {{#if hasAuth}}
+    const deleted = await this.db.drizzle.delete(schema.todos).where(and(eq(schema.todos.authorId, user.id), eq(schema.todos.id, Number(id)))).returning();
+    {{else}}
+    const deleted = await this.db.drizzle.delete(schema.todos).where(eq(schema.todos.id, Number(id))).returning();
+    {{/if}}
+    if (deleted.length === 0) throw new NotFoundException("Todo not found");
+    {{/if}}
+    return true;
+    {{else}}
+    return true;
+    {{/if}}
+  }{{/if}}
+}
+
+{{/if}}

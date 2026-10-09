@@ -1,0 +1,120 @@
+name: Sync Nest Arch project previews
+
+on:
+  schedule:
+    - cron: "23 */6 * * *"
+  workflow_dispatch:
+  repository_dispatch:
+    types: [nest-arch-published]
+
+concurrency:
+  group: sync-project-preview
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    if: github.event.repository.private && vars.NEST_ARCH_PREVIEW_AUTO_SYNC == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout website
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+
+      - name: Test release detection
+        run: node --test .github/scripts/check-preview-release.test.mjs
+
+      - name: Check npm latest
+        id: release
+        run: node .github/scripts/check-preview-release.mjs
+
+      - name: Check private repository access
+        if: steps.release.outputs.should_sync == 'true'
+        env:
+          SOURCE_TOKEN: ${{ secrets.NEST_ARCH_SOURCE_TOKEN }}
+        run: |
+          if [ -z "$SOURCE_TOKEN" ]; then
+            echo "Configure NEST_ARCH_SOURCE_TOKEN with read access to Angel-Mario/nest-arch."
+            exit 1
+          fi
+
+      - name: Checkout published generator source
+        if: steps.release.outputs.should_sync == 'true'
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: Angel-Mario/nest-arch
+          ref: ${{ steps.release.outputs.ref }}
+          token: ${{ secrets.NEST_ARCH_SOURCE_TOKEN }}
+          path: .cache/nest-arch-source
+          persist-credentials: false
+
+      - name: Verify source package version
+        if: steps.release.outputs.should_sync == 'true'
+        env:
+          EXPECTED_VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFile } from 'node:fs/promises';
+          const source = JSON.parse(await readFile('.cache/nest-arch-source/apps/tui/package.json', 'utf8'));
+          if (source.name !== '@nest-arch/tui' || source.version !== process.env.EXPECTED_VERSION) {
+            throw new Error('Release source does not match npm latest');
+          }
+          NODE
+
+      - name: Set up pnpm
+        if: steps.release.outputs.should_sync == 'true'
+        uses: pnpm/action-setup@v6.1.0
+
+      - name: Install website dependencies
+        if: steps.release.outputs.should_sync == 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Synchronize private snapshot and presets
+        if: steps.release.outputs.should_sync == 'true'
+        run: pnpm --filter web preview:sync "$GITHUB_WORKSPACE/.cache/nest-arch-source"
+
+      - name: Validate generated preview
+        if: steps.release.outputs.should_sync == 'true'
+        env:
+          NEXT_PUBLIC_CONVEX_URL: https://preview-ci.convex.cloud
+        run: |
+          pnpm --filter web test:preview
+          pnpm --filter web build
+          pnpm --filter web check-types
+          pnpm check
+
+      - name: Record synchronized release
+        if: steps.release.outputs.should_sync == 'true'
+        run: node .github/scripts/check-preview-release.mjs record
+
+      - name: Open or update synchronization PR
+        if: steps.release.outputs.should_sync == 'true'
+        uses: peter-evans/create-pull-request@v8.1.1
+        with:
+          branch: automation/nest-arch-preview
+          add-paths: |
+            apps/web/private/nest-arch
+            apps/web/public/project-previews
+            apps/web/src/lib/project-preview/generated
+          commit-message: "chore: sync nest-arch preview to ${{ steps.release.outputs.version }}"
+          title: "chore: sync nest-arch preview to ${{ steps.release.outputs.version }}"
+          body: |
+            Updates the generator snapshot, file previews and versioned cache namespace to npm latest.
+
+            Package: @nest-arch/tui@${{ steps.release.outputs.version }}
+            Source: ${{ steps.release.outputs.ref }}
+
+            Validation: release detection tests, preview tests, TypeScript, Ultracite and web production build.
+            Merge after reviewing the generated files and supported wizard selections. The usual Vercel Git integration handles deployment.

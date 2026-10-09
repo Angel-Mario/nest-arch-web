@@ -1,0 +1,38 @@
+allowBuilds:
+{{#if (or useDrizzle useTypescript7)}}
+  esbuild: true
+{{/if}}
+  protobufjs: true
+  "@nestjs/core": true
+{{#if swagger}}
+  "@scarf/scarf": true
+{{/if}}
+{{#if hasGraphql}}
+  "@apollo/protobufjs": true
+{{/if}}
+{{#if usePrisma}}
+  prisma: true
+  "@prisma/engines": true
+  {{#if isPrisma6}}
+  "@prisma/client": true
+  {{/if}}
+  {{#if isPrisma8}}
+  {{#unless (or useDrizzle useTypescript7)}}
+  esbuild: true
+  {{/unless}}
+  msgpackr-extract: true
+  workerd: true
+  {{/if}}
+{{/if}}
+{{#if (and (eq auth "passport") hasDatabase)}}
+  bcrypt: true
+{{/if}}
+{{#if hasSqlite}}
+  better-sqlite3: true
+{{/if}}
+{{#if hasTrpc}}
+peerDependencyRules:
+  allowedVersions:
+    "nestjs-trpc>@nestjs/common": "^12.0.0"
+    "nestjs-trpc>@nestjs/core": "^12.0.0"
+{{/if}}

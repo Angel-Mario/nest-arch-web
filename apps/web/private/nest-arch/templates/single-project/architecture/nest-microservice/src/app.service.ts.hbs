@@ -1,0 +1,56 @@
+import { Injectable } from "@nestjs/common";
+{{#if (and hasDatabase hasTodoExample)}}
+import { RpcException } from "@nestjs/microservices";
+import { TodoService } from "./api/todo/todo.service.js";
+{{/if}}
+
+@Injectable()
+export class AppService {
+  {{#unless (includes microservices "grpc")}}
+  private readonly auditEvents = new Map<
+    string,
+    { id: string; payload: Record<string, unknown>; source: string }
+  >();
+
+  recordAuditEvent(event: {
+    id: string;
+    payload: Record<string, unknown>;
+    source: string;
+  }): void {
+    this.auditEvents.set(event.id, event);
+  }
+
+  getAuditEvent(
+    id: string
+  ): { id: string; payload: Record<string, unknown>; source: string } | null {
+    return this.auditEvents.get(id) ?? null;
+  }
+
+  {{/unless}}
+  {{#if (and hasDatabase hasTodoExample)}}
+  constructor(private readonly todos: TodoService) {}
+
+  createTodo(data: { title: string }) {
+    if (typeof data?.title !== "string" || data.title.trim().length === 0) {
+      throw new RpcException({ code: 3, message: "A non-empty title is required" });
+    }
+    return this.todos.create({ completed: false, title: data.title });
+  }
+
+  findTodos() {
+    return this.todos.findAll();
+  }
+
+  {{/if}}
+  getHello(): string {
+    return "Hello World!";
+  }
+
+  handlePing(): string {
+    return "pong";
+  }
+
+  handleLog(data: Record<string, unknown>): { received: Record<string, unknown> } {
+    return { received: data };
+  }
+}

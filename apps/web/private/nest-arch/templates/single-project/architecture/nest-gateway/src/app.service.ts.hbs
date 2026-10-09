@@ -1,0 +1,36 @@
+import { Injectable } from "@nestjs/common";
+import { HttpService } from "@nestjs/axios";
+{{#if (or hasDatabase hasOrm)}}
+import { DbService } from "./database/db.service.js";
+{{/if}}
+{{#if (eq httpProvider "fastify")}}
+import type { FastifyRequest as Request, FastifyReply as Response } from "fastify";
+{{else}}
+import type { Request, Response } from "express";
+{{/if}}
+
+@Injectable()
+export class AppService {
+  constructor(
+    private readonly httpService: HttpService,
+    {{#if (or hasDatabase hasOrm)}}private readonly db: DbService,{{/if}}
+  ) {}
+
+  getHello(): string {
+    return "Hello World!";
+  }
+
+  async proxyRequest(req: Request, res: Response): Promise<void> {
+    try {
+      const response = await this.httpService.axiosRef({
+        data: req.body,
+        headers: req.headers,
+        method: req.method,
+        url: `http://localhost:3001${req.url}`,
+      });
+      res.status(response.status).json(response.data);
+    } catch {
+      res.status(502).json({ message: "Bad Gateway" });
+    }
+  }
+}

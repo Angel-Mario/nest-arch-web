@@ -1,0 +1,148 @@
+import { Module } from "@nestjs/common";
+{{#if (and isPassportAuth hasDatabase)}}
+import { PassportModule } from "@nestjs/passport";
+{{/if}}
+{{#if (or hasDatabase hasOrm)}}
+import { env } from "./config/env.js";
+import { DbModule } from "./database/db.module.js";
+{{/if}}
+{{#if shouldImportAuthModule}}
+import { AuthModule } from "./auth/auth.module.js";
+{{/if}}
+{{#if (and isPassportAuth hasDatabase)}}
+{{#if hasGraphql}}
+import { GqlAuthGuard } from "./auth/guards/gql-auth.guard.js";
+{{/if}}
+{{#if hasRest}}
+import { RestAuthGuard } from "./auth/guards/rest-auth.guard.js";
+{{/if}}
+{{/if}}
+{{#if hasGraphql}}
+import { GraphqlAppModule } from "./graphql/graphql.module.js";
+{{/if}}
+{{#if hasTrpc}}
+import { TRPCModule } from "nestjs-trpc";
+import { AppRouterClass as AppRouter } from "./app.router.js";
+import { AppContext } from "./libs/trpc/context.js";
+import { AppErrorHandler } from "./libs/trpc/error.handler.js";
+{{#if hasTrpcAndAuth}}
+import { AuthTRPCMiddleware } from "./libs/middlewares/auth.trpc.middleware.js";
+{{/if}}
+{{#if (and hasTrpc hasRateLimiting)}}
+import { RateLimitTRPCMiddleware } from "./libs/middlewares/rate-limit.trpc.middleware.js";
+{{/if}}
+{{/if}}
+
+{{#if hasRest}}
+import { AppController } from "./app.controller.js";
+{{/if}}
+{{#if (and hasTodoExample (or hasRest hasTrpc))}}
+import { TodoModule } from "./api/todo/todo.module.js";
+{{/if}}
+{{#if (and hasTrpc hasTodoExample hasRest)}}
+import { TodoRouter } from "./api/todo/todo.router.js";
+{{/if}}
+{{#if hasHealthCheck}}
+import { HealthModule } from "./health/health.module.js";
+{{/if}}
+{{#if hasRateLimiting}}
+import { APP_GUARD } from "@nestjs/core";
+import { {{#unless hasGraphql}}ThrottlerGuard, {{/unless}}ThrottlerModule } from "@nestjs/throttler";
+{{/if}}
+{{#if (and hasGraphql hasRateLimiting)}}
+import { GraphqlThrottlerGuard } from "./libs/middlewares/graphql-throttler.guard.js";
+{{/if}}
+{{#if (and isPassportAuth hasDatabase hasGraphql (not hasRateLimiting))}}
+import { APP_GUARD } from "@nestjs/core";
+{{/if}}
+import { AppService } from "./app.service.js";
+
+@Module({
+  {{#if hasRest}}
+  controllers: [
+    AppController,
+  ],
+  {{/if}}
+  imports: [
+    {{#if (or hasDatabase hasOrm)}}
+    DbModule.forRoot({
+      {{#if hasPostgres}}postgresUrl: env.POSTGRES_URL,{{/if}}
+      {{#if hasMysql}}mysqlUrl: env.MYSQL_URL,{{/if}}
+      {{#if hasSqlite}}sqlitePath: env.SQLITE_PATH,{{/if}}
+      {{#if hasSqlserver}}sqlserver: { server: env.SQLSERVER_HOST, port: env.SQLSERVER_PORT, database: env.SQLSERVER_DATABASE, user: env.SQLSERVER_USER, password: env.SQLSERVER_PASSWORD, options: { encrypt: env.SQLSERVER_ENCRYPT, trustServerCertificate: env.SQLSERVER_TRUST_SERVER_CERTIFICATE } },{{/if}}
+      {{#if hasMongodb}}mongodbUrl: env.MONGODB_URL,{{/if}}
+    }),
+    {{/if}}
+    {{#if shouldImportAuthModule}}
+    AuthModule,
+    {{/if}}
+    {{#if (and isPassportAuth hasDatabase)}}
+    PassportModule.register({ defaultStrategy: "jwt" }),
+    {{/if}}
+    {{#if hasGraphql}}
+    GraphqlAppModule,
+    {{/if}}
+    {{#if hasTrpc}}
+    TRPCModule.forRoot({
+      context: AppContext,
+      onError: AppErrorHandler,
+      {{#if hasRateLimiting}}
+      globalMiddlewares: [RateLimitTRPCMiddleware],
+      {{/if}}
+    }),
+    {{/if}}
+    {{#if (and hasTodoExample (or hasRest hasTrpc))}}
+    TodoModule,
+    {{/if}}
+    {{#if hasHealthCheck}}
+    HealthModule,
+    {{/if}}
+    {{#if hasRateLimiting}}
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60_000,
+        limit: 60,
+        {{#if hasGraphql}}
+        setHeaders: false,
+        {{/if}}
+      },
+    ]),
+    {{/if}}
+  ],
+  providers: [
+    AppService,
+    {{#if (and isPassportAuth hasDatabase)}}
+    {{#if hasGraphql}}
+    GqlAuthGuard,
+    {{/if}}
+    {{#if hasRest}}
+    RestAuthGuard,
+    {{/if}}
+    {{/if}}
+    {{#if hasTrpc}}
+    {{#if hasTrpcAndAuth}}
+    AuthTRPCMiddleware,
+    {{/if}}
+    {{#if hasRateLimiting}}
+    RateLimitTRPCMiddleware,
+    {{/if}}
+    AppContext,
+    AppErrorHandler,
+    AppRouter,
+    {{#if (and hasTrpc hasTodoExample hasRest)}}
+    TodoRouter,
+    {{/if}}
+    {{/if}}
+    {{#if hasRateLimiting}}
+    {
+      provide: APP_GUARD,
+      {{#if hasGraphql}}
+      useClass: GraphqlThrottlerGuard,
+      {{else}}
+      useClass: ThrottlerGuard,
+      {{/if}}
+    },
+    {{/if}}
+  ],
+})
+export class AppModule {}

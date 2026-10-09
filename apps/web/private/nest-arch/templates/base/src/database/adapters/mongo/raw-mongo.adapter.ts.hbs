@@ -1,0 +1,24 @@
+import { Injectable, Inject } from "@nestjs/common";
+import type { OnModuleDestroy, OnModuleInit } from "@nestjs/common";
+import { MongoClient } from "mongodb";
+import type { Collection, Db, Document } from "mongodb";
+import type { IMongoAdapter } from "../interfaces/db-adapter.interface.js";
+
+@Injectable()
+export class RawMongoAdapter implements IMongoAdapter<Db>, OnModuleInit, OnModuleDestroy {
+  constructor(@Inject("MONGODB_CLIENT") private readonly client: MongoClient) {}
+  collection<T extends Document = Document>(name: string): Collection<T> {
+    return this.client.db().collection<T>(name);
+  }
+  getClient(): Db { return this.client.db(); }
+  async onModuleInit(): Promise<void> {
+    try {
+      await this.client.connect();
+      await this.client.db().command({ ping: 1 });
+    } catch (error) {
+      await this.client.close();
+      throw error;
+    }
+  }
+  async onModuleDestroy(): Promise<void> { await this.client.close(); }
+}

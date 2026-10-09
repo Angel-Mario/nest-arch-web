@@ -1,0 +1,105 @@
+{{#if hasTrpc}}
+import { Router, Query, Mutation{{#if hasTrpcAndAuth}}, Ctx, UseMiddlewares{{/if}}, Input } from "nestjs-trpc";
+import { NotFoundException } from "@nestjs/common";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+{{#if hasTrpcAndAuth}}
+import { AuthTRPCMiddleware } from "../../libs/middlewares/auth.trpc.middleware.js";
+import type { InnerContext } from "../../libs/trpc/inner.context.js";
+{{/if}}
+import { TodoService } from "./todo.service.js";
+import { CreateTodoDto } from "./dto/create-todo.dto.js";
+import { UpdateTodoDto } from "./dto/update-todo.dto.js";
+
+const todoSchema = z.object({
+  authorId: z.string().nullable().optional(),
+  completed: z.boolean(),
+  description: z.string().nullable().optional(),
+  id: z.union([z.string(), z.number()]),
+  title: z.string(),
+});
+
+const updateTodoInput = z.object({
+  data: UpdateTodoDto.schema,
+  id: z.union([z.string(), z.number()]),
+});
+
+@Router({ alias: "todoRouter" })
+export class TodoRouter {
+  constructor(private readonly todoService: TodoService) {}
+
+{{#if hasTrpcAndAuth}}
+  @Query({ output: z.array(todoSchema) })
+  @UseMiddlewares(AuthTRPCMiddleware)
+  findAll(@Ctx() ctx: InnerContext) {
+    return this.todoService.findAll(ctx.session!.user.id);
+  }
+
+  @Mutation({ input: CreateTodoDto.schema, output: todoSchema })
+  @UseMiddlewares(AuthTRPCMiddleware)
+  create(@Ctx() ctx: InnerContext, @Input() input: CreateTodoDto) {
+    return this.todoService.create(input, ctx.session!.user.id);
+  }
+
+  @Mutation({ input: updateTodoInput, output: todoSchema })
+  @UseMiddlewares(AuthTRPCMiddleware)
+  async update(@Ctx() ctx: InnerContext, @Input() input: { id: string | number; data: UpdateTodoDto }) {
+    try {
+      return await this.todoService.update(String(input.id), input.data, ctx.session!.user.id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+      }
+      throw error;
+    }
+  }
+
+  @Mutation({ input: z.object({ id: z.union([z.string(), z.number()]) }) })
+  @UseMiddlewares(AuthTRPCMiddleware)
+  async delete(@Ctx() ctx: InnerContext, @Input() input: { id: string | number }) {
+    try {
+      return await this.todoService.delete(String(input.id), ctx.session!.user.id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+      }
+      throw error;
+    }
+  }
+{{else}}
+  @Query({ output: z.array(todoSchema) })
+  findAll() {
+    return this.todoService.findAll();
+  }
+
+  @Mutation({ input: CreateTodoDto.schema, output: todoSchema })
+  create(@Input() input: CreateTodoDto) {
+    return this.todoService.create(input);
+  }
+
+  @Mutation({ input: updateTodoInput, output: todoSchema })
+  async update(@Input() input: { id: string; data: UpdateTodoDto }) {
+    try {
+      return await this.todoService.update(input.id, input.data);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+      }
+      throw error;
+    }
+  }
+
+  @Mutation({ input: z.object({ id: z.union([z.string(), z.number()]) }) })
+  async delete(@Input() input: { id: string | number }) {
+    try {
+      return await this.todoService.delete(String(input.id));
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new TRPCError({ code: "NOT_FOUND", message: error.message });
+      }
+      throw error;
+    }
+  }
+{{/if}}
+}
+{{/if}}

@@ -1,0 +1,23 @@
+import { Controller, Get, Req, Res } from "@nestjs/common";
+{{#if (eq httpProvider "fastify")}}
+import type { FastifyRequest as Request, FastifyReply as Response } from "fastify";
+{{else}}
+import type { Request, Response } from "express";
+{{/if}}
+
+import { AppService } from "./app.service.js";
+
+@Controller()
+export class AppController {
+  constructor(private readonly appService: AppService) {}
+
+  @Get()
+  getHello(): string {
+    return this.appService.getHello();
+  }
+
+  @Get("*")
+  proxy(@Req() req: Request, @Res() res: Response): void {
+    this.appService.proxyRequest(req, res);
+  }
+}

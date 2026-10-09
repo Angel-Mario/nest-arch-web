@@ -1,0 +1,100 @@
+import { NestFactory } from "@nestjs/core";
+{{#if (eq httpProvider "fastify")}}
+import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
+{{/if}}
+import { Logger } from "@nestjs/common";
+
+import { AppModule } from "./app.module.js";
+import { env } from "./config/env.js";
+{{#if swagger}}
+import { createDocs } from "./docs/create-docs.js";
+{{/if}}
+{{#if (and swagger useSwaggerScalar)}}
+import { apiReference } from "@scalar/nestjs-api-reference";
+{{/if}}
+{{#if (and swagger (eq useSwaggerScalar false))}}
+import { SwaggerModule } from "@nestjs/swagger";
+{{/if}}
+{{#if (and swagger (or (eq auth "better-auth") (eq auth "better-auth:stateless")))}}
+import { AuthService } from "@thallesp/nestjs-better-auth";
+{{/if}}
+
+async function bootstrap() {
+  const app = await NestFactory.create{{#if (eq httpProvider "fastify")}}<NestFastifyApplication>(AppModule, new FastifyAdapter()){{else}}(AppModule){{/if}};
+  app.enableCors({
+    origin: env.CORS_ORIGIN,
+  });
+  app.setGlobalPrefix("api");
+  {{#if swagger}}
+  if (env.NODE_ENV === "development") {
+    const docsPath = "/docs";
+    {{#if useSwaggerScalar}}
+    app.use(
+      docsPath,
+      apiReference({
+        content: await createDocs(app, {
+          description: "{{description}}",
+          integrations: {
+            {{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless"))}}
+            betterAuth: {
+              auth: app.get(AuthService).instance,
+              pathPrefix: "/api/auth",
+            },
+            {{/if}}
+            {{#if (includes apis "trpc")}}
+            trpc: {
+              routerFilePath: "./{{trpcGeneratePath}}/server.ts",
+              pathPrefix: "/trpc",
+            },
+            {{/if}}
+            zod: {
+              withFastify: {{#if (eq httpProvider "fastify")}}true{{else}}false{{/if}},
+            },
+          },
+          title: "{{projectNamePascalCase}} API",
+          version: "1.0.0",
+      }),
+      {{#if (eq httpProvider "fastify")}}withFastify: true,{{/if}}
+      pageTitle: "{{projectNamePascalCase}} API Docs",
+        theme: "default",
+      }),
+    );
+    {{else}}
+    const document = await createDocs(app, {
+      description: "{{description}}",
+      integrations: {
+        {{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless"))}}
+        betterAuth: {
+          auth: app.get(AuthService).instance,
+          pathPrefix: "/api/auth",
+        },
+        {{/if}}
+        {{#if (includes apis "trpc")}}
+        trpc: {
+          routerFilePath: "./{{trpcGeneratePath}}/server.ts",
+          pathPrefix: "/trpc",
+        },
+        {{/if}}
+        zod: {
+          withFastify: {{#if (eq httpProvider "fastify")}}true{{else}}false{{/if}},
+        },
+      },
+      title: "{{projectNamePascalCase}} API",
+      version: "1.0.0",
+    });
+    SwaggerModule.setup(docsPath, app, document);
+    {{/if}}
+    Logger.log(`Swagger documentation available at http://localhost:${env.PORT ?? 3000}${docsPath}`, "SwaggerDocs");
+  }
+  {{/if}}
+
+  await app.listen(env.PORT ?? 3000, "0.0.0.0");
+  {{#if hasRest}}
+  Logger.log(`Started backend server on http://localhost:${env.PORT ?? 3000}/api`, "Main");
+  {{else if hasTrpc}}
+  Logger.log(`Started trpc server on http://localhost:${env.PORT ?? 3000}/trpc`, "Main");
+  {{else}}
+  Logger.log(`Started server on http://localhost:${env.PORT ?? 3000}`, "Main");
+  {{/if}}
+}
+await bootstrap();

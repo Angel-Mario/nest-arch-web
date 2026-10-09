@@ -1,0 +1,90 @@
+import { Module } from "@nestjs/common";
+{{#if hasRateLimiting}}
+import { APP_GUARD } from "@nestjs/core";
+import { ThrottlerModule } from "@nestjs/throttler";
+{{/if}}
+{{#if (or hasDatabase hasOrm)}}
+import { DbModule } from "./database/db.module.js";
+import { env } from "./config/env.js";
+{{/if}}
+{{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless"))}}
+import { AuthModule } from "./auth/auth.module.js";
+{{/if}}
+
+import { AppController } from "./app.controller.js";
+import { AppService } from "./app.service.js";
+{{#if hasTrpc}}
+import { TRPCModule } from "nestjs-trpc";
+import { AppRouterClass as AppRouter } from "./app.router.js";
+import { AppContext } from "./libs/trpc/context.js";
+import { AppErrorHandler } from "./libs/trpc/error.handler.js";
+{{#if hasRateLimiting}}
+import { RateLimitTRPCMiddleware } from "./libs/middlewares/rate-limit.trpc.middleware.js";
+{{/if}}
+{{#if hasTodoExample}}
+import { TodoRouter } from "./api/todo/todo.router.js";
+{{/if}}
+{{/if}}
+{{#if hasRateLimiting}}
+import { HttpThrottlerGuard } from "./http-throttler.guard.js";
+{{/if}}
+{{#if (and hasRest hasTodoExample)}}
+import { TodoModule } from "./api/todo/todo.module.js";
+{{/if}}
+{{#if hasHealthCheck}}
+import { HealthModule } from "./health/health.module.js";
+{{/if}}
+
+@Module({
+  controllers: [AppController],
+  imports: [
+    {{#if (or hasDatabase hasOrm)}}
+    DbModule.forRoot({
+      {{#if hasPostgres}}postgresUrl: env.POSTGRES_URL,{{/if}}
+      {{#if hasMysql}}mysqlUrl: env.MYSQL_URL,{{/if}}
+      {{#if hasSqlite}}sqlitePath: env.SQLITE_PATH,{{/if}}
+      {{#if hasSqlserver}}sqlserver: { server: env.SQLSERVER_HOST, port: env.SQLSERVER_PORT, database: env.SQLSERVER_DATABASE, user: env.SQLSERVER_USER, password: env.SQLSERVER_PASSWORD, options: { encrypt: env.SQLSERVER_ENCRYPT, trustServerCertificate: env.SQLSERVER_TRUST_SERVER_CERTIFICATE } },{{/if}}
+      {{#if hasMongodb}}mongodbUrl: env.MONGODB_URL,{{/if}}
+    }),
+    {{/if}}
+    {{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless"))}}
+    AuthModule,
+    {{/if}}
+    {{#if hasTrpc}}
+    TRPCModule.forRoot({
+      context: AppContext,
+      {{#if hasRateLimiting}}
+      globalMiddlewares: [RateLimitTRPCMiddleware],
+      {{/if}}
+      onError: AppErrorHandler,
+    }),
+    {{/if}}
+    {{#if hasRateLimiting}}
+    ThrottlerModule.forRoot([{ limit: 60, ttl: 60_000 }]),
+    {{/if}}
+    {{#if (and hasRest hasTodoExample)}}
+    TodoModule,
+    {{/if}}
+    {{#if hasHealthCheck}}
+    HealthModule,
+    {{/if}}
+  ],
+  providers: [
+    AppService,
+    {{#if hasTrpc}}
+    AppContext,
+    AppErrorHandler,
+    AppRouter,
+    {{#if hasRateLimiting}}
+    RateLimitTRPCMiddleware,
+    {{/if}}
+    {{#if hasTodoExample}}
+    TodoRouter,
+    {{/if}}
+    {{/if}}
+    {{#if hasRateLimiting}}
+    { provide: APP_GUARD, useClass: HttpThrottlerGuard },
+    {{/if}}
+  ],
+})
+export class AppModule {}

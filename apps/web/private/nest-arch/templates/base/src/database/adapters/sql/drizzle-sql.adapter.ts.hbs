@@ -1,0 +1,33 @@
+// oxlint-disable typescript/no-explicit-any require-await
+import { Injectable, Inject } from '@nestjs/common';
+import { sql } from 'drizzle-orm';
+import { ISqlAdapter } from '../interfaces/db-adapter.interface.js';
+
+@Injectable()
+export class DrizzleSqlAdapter<TClient = unknown> implements ISqlAdapter<TClient> {
+  constructor(
+    @Inject('DRIZZLE_CLIENT') private readonly db: TClient
+  ) {}
+
+  async query<T = unknown>(queryString: string, _params: unknown[] = []): Promise<T[]> {
+    const result = await (this.db as any).execute(sql.raw(queryString));
+    return (result.rows || result) as T[];
+  }
+
+  async execute(queryString: string, _params: unknown[] = []): Promise<unknown> {
+    return (this.db as any).execute(sql.raw(queryString));
+  }
+
+  getClient(): TClient {
+    return this.db;
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    const client = (this.db as any).$client;
+    if (typeof client?.end === 'function') {
+      await client.end();
+    } else if (typeof client?.close === 'function') {
+      await client.close();
+    }
+  }
+}

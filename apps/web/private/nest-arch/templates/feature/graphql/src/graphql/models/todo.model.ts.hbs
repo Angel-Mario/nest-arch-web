@@ -1,0 +1,27 @@
+import { Field{{#if hasAuth}}, ID{{/if}}, ObjectType } from "@nestjs/graphql";
+
+import { BaseModel } from "./base.model.js";
+{{#if hasAuth}}
+// oxlint-disable-next-line import/no-cycle
+import { User } from "./user.model.js";
+{{/if}}
+
+@ObjectType()
+export class Todo extends BaseModel {
+  @Field()
+  title: string;
+
+  @Field(() => String, { nullable: true })
+  description: string | null;
+
+  @Field()
+  completed: boolean;
+
+{{#if hasAuth}}
+  @Field(() => ID, { nullable: true })
+  authorId: string | null;
+
+  @Field(() => User, { nullable: true })
+  author: User | null;
+{{/if}}
+}

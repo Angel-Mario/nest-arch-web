@@ -1,0 +1,23 @@
+import { GraphQLResolveInfo } from "graphql";
+import { DataSource, EntityTarget, FindOptionsRelations } from "typeorm";
+import { GraphRelationBuilder } from "typeorm-relations-graphql";
+
+export class TypeOrmGraphqlRelationsHelper {
+  private readonly builder: GraphRelationBuilder;
+
+  constructor(dataSource: DataSource) {
+    this.builder = new GraphRelationBuilder(dataSource);
+  }
+
+  resolve<T>(
+    entity: EntityTarget<T>,
+    info: GraphQLResolveInfo,
+    path?: string
+  ): FindOptionsRelations<T> {
+    const relationMap = path
+      ? this.builder.buildForQuery(entity, info, path)
+      : this.builder.buildForQuery(entity, info);
+
+    return relationMap as unknown as FindOptionsRelations<T>;
+  }
+}

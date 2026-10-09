@@ -1,0 +1,254 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+{{#if (eq auth "better-auth:stateless")}}
+  UnauthorizedException,
+{{/if}}
+{{#if isPassportAuth}}
+  UseGuards,
+{{/if}}
+{{#if (and isBetterAuth hasDatabase hasGraphql)}}
+  UseGuards,
+{{/if}}
+} from "@nestjs/common";
+{{#if swagger}}
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+{{#if (or isPassportAuth isBetterAuth)}}
+  ApiUnauthorizedResponse,
+{{/if}}
+{{#if isPassportAuth}}
+  ApiBearerAuth,
+{{/if}}
+} from "@nestjs/swagger";
+{{/if}}
+{{#if (and isBetterAuth hasDatabase)}}
+import { Session } from "@thallesp/nestjs-better-auth";
+import type { UserSession } from "../../auth/auth.js";
+{{/if}}
+{{#if (and isBetterAuth (not hasDatabase))}}
+import { Session } from "@thallesp/nestjs-better-auth";
+import type { UserSession } from "../../auth/auth.js";
+{{/if}}
+{{#if isPassportAuth}}
+import { RestAuthGuard } from "../../auth/guards/rest-auth.guard.js";
+import { CurrentUser } from "../../auth/decorators/current-user.decorator.js";
+{{/if}}
+{{#if (and isBetterAuth hasDatabase hasGraphql)}}
+import { RestAuthGuard } from "../../auth/guards/rest-auth.guard.js";
+{{/if}}
+import { TodoService } from "./todo.service.js";
+import { CreateTodoDto } from "./dto/create-todo.dto.js";
+import { UpdateTodoDto } from "./dto/update-todo.dto.js";
+{{#if isPrisma8}}
+import type { Models } from "../../prisma/contract.js";
+
+type Todo = Models.public_Todo;
+{{/if}}
+
+{{#if swagger}}
+@ApiTags("Todos")
+{{/if}}
+@Controller("todos")
+{{#if (or isPassportAuth (and isBetterAuth hasDatabase hasGraphql))}}
+@UseGuards(RestAuthGuard)
+{{/if}}
+export class TodoController {
+  constructor(private readonly todoService: TodoService) {}
+{{#if (eq auth "better-auth:stateless")}}
+  private requireUserId(session: UserSession | null | undefined): string {
+    if (!session?.user?.id) {
+      throw new UnauthorizedException("Authentication required");
+    }
+    return session.user.id;
+  }
+{{/if}}
+
+  @Get()
+{{#if swagger}}
+{{#if (or isPassportAuth)}}
+  @ApiBearerAuth()
+{{/if}}
+  @ApiOperation({ summary: "/api/todos" })
+  @ApiOkResponse({ description: "Returns all todos" })
+{{#if (or isPassportAuth isBetterAuth)}}
+  @ApiUnauthorizedResponse({ description: "Unauthorized" })
+{{/if}}
+{{/if}}
+{{#if isPassportAuth}}
+  findAll(@CurrentUser() user: { id: string }) {
+    return this.todoService.findAll(user.id);
+  }
+{{else if (and isBetterAuth hasDatabase)}}
+{{#if (and isMonorepo usePrisma)}}
+  findAll(@Session() session: UserSession): ReturnType<TodoService["findAll"]> {
+{{else}}
+  findAll(@Session() session: UserSession) {
+{{/if}}
+    return this.todoService.findAll(session.user.id);
+  }
+{{else if isBetterAuth}}
+  findAll(@Session() session: UserSession | null) {
+    return this.todoService.findAll(this.requireUserId(session));
+  }
+{{else}}
+{{#if isPrisma8}}
+  async findAll(): Promise<Todo[]> {
+    return await this.todoService.findAll();
+  }
+{{else}}
+  findAll() {
+    return this.todoService.findAll();
+  }
+{{/if}}
+{{/if}}
+
+  @Post()
+{{#if swagger}}
+{{#if (or isPassportAuth)}}
+  @ApiBearerAuth()
+{{/if}}
+  @ApiOperation({ summary: "/api/todos" })
+  @ApiCreatedResponse({ description: "Todo created successfully" })
+{{#if (or isPassportAuth isBetterAuth)}}
+  @ApiUnauthorizedResponse({ description: "Unauthorized" })
+{{/if}}
+{{/if}}
+{{#if isPassportAuth}}
+  create(
+    @Body{{#if (includes addons "nestjs-zod")}}(){{else}}({ schema: CreateTodoDto.schema }){{/if}} input: CreateTodoDto,
+    @CurrentUser() user: { id: string }
+  ) {
+    return this.todoService.create(input, user.id);
+  }
+{{else if (and isBetterAuth hasDatabase)}}
+  create(
+    @Body{{#if (includes addons "nestjs-zod")}}(){{else}}({ schema: CreateTodoDto.schema }){{/if}} input: CreateTodoDto,
+    @Session() session: UserSession
+  ) {
+    return this.todoService.create(input, session.user.id);
+  }
+{{else if isBetterAuth}}
+  create(
+    @Body{{#if (includes addons "nestjs-zod")}}(){{else}}({ schema: CreateTodoDto.schema }){{/if}} input: CreateTodoDto,
+    @Session() session: UserSession | null
+  ) {
+    return this.todoService.create(input, this.requireUserId(session));
+  }
+{{else}}
+{{#if isPrisma8}}
+  async create(@Body{{#if (includes addons "nestjs-zod")}}(){{else}}({ schema: CreateTodoDto.schema }){{/if}} input: CreateTodoDto): Promise<Todo> {
+    return await this.todoService.create(input);
+  }
+{{else}}
+  create(@Body{{#if (includes addons "nestjs-zod")}}(){{else}}({ schema: CreateTodoDto.schema }){{/if}} input: CreateTodoDto) {
+    return this.todoService.create(input);
+  }
+{{/if}}
+{{/if}}
+
+  @Put(":id")
+{{#if swagger}}
+{{#if (or isPassportAuth)}}
+  @ApiBearerAuth()
+{{/if}}
+  @ApiOperation({ summary: "/api/todos/{id}" })
+  @ApiOkResponse({ description: "Todo updated successfully" })
+{{#if (or isPassportAuth isBetterAuth)}}
+  @ApiUnauthorizedResponse({ description: "Unauthorized" })
+{{/if}}
+{{/if}}
+{{#if isPassportAuth}}
+  update(
+    @Param("id") id: string,
+    @Body{{#if (includes addons "nestjs-zod")}}(){{else}}({ schema: UpdateTodoDto.schema }){{/if}} input: UpdateTodoDto,
+    @CurrentUser() user: { id: string }
+  ) {
+    return this.todoService.update(id, input, user.id);
+  }
+{{else if (and isBetterAuth hasDatabase)}}
+  update(
+    @Param("id") id: string,
+    @Body{{#if (includes addons "nestjs-zod")}}(){{else}}({ schema: UpdateTodoDto.schema }){{/if}} input: UpdateTodoDto,
+    @Session() session: UserSession
+  ) {
+    return this.todoService.update(id, input, session.user.id);
+  }
+{{else if isBetterAuth}}
+  update(
+    @Param("id") id: string,
+    @Body{{#if (includes addons "nestjs-zod")}}(){{else}}({ schema: UpdateTodoDto.schema }){{/if}} input: UpdateTodoDto,
+    @Session() session: UserSession | null
+  ) {
+    return this.todoService.update(id, input, this.requireUserId(session));
+  }
+{{else}}
+{{#if isPrisma8}}
+  async update(
+    @Param("id") id: string,
+    @Body{{#if (includes addons "nestjs-zod")}}(){{else}}({ schema: UpdateTodoDto.schema }){{/if}} input: UpdateTodoDto
+  ): Promise<Todo> {
+    return await this.todoService.update(id, input);
+  }
+{{else}}
+  update(
+    @Param("id") id: string,
+    @Body{{#if (includes addons "nestjs-zod")}}(){{else}}({ schema: UpdateTodoDto.schema }){{/if}} input: UpdateTodoDto
+  ) {
+    return this.todoService.update(id, input);
+  }
+{{/if}}
+{{/if}}
+
+  @Delete(":id")
+{{#if swagger}}
+{{#if (or isPassportAuth)}}
+  @ApiBearerAuth()
+{{/if}}
+  @ApiOperation({ summary: "/api/todos/{id}" })
+  @ApiOkResponse({ description: "Todo deleted successfully" })
+{{#if (or isPassportAuth isBetterAuth)}}
+  @ApiUnauthorizedResponse({ description: "Unauthorized" })
+{{/if}}
+{{/if}}
+{{#if isPassportAuth}}
+  delete(
+    @Param("id") id: string,
+    @CurrentUser() user: { id: string }
+  ) {
+    return this.todoService.delete(id, user.id);
+  }
+{{else if (and isBetterAuth hasDatabase)}}
+  delete(
+    @Param("id") id: string,
+    @Session() session: UserSession
+  ) {
+    return this.todoService.delete(id, session.user.id);
+  }
+{{else if isBetterAuth}}
+  delete(
+    @Param("id") id: string,
+    @Session() session: UserSession | null
+  ) {
+    return this.todoService.delete(id, this.requireUserId(session));
+  }
+{{else}}
+{{#if isPrisma8}}
+  async delete(@Param("id") id: string): Promise<{ message: string }> {
+    return await this.todoService.delete(id);
+  }
+{{else}}
+  delete(@Param("id") id: string) {
+    return this.todoService.delete(id);
+  }
+{{/if}}
+{{/if}}
+}

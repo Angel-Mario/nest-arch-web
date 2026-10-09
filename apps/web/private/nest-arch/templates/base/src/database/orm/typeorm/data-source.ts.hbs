@@ -1,0 +1,63 @@
+// oxlint-disable typescript/no-non-null-assertion
+import "reflect-metadata";
+import "dotenv/config";
+{{#if isMonorepo}}
+import { env } from "@repo/env/api-gateway";
+{{else}}
+import { env } from "../../../config/env.js";
+{{/if}}
+import { DataSource } from "typeorm";
+{{#if (or hasTodoExample hasMongodb)}}
+import { Todo } from "../../entities/todo.entity.js";
+{{/if}}
+{{#if (and useTypeorm isPassportAuth)}}
+import { UserEntity } from "../../../modules/users/entities/user.entity.js";
+{{/if}}
+{{#if (eq auth "better-auth:stateless")}}
+import { AppEntity } from "../../entities/app.entity.js";
+{{/if}}
+
+{{#unless (or hasSqlite hasSqlserver hasMongodb)}}
+const databaseUrl = env.{{#if hasPostgres}}POSTGRES_URL{{/if}}{{#if hasMysql}}MYSQL_URL{{/if}};
+const parsedUrl = new URL(databaseUrl);
+{{/unless}}
+
+
+export const AppDataSource = new DataSource({
+  {{#if hasSqlite}}
+  database: env.SQLITE_PATH,
+  {{/if}}
+  {{#if hasSqlserver}}
+  database: env.SQLSERVER_DATABASE,
+  {{/if}}
+  // Register entities explicitly for consistent metadata in Node and test runners.
+  entities: [{{#if (or hasTodoExample hasMongodb)}}Todo{{/if}}{{#if (and hasTodoExample (and useTypeorm isPassportAuth))}}, {{/if}}{{#if (and useTypeorm isPassportAuth)}}UserEntity{{/if}}{{#if (eq auth "better-auth:stateless")}}{{#if (or hasTodoExample (and useTypeorm isPassportAuth))}}, {{/if}}AppEntity{{/if}}],
+  {{#if hasSqlserver}}
+  host: env.SQLSERVER_HOST,
+  {{/if}}
+  migrations: [
+    "dist/database/orm/typeorm/migrations/*.js",
+    "src/database/orm/typeorm/migrations/*.js",
+  ],
+  {{#if hasSqlserver}}
+  options: { encrypt: env.SQLSERVER_ENCRYPT, trustServerCertificate: env.SQLSERVER_TRUST_SERVER_CERTIFICATE },
+  password: env.SQLSERVER_PASSWORD,
+  port: env.SQLSERVER_PORT,
+  {{/if}}
+  synchronize: false,
+  type: "{{#if hasPostgres}}postgres{{/if}}{{#if hasMysql}}mysql{{/if}}{{#if hasSqlite}}better-sqlite3{{/if}}{{#if hasSqlserver}}mssql{{/if}}{{#if hasMongodb}}mongodb{{/if}}",
+  {{#if hasMongodb}}
+  url: env.MONGODB_URL,
+  serverSelectionTimeoutMS: 5000,
+  {{/if}}
+  {{#if hasSqlserver}}
+  username: env.SQLSERVER_USER,
+  {{/if}}
+  {{#unless (or hasSqlite hasSqlserver hasMongodb)}}
+  url: databaseUrl,
+  {{/unless}}
+  {{#unless (or hasSqlite hasSqlserver hasMongodb)}}
+  ...(parsedUrl.username ? { username: decodeURIComponent(parsedUrl.username) } : {}),
+  ...(parsedUrl.password ? { password: decodeURIComponent(parsedUrl.password) } : {}),
+  {{/unless}}
+});

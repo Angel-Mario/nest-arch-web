@@ -1,0 +1,139 @@
+// oxlint-disable typescript/no-explicit-any
+{{#if hasPostgres}}
+import { {{#if hasTodoExample}}boolean, {{/if}}pgTable{{#if (or (not isPassportAuth) hasTodoExample)}}, serial{{/if}}, text{{#if (or isPassportAuth (eq auth "better-auth:stateless"))}}, timestamp{{/if}} } from 'drizzle-orm/pg-core';
+{{/if}}
+{{#if hasMysql}}
+import { {{#if hasTodoExample}}boolean, {{/if}}mysqlTable{{#if (or (not isPassportAuth) hasTodoExample)}}, int{{/if}}, text{{#if (or isPassportAuth (eq auth "better-auth:stateless"))}}, timestamp, varchar{{/if}} } from 'drizzle-orm/mysql-core';
+{{/if}}
+{{#if hasSqlite}}
+import { sqliteTable{{#if (or (not isPassportAuth) hasTodoExample)}}, integer{{/if}}, text } from 'drizzle-orm/sqlite-core';
+{{/if}}
+{{#if hasSqlserver}}
+import { bit, int, mssqlTable, nvarchar } from 'drizzle-orm/mssql-core';
+{{/if}}
+{{#if (eq auth "better-auth")}}
+// oxlint-disable-next-line oxc/no-barrel-file
+export * from "./auth-schema.js";
+{{/if}}
+{{#if hasPostgres}}
+{{#if (or isPassportAuth (eq auth "better-auth:stateless"))}}
+export const users = pgTable('users', {
+  email: text('email').unique(),
+{{#if isPassportAuth}}
+  id: text('id').primaryKey(),
+{{else}}
+  id: serial('id').primaryKey(),
+{{/if}}
+  name: text('name'),
+  createdAt: timestamp('created_at').defaultNow(),
+{{#if isPassportAuth}}
+  password: text('password').notNull(),
+  firstname: text('firstname'),
+  lastname: text('lastname'),
+  role: text('role').default('USER'),
+{{/if}}
+});
+{{/if}}
+{{#if hasTodoExample}}
+export const todos = pgTable('todos', {
+  {{#if hasAuth}}
+  authorId: text('author_id'),
+  {{/if}}
+  completed: boolean('completed').notNull().default(false),
+  description: text('description'),
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+});
+{{/if}}
+{{/if}}
+{{#if hasMysql}}
+{{#if (or isPassportAuth (eq auth "better-auth:stateless"))}}
+export const users = mysqlTable('users', {
+  email: varchar('email', { length: 320 }).unique(),
+{{#if isPassportAuth}}
+  id: varchar('id', { length: 255 }).primaryKey(),
+{{else}}
+  id: int('id').autoincrement().primaryKey(),
+{{/if}}
+  name: text('name'),
+  createdAt: timestamp('created_at').defaultNow(),
+{{#if isPassportAuth}}
+  password: text('password').notNull(),
+  firstname: text('firstname'),
+  lastname: text('lastname'),
+  role: text('role').default('USER'),
+{{/if}}
+});
+{{/if}}
+{{#if hasTodoExample}}
+export const todos = mysqlTable('todos', {
+  {{#if hasAuth}}
+  authorId: text('author_id'),
+  {{/if}}
+  completed: boolean('completed').notNull().default(false),
+  description: text('description'),
+  id: int('id').autoincrement().primaryKey(),
+  title: text('title').notNull(),
+});
+{{/if}}
+{{/if}}
+{{#if hasSqlite}}
+{{#if (or isPassportAuth (eq auth "better-auth:stateless"))}}
+export const users = sqliteTable('users', {
+  email: text('email').unique(),
+{{#if isPassportAuth}}
+  id: text('id').primaryKey(),
+{{else}}
+  id: integer('id').primaryKey({ autoIncrement: true }),
+{{/if}}
+  name: text('name'),
+{{#if isPassportAuth}}
+  password: text('password').notNull(),
+  firstname: text('firstname'),
+  lastname: text('lastname'),
+  role: text('role').default('USER'),
+{{/if}}
+});
+{{/if}}
+{{#if hasTodoExample}}
+export const todos = sqliteTable('todos', {
+  {{#if hasAuth}}
+  authorId: text('author_id'),
+  {{/if}}
+  completed: integer('completed', { mode: 'boolean' }).notNull().default(false),
+  description: text('description'),
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  title: text('title').notNull(),
+});
+{{/if}}
+{{/if}}
+{{#if hasSqlserver}}
+{{#if (or isPassportAuth (eq auth "better-auth:stateless"))}}
+export const users = mssqlTable('users', {
+  email: nvarchar('email', { length: 320 }).unique(),
+{{#if isPassportAuth}}
+  id: nvarchar('id', { length: 255 }).primaryKey(),
+{{else}}
+  id: int('id').identity().primaryKey(),
+{{/if}}
+  name: nvarchar('name', { length: 255 }),
+{{#if isPassportAuth}}
+  password: nvarchar('password', { length: 255 }).notNull(),
+  firstname: nvarchar('firstname', { length: 255 }),
+  lastname: nvarchar('lastname', { length: 255 }),
+  role: nvarchar('role', { length: 32 }).default('USER'),
+{{/if}}
+});
+{{/if}}
+{{#if hasTodoExample}}
+export const todos = mssqlTable('todos', {
+  {{#if hasAuth}}
+  authorId: nvarchar('author_id', { length: 255 }),
+  {{/if}}
+  completed: bit('completed').notNull().default(false),
+  description: nvarchar('description', { length: 'max' }),
+  id: int('id').identity().primaryKey(),
+  title: nvarchar('title', { length: 255 }).notNull(),
+});
+{{/if}}
+{{/if}}

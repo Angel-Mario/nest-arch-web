@@ -1,0 +1,58 @@
+import { Test, TestingModule } from "@nestjs/testing";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import { AppRouterClass } from "./app.router.js";
+import { AppService } from "./app.service.js";
+{{#if hasTrpcAndAuth}}
+import { AuthTRPCMiddleware } from "./libs/middlewares/auth.trpc.middleware.js";
+import type { InnerContext } from "./libs/trpc/inner.context.js";
+{{/if}}
+
+describe(AppRouterClass, () => {
+  let router: AppRouterClass;
+
+  const mockAppService = {
+    getHello: vi.fn<() => string>().mockReturnValue("Hello World!"),
+  };
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AppRouterClass,
+        { provide: AppService, useValue: mockAppService },
+        {{#if hasTrpcAndAuth}}
+        { provide: AuthTRPCMiddleware, useValue: {} },
+        {{/if}}
+      ],
+    }).compile();
+
+    router = module.get<AppRouterClass>(AppRouterClass);
+  });
+
+  it("should be defined", () => {
+    expect(router).toBeDefined();
+  });
+
+  describe("getHello", () => {
+    it("should return the hello message from AppService", () => {
+      const result = router.getHello();
+      expect(result).toBe("Hello World!");
+      expect(mockAppService.getHello).toHaveBeenCalledWith();
+    });
+  });
+
+{{#if hasTrpcAndAuth}}
+  describe("testAuth", () => {
+    it("should return the session from context", () => {
+      const mockCtx = {
+        session: {
+          session: { expiresAt: new Date() },
+          user: { email: "test@example.com", id: "1", name: "Test User" },
+        },
+      } as InnerContext;
+      const result = router.testAuth(mockCtx);
+      expect(result).toStrictEqual(mockCtx.session);
+    });
+  });
+{{/if}}
+});

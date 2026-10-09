@@ -1,0 +1,32 @@
+// oxlint-disable typescript/no-explicit-any
+// Define your database schema here.
+// See: https://orm.drizzle.team/docs/sql-schema-declaration
+{{#if hasPostgres}}
+// import { pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
+//
+// export const users = pgTable('users', {
+//   id: serial('id').primaryKey(),
+//   name: text('name'),
+//   email: text('email').unique(),
+//   createdAt: timestamp('created_at').defaultNow(),
+// });
+{{/if}}
+{{#if hasMysql}}
+// import { mysqlTable, serial, text, timestamp } from 'drizzle-orm/mysql-core';
+//
+// export const users = mysqlTable('users', {
+//   id: serial('id').primaryKey(),
+//   name: text('name'),
+//   email: text('email').unique(),
+//   createdAt: timestamp('created_at').defaultNow(),
+// });
+{{/if}}
+{{#if hasSqlite}}
+// import { sqliteTable, integer, text } from 'drizzle-orm/sqlite-core';
+//
+// export const users = sqliteTable('users', {
+//   id: integer('id').primaryKey({ autoIncrement: true }),
+//   name: text('name'),
+//   email: text('email').unique(),
+// });
+{{/if}}

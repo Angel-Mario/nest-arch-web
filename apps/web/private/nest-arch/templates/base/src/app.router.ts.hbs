@@ -1,0 +1,25 @@
+import { Router, Query{{#if hasTrpcAndAuth}}, UseMiddlewares, Ctx{{/if}} } from "nestjs-trpc";
+import { z } from "zod";
+{{#if hasTrpcAndAuth}}
+import { AuthTRPCMiddleware } from "./libs/middlewares/auth.trpc.middleware.js";
+import type { InnerContext } from "./libs/trpc/inner.context.js";
+{{/if}}
+import { AppService } from "./app.service.js";
+
+@Router({ alias: "appRouter" })
+export class AppRouterClass {
+  constructor(private readonly appService: AppService) {}
+
+{{#if hasTrpcAndAuth}}
+  @Query()
+  @UseMiddlewares(AuthTRPCMiddleware)
+  testAuth(@Ctx() ctx: InnerContext): NonNullable<InnerContext["session"]> {
+    return ctx.session!;
+  }
+
+{{/if}}
+  @Query({ output: z.string() })
+  getHello(): string {
+    return this.appService.getHello();
+  }
+}

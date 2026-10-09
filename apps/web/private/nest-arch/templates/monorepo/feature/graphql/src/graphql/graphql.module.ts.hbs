@@ -1,0 +1,29 @@
+import { Module } from "@nestjs/common";
+import { GraphQLModule } from "@nestjs/graphql";
+import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
+import type { IncomingMessage } from "node:http";
+import path from "node:path";
+import { env } from "@repo/env/api-gateway";
+import { HealthResolver } from "./resolvers/health.resolver.js";
+{{#if hasTodoExample}}
+import { TodoResolver } from "./resolvers/todo.resolver.js";
+{{/if}}
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: path.join(process.cwd(), "apps/api-gateway/src/schema.gql"),
+      graphiql: env.GRAPHQL_PLAYGROUND,
+      context: ({ req, res }: { req: IncomingMessage; res: unknown }) => ({ req, res }),
+      sortSchema: true,
+    }),
+  ],
+  providers: [
+    HealthResolver,
+    {{#if hasTodoExample}}
+    TodoResolver,
+    {{/if}}
+  ],
+})
+export class GraphqlAppModule {}

@@ -1,0 +1,89 @@
+{{#if (eq auth "passport")}}
+import { Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { TRPCError } from "@trpc/server";
+import { MiddlewareOptions, MiddlewareResponse, TRPCMiddleware } from "nestjs-trpc";
+import type { ContextOptions } from "nestjs-trpc";
+
+import { env } from "../../config/env.js";
+import { AuthService } from "../../auth/auth.service.js";
+
+@Injectable()
+export class AuthTRPCMiddleware implements TRPCMiddleware {
+  constructor(private readonly auth: AuthService, private readonly jwt: JwtService) {}
+
+  async use(opts: MiddlewareOptions<ContextOptions>): Promise<MiddlewareResponse> {
+    const header = opts.ctx.req.headers.authorization;
+    const token = header?.startsWith("Bearer ") ? header.slice("Bearer ".length) : undefined;
+    if (!token) throw new TRPCError({ code: "UNAUTHORIZED", message: "Missing bearer token." });
+    try {
+      const payload = await this.jwt.verifyAsync<Record<string, unknown>>(token, {
+        algorithms: ["HS256"], audience: env.JWT_AUDIENCE, issuer: env.JWT_ISSUER,
+      });
+      {{#if (and usePrisma (not hasMongodb))}}
+      const user = await this.auth.validate(payload);
+      {{else}}
+      const user = await this.auth.validateUser(payload.userId as string);
+      {{/if}}
+      if (!user) throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid bearer token." });
+      return opts.next({
+        ctx: {
+          ...opts.ctx,
+          session: { user },
+        },
+      });
+    } catch {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid bearer token." });
+    }
+  }
+}
+{{else}}
+import { Injectable } from "@nestjs/common";
+import { AuthService } from "@thallesp/nestjs-better-auth";
+import { TRPCError } from "@trpc/server";
+import {
+  MiddlewareOptions,
+  MiddlewareResponse,
+  TRPCMiddleware,
+} from "nestjs-trpc";
+import type { ContextOptions } from "nestjs-trpc";
+
+{{#if (eq auth "better-auth:stateless")}}
+import { auth } from "../../auth/auth.js";
+
+type AppAuth = typeof auth;
+{{else}}
+import { createAuth } from "../../auth/auth.js";
+
+type AppAuth = ReturnType<typeof createAuth>;
+{{/if}}
+
+@Injectable()
+export class AuthTRPCMiddleware implements TRPCMiddleware {
+  constructor(private readonly authService: AuthService<AppAuth>) {}
+
+  async use(
+    opts: MiddlewareOptions<ContextOptions>
+  ): Promise<MiddlewareResponse> {
+    const { ctx, next } = opts;
+
+    const session = await this.authService.api.getSession({
+      headers: ctx.req.headers,
+    });
+
+    if (session === null) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "No session found.",
+      });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        session,
+      },
+    });
+  }
+}
+{{/if}}

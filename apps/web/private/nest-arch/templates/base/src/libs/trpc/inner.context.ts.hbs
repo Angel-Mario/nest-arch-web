@@ -1,0 +1,10 @@
+import { ContextOptions } from "nestjs-trpc";
+{{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless"))}}
+import type { UserSession } from "../../auth/auth.js";
+{{else if (eq auth "passport")}}
+import type { AuthService } from "../../auth/auth.service.js";
+{{/if}}
+
+export type InnerContext = {
+  session?: {{#if (or (eq auth "better-auth") (eq auth "better-auth:stateless"))}}UserSession{{else if (eq auth "passport")}}{ user: NonNullable<Awaited<ReturnType<AuthService[{{#if (and usePrisma (not hasMongodb))}}"validate"{{else}}"validateUser"{{/if}}]>>> }{{else}}unknown{{/if}};
+} & ContextOptions;

@@ -1,42 +1,39 @@
-# fumadocs
+# Nest Arch documentation app
 
-This is a Next.js application generated with [Create Fumadocs](https://github.com/fuma-nama/fumadocs).
+Fumadocs/Next.js application in the Nest Arch workspace. Documentation development is currently private; the generator's v1 scope is single applications, with monorepos planned for v2.
 
-Run development server:
+## Development
+
+Run from the repository root:
 
 ```bash
-npm run dev
-# or
-pnpm dev
-# or
-yarn dev
+pnpm install --frozen-lockfile
+pnpm --filter fumadocs dev
 ```
 
-Open http://localhost:3000 with your browser to see the result.
+Open http://localhost:4000. This app has its own Next.js entry points and is separate from the marketing website on port 3001.
 
-## Explore
+## Documentation structure
 
-In the project, you can see:
+| Path                        | Purpose                                     |
+| --------------------------- | ------------------------------------------- |
+| `content/docs/`             | MDX documentation pages                     |
+| `source.config.ts`          | Fumadocs collections and frontmatter schema |
+| `src/lib/source.ts`         | Content loader and page metadata helpers    |
+| `src/lib/layout.shared.tsx` | Shared layout options                       |
+| `src/app/docs/`             | Documentation pages and layout              |
 
-- `lib/source.ts`: Code for content source adapter, [`loader()`](https://fumadocs.dev/docs/headless/source-api) provides the interface to access your content.
-- `lib/layout.shared.tsx`: Shared options for layouts, optional but preferred to keep.
+Fumadocs generates content collections during installation. Add documentation under `content/docs` rather than editing generated `.source` files.
 
-| Route | Description |
-| --- | --- |
-| `app/(home)` | The route group for your landing page and other pages. |
-| `app/docs` | The documentation layout and pages. |
-| `app/api/search/route.ts` | The Route Handler for search. |
+## Checks
 
-### Fumadocs MDX
+```bash
+pnpm --filter fumadocs types:check
+pnpm --filter fumadocs build
+```
 
-A `source.config.ts` config file has been included, you can customise different options like frontmatter schema.
+## Keeping documentation aligned with npm
 
-Read the [Introduction](https://fumadocs.dev/docs/mdx) for further details.
+Follow the [Nest Arch release maintenance guide](../../docs/NEST-ARCH-RELEASES.md) when `@nest-arch/tui` is published. Review option names, certified combinations, generated setup commands and the single-app/v2 roadmap against the published source tag.
 
-## Learn More
-
-To learn more about Next.js and Fumadocs, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [Fumadocs](https://fumadocs.dev) - learn about Fumadocs
+The preview automation updates the website's private snapshot and presets. MDX content and product claims require a separate editorial review when features change. See the [website README](../web/README.md) for preview behavior and storage configuration.

@@ -1,0 +1,34 @@
+import { Field, ObjectType, registerEnumType } from "@nestjs/graphql";
+
+import { BaseModel } from "./base.model.js";
+{{#if hasTodoExample}}
+// oxlint-disable-next-line import/no-cycle
+import { Todo } from "./todo.model.js";
+{{/if}}
+
+export enum Role {
+  ADMIN = "ADMIN",
+  USER = "USER",
+}
+
+registerEnumType(Role, { name: "Role" });
+
+@ObjectType()
+export class User extends BaseModel {
+  @Field()
+  email: string;
+
+  @Field(() => String, { nullable: true })
+  firstname: string | null;
+
+  @Field(() => String, { nullable: true })
+  lastname: string | null;
+
+  @Field(() => Role)
+  role: Role;
+{{#if hasTodoExample}}
+
+  @Field(() => [Todo], { nullable: "items" })
+  todos: Todo[];
+{{/if}}
+}

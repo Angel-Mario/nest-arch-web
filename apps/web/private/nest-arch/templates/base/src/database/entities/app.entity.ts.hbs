@@ -1,0 +1,25 @@
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
+
+@Entity("app_data")
+export class AppEntity {
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
+
+  @Column({ type: "varchar", length: 255, unique: true })
+  key: string;
+
+  @Column({ type: "text" })
+  value: string;
+
+  @CreateDateColumn({ name: "created_at" })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: "updated_at" })
+  updatedAt: Date;
+}
