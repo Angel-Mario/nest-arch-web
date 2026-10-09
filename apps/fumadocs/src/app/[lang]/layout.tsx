@@ -5,12 +5,13 @@ import { type Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
-import nestArchLogo from "@/components/nest-arch-logo.png";
 import { NpmVersionBadge } from "@/components/npm-version-badge";
 import { i18n } from "@/lib/i18n";
 import { baseOptions, translations } from "@/lib/layout.shared";
 import { appDescription, appName } from "@/lib/shared";
 import { source } from "@/lib/source";
+
+import nestArchLogo from "../../../web/public/photos/logo.png";
 
 import "../global.css";
 

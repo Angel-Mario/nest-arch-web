@@ -9,6 +9,8 @@ import { useUi } from "@/components/locale-provider";
 import { trackAnalyticsEvent } from "@/lib/analytics";
 import { getDocumentationUrl } from "@/lib/documentation";
 
+import nestArchLogo from "../../public/photos/logo.png";
+
 const GithubIcon = ({ className }: { className?: string }) => (
   <svg
     className={className}
@@ -52,7 +54,7 @@ const Footer = () => {
               aria-label={t.header.nestArchHome}
             >
               <Image
-                src="/photos/logo.png"
+                src={nestArchLogo}
                 alt=""
                 width={458}
                 height={393}

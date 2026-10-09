@@ -23,6 +23,7 @@ import { LocaleSelect } from "@/components/locale-select";
 import { builderMessages } from "@/lib/builder-messages";
 import { getDocumentationUrl } from "@/lib/documentation";
 
+import nestArchLogo from "../../public/photos/logo.png";
 import { ModeToggle } from "./mode-toggle";
 
 const GithubIcon = ({ className }: { className?: string }) => (
@@ -140,7 +141,7 @@ const Header = () => {
           aria-label={t.header.nestArchHome}
         >
           <Image
-            src="/photos/logo.png"
+            src={nestArchLogo}
             alt=""
             width={458}
             height={393}
