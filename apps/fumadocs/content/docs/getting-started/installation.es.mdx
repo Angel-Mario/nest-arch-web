@@ -1,16 +1,16 @@
 ---
 title: Instalar Nest Arch
-description: Ejecuta el asistente interactivo de terminal de Nest Arch.
+description: Instala Nest Arch y elige entre el asistente interactivo y la generación headless.
 ---
 
-Estas instrucciones corresponden a **`@nest-arch/tui` 0.5.0**. Nest Arch está en fase alpha; otras versiones pueden cambiar el asistente y los archivos generados.
+Estas instrucciones corresponden a **`@nest-arch/tui` 0.5.1**. Nest Arch está en fase alpha; otras versiones pueden cambiar el asistente y los archivos generados.
 
 ## Ejecución puntual con npx
 
 Usa una terminal interactiva y una carpeta nueva para el proyecto:
 
 ```sh
-npx @nest-arch/tui@0.5.0
+npx @nest-arch/tui@0.5.1
 ```
 
 Para usar la versión más reciente publicada, ejecuta `npx @nest-arch/tui@latest`.
@@ -18,8 +18,8 @@ Para usar la versión más reciente publicada, ejecuta `npx @nest-arch/tui@lates
 ## Instalación global
 
 ```sh
-npm install --global @nest-arch/tui@0.5.0
+npm install --global @nest-arch/tui@0.5.1
 nest-arch
 ```
 
-Consulta la versión instalada con `nest-arch --version`. No necesitas clonar el repositorio para generar una aplicación. Evita ejecutar el comando desde un proceso sin entrada interactiva.
+Consulta la versión instalada con `nest-arch --version`. No necesitas clonar el repositorio para generar una aplicación. El asistente requiere entrada interactiva; para scripts y CI, usa la [generación headless](../guides/headless.mdx) con un nombre de proyecto o `--config`.

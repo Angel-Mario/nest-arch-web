@@ -3,14 +3,14 @@ title: Quick start
 description: Generate a small NestJS REST application and start its development server.
 ---
 
-This walkthrough targets `@nest-arch/tui` **0.5.0** and creates a standalone NestJS REST API with Express, no database, and no authentication.
+This walkthrough targets `@nest-arch/tui` **0.5.1** and creates a standalone NestJS REST API with Express, no database, and no authentication.
 
 ## Generate the project
 
 Run the wizard from a parent directory where you want the new project created:
 
 ```sh
-npx @nest-arch/tui@0.5.0
+npx @nest-arch/tui@0.5.1
 ```
 
 Choose these values when the corresponding steps appear:
@@ -33,6 +33,14 @@ Leave optional extras and addons unselected for this first project. Confirm the 
 
 ## Start the server
 
+You can also generate the same API without prompts, using npm and skipping dependency installation and Git:
+
+```sh
+npx @nest-arch/tui@0.5.1 hello-nest --package-manager npm --install-dependencies no --no-git
+```
+
+Choose one generation method and a fresh output directory. See the [headless guide](../guides/headless.mdx) for JSONC and more options.
+
 Move into the project directory. If you skipped dependency installation in the wizard, install dependencies first:
 
 ```sh
@@ -46,4 +54,4 @@ Start the NestJS development server:
 npm run dev
 ```
 
-The generated project listens on the port configured by its environment file; open the local URL printed by NestJS. The `dev` script runs Nest in watch mode. See [first run](./first-run) for setup steps when your selected project needs a database or environment variables.
+The generated project listens on the port configured by its environment file; open the local URL printed by NestJS. The `dev` script runs Nest in watch mode. See [first run](./first-run.mdx) for setup steps when your selected project needs a database or environment variables.

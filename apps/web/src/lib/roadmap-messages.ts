@@ -1,3 +1,4 @@
+import { getDocumentationUrl } from "@/lib/documentation";
 import type { Locale } from "@/lib/i18n";
 
 export interface RoadmapMessages {
@@ -38,8 +39,10 @@ export const roadmapMessages: Record<Locale, RoadmapMessages> = {
       heading: "Documentation & community",
       items: [
         {
-          description: "CLI, TUI, templates, and project metadata guides.",
-          status: "Planned",
+          description:
+            "Documentation available in English, Spanish, and Portuguese, with quick start, wizard, headless generation, configuration, and CLI guides.",
+          href: getDocumentationUrl("en"),
+          status: "Implemented",
           title: "Documentation",
         },
         {
@@ -153,8 +156,9 @@ export const roadmapMessages: Record<Locale, RoadmapMessages> = {
       items: [
         {
           description:
-            "Guías de CLI, TUI, plantillas y metadatos del proyecto.",
-          status: "Planificado",
+            "Documentación disponible en inglés, español y portugués, con inicio rápido, wizard, generación headless, configuración y referencia de la CLI.",
+          href: getDocumentationUrl("es"),
+          status: "Implementado",
           title: "Documentación",
         },
         {
@@ -267,8 +271,10 @@ export const roadmapMessages: Record<Locale, RoadmapMessages> = {
       heading: "Documentação e comunidade",
       items: [
         {
-          description: "Guias de CLI, TUI, templates e metadados do projeto.",
-          status: "Planejado",
+          description:
+            "Documentação disponível em inglês, espanhol e português, com início rápido, wizard, geração headless, configuração e referência da CLI.",
+          href: getDocumentationUrl("pt"),
+          status: "Implementado",
           title: "Documentação",
         },
         {

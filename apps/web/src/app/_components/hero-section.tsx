@@ -20,6 +20,7 @@ import { useState } from "react";
 import { useUi } from "@/components/locale-provider";
 import { trackAnalyticsEvent } from "@/lib/analytics";
 import { builderMessages } from "@/lib/builder-messages";
+import { getDocumentationUrl } from "@/lib/documentation";
 
 const InteractiveTerminalWizard = dynamic(async () => {
   const { InteractiveTerminalWizard: Wizard } =
@@ -149,12 +150,12 @@ export const HeroSection = () => {
           </Link>
 
           <div className="inline-flex items-center gap-2 font-mono text-sm text-red-300">
-            <Link
-              href="#workflow"
+            <a
+              href={getDocumentationUrl(locale)}
               className="text-foreground inline-flex items-center gap-2 border-b border-red-600/60 pb-1 font-medium transition-colors hover:border-red-500 hover:text-red-600 dark:border-red-500/50 dark:hover:border-red-400 dark:hover:text-red-400"
             >
               {t.hero.exploreDocs} <ArrowRight className="size-4" />
-            </Link>
+            </a>
             <span className="ml-3 text-zinc-500">•</span>
             <span className="text-zinc-400">
               {formattedTotalDownloads} {t.hero.downloads}

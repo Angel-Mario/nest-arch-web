@@ -1,16 +1,58 @@
 ---
 title: Referencia de la CLI
-description: Instala, ejecuta y consulta la versión del asistente Nest Arch.
+description: Ejecuta el asistente o genera proyectos headless con opciones y configuración JSONC.
 ---
 
 El paquete `@nest-arch/tui` publica el ejecutable `nest-arch`.
 
 | Acción | Comando |
 | --- | --- |
-| Ejecutar 0.5.0 una vez | `npx @nest-arch/tui@0.5.0` |
+| Ejecutar 0.5.1 una vez | `npx @nest-arch/tui@0.5.1` |
 | Ejecutar la versión más reciente | `npx @nest-arch/tui@latest` |
-| Instalar 0.5.0 globalmente | `npm install --global @nest-arch/tui@0.5.0` |
+| Instalar 0.5.1 globalmente | `npm install --global @nest-arch/tui@0.5.1` |
 | Iniciar la instalación global | `nest-arch` |
 | Consultar la versión | `nest-arch --version` |
+| Mostrar ayuda | `nest-arch --help` |
+| Abrir el asistente explícitamente | `nest-arch --ui` |
+| Generar sin preguntas | `pnpm dlx @nest-arch/tui@0.5.1 my-api` |
+| Generar desde JSONC | `pnpm dlx @nest-arch/tui@0.5.1 --config ./nest-arch.jsonc` |
 
-Ejecuta la CLI en una terminal interactiva, desde la carpeta donde quieres crear el proyecto. Usa una carpeta de salida nueva. Este paquete de TUI no publica el comando `generate:module`.
+Sin argumentos o con `--ui`, la CLI abre el asistente y requiere una terminal interactiva. Con un nombre de proyecto o `--config`, genera sin preguntas. Consulta la [guía headless](../guides/headless.mdx) para ejemplos y reproducción de proyectos. Este paquete no publica el comando `generate:module`.
+
+## Opciones de generación
+
+| Opción | Valores o función |
+| --- | --- |
+| `--config` | Ruta a un archivo JSONC; los flags tienen prioridad |
+| `--output-dir` | Directorio de destino exacto, nuevo o vacío |
+| `--project-type` | `single`, `monorepo` |
+| `--architecture` | `nest-api`, `nest-gateway`, `nest-microservice` |
+| `--http-provider` | `express`, `fastify` |
+| `--package-manager` | `pnpm`, `npm`, `yarn`, `bun` |
+| `--auth` | `none`, `passport`, `better-auth`, `better-auth:stateless` |
+| `--formatter` | `none`, `biome`, `oxlint-oxfmt`, `eslint-prettier-stylelint`, `eslint-prettier-no-stylelint` |
+| `--prisma-version` | `6`, `7`, `8` |
+| `--description` | Texto de descripción |
+| `--description-base64` | Descripción UTF-8 en base64, usada en comandos reproducibles |
+| `--install-dependencies` | `yes`, `no`; por defecto `no` |
+| `--git`, `--no-git` | Activar o desactivar Git; por defecto desactivado |
+| `--ultracite-install-skill` | `yes`, `no`; por defecto `no` |
+
+Los valores aceptados por el parser no garantizan una combinación compatible. La [política de soporte](./compatibility.mdx) se aplica también en modo headless.
+
+## Opciones de lista
+
+| Opción | Valores |
+| --- | --- |
+| `--api` | `rest`, `trpc`, `graphql` |
+| `--database` | `postgresql`, `mysql`, `sqlite`, `mongodb`, `sqlserver` |
+| `--orm` | `prisma`, `typeorm`, `drizzle` |
+| `--microservices` | `redis`, `mqtt`, `nats`, `rabbitmq`, `kafka`, `grpc` |
+| `--extras` | `docker`, `health-check`, `rate-limiting`, `swagger`, `packages/shared`, `todo-example`, `typescript-7` |
+| `--addons` | `agent-skills`, `husky`, `ultracite`, `nestjs-zod`, `scalar-ui` |
+| `--trusted-proxy-ips` | Direcciones IP o rangos CIDR |
+| `--ultracite-editors` | Identificadores de editores, por ejemplo `vscode` o `cursor` |
+| `--ultracite-agents` | Identificadores de agentes, por ejemplo `codex` o `claude` |
+| `--ultracite-hooks` | `cursor`, `windsurf`, `codebuddy`, `claude`, `copilot` |
+
+Separa los valores con espacios: `--extras docker health-check`. Usa `none` como único valor para vaciar una lista. En JSONC, usa arrays y los nombres de campo del [ejemplo headless](../guides/headless.mdx).

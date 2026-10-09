@@ -105,7 +105,9 @@ export const RoadmapContent = () => {
                   {item.href ? (
                     <a
                       href={item.href}
-                      target="_blank"
+                      target={
+                        item.href.startsWith("https://") ? "_blank" : undefined
+                      }
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1 underline underline-offset-4"
                     >

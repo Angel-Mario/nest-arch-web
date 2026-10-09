@@ -1,18 +1,60 @@
 ---
 title: CLI reference
-description: Install, launch, and check the version of the Nest Arch terminal wizard.
+description: Run the wizard or generate headless projects with options and JSONC configuration.
 ---
 
 The `@nest-arch/tui` package publishes the `nest-arch` executable.
 
-| Task                           | Command                                     |
-| ------------------------------ | ------------------------------------------- |
-| Run release 0.5.0 once         | `npx @nest-arch/tui@0.5.0`                  |
-| Run the newest release once    | `npx @nest-arch/tui@latest`                 |
-| Install release 0.5.0 globally | `npm install --global @nest-arch/tui@0.5.0` |
-| Start a global installation    | `nest-arch`                                 |
-| Print the installed version    | `nest-arch --version`                       |
+| Task | Command |
+| --- | --- |
+| Run release 0.5.1 once | `npx @nest-arch/tui@0.5.1` |
+| Run the newest release once | `npx @nest-arch/tui@latest` |
+| Install release 0.5.1 globally | `npm install --global @nest-arch/tui@0.5.1` |
+| Start a global installation | `nest-arch` |
+| Print the installed version | `nest-arch --version` |
+| Show help | `nest-arch --help` |
+| Open the wizard explicitly | `nest-arch --ui` |
+| Generate without prompts | `pnpm dlx @nest-arch/tui@0.5.1 my-api` |
+| Generate from JSONC | `pnpm dlx @nest-arch/tui@0.5.1 --config ./nest-arch.jsonc` |
 
-The wizard requires an interactive terminal. Project generation is performed in the current working directory, so start it from the parent folder where you want the new project created. Use a fresh output directory to avoid mixing generated files with an existing project.
+Without arguments or with `--ui`, the CLI opens the wizard and requires an interactive terminal. A project name or `--config` generates without prompts. See the [headless guide](../guides/headless.mdx) for examples and project reproduction.
 
 The CLI package does not publish a `generate:module` command. Module generation, when available from a separate development package or workflow, is outside this TUI reference.
+
+## Generation options
+
+| Option | Values or purpose |
+| --- | --- |
+| `--config` | JSONC file path; CLI flags take precedence |
+| `--output-dir` | Exact destination directory, new or empty |
+| `--project-type` | `single`, `monorepo` |
+| `--architecture` | `nest-api`, `nest-gateway`, `nest-microservice` |
+| `--http-provider` | `express`, `fastify` |
+| `--package-manager` | `pnpm`, `npm`, `yarn`, `bun` |
+| `--auth` | `none`, `passport`, `better-auth`, `better-auth:stateless` |
+| `--formatter` | `none`, `biome`, `oxlint-oxfmt`, `eslint-prettier-stylelint`, `eslint-prettier-no-stylelint` |
+| `--prisma-version` | `6`, `7`, `8` |
+| `--description` | Description text |
+| `--description-base64` | Base64-encoded UTF-8 description, used in reproducible commands |
+| `--install-dependencies` | `yes`, `no`; default `no` |
+| `--git`, `--no-git` | Enable or disable Git; disabled by default |
+| `--ultracite-install-skill` | `yes`, `no`; default `no` |
+
+Parser-accepted values do not guarantee a supported combination. The [support policy](./compatibility.mdx) also applies to headless generation.
+
+## List options
+
+| Option | Values |
+| --- | --- |
+| `--api` | `rest`, `trpc`, `graphql` |
+| `--database` | `postgresql`, `mysql`, `sqlite`, `mongodb`, `sqlserver` |
+| `--orm` | `prisma`, `typeorm`, `drizzle` |
+| `--microservices` | `redis`, `mqtt`, `nats`, `rabbitmq`, `kafka`, `grpc` |
+| `--extras` | `docker`, `health-check`, `rate-limiting`, `swagger`, `packages/shared`, `todo-example`, `typescript-7` |
+| `--addons` | `agent-skills`, `husky`, `ultracite`, `nestjs-zod`, `scalar-ui` |
+| `--trusted-proxy-ips` | IP addresses or CIDR ranges |
+| `--ultracite-editors` | Editor identifiers, such as `vscode` or `cursor` |
+| `--ultracite-agents` | Agent identifiers, such as `codex` or `claude` |
+| `--ultracite-hooks` | `cursor`, `windsurf`, `codebuddy`, `claude`, `copilot` |
+
+Separate values with spaces: `--extras docker health-check`. Use `none` alone to clear a list. In JSONC, use arrays and the field names in the [headless example](../guides/headless.mdx).

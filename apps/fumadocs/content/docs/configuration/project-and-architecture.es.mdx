@@ -3,6 +3,6 @@ title: Tipo de proyecto y arquitectura
 description: Elige una arquitectura NestJS independiente.
 ---
 
-En `@nest-arch/tui` 0.5.0 puedes elegir **Single project**. Las opciones de arquitectura incluyen NestJS API y NestJS Microservice. La generación de monorepos y API Gateway no forma parte del alcance documentado de esta release.
+El asistente de `@nest-arch/tui` 0.5.1 ofrece **Single project**, NestJS API y NestJS Microservice. La [CLI headless](../guides/headless.mdx) acepta además `--project-type monorepo` y `--architecture nest-gateway`; que un valor sea aceptado por el parser no garantiza que cualquier combinación esté admitida.
 
-Una API puede usar un proveedor HTTP y una capa de API. Un microservicio se organiza alrededor de un transporte de mensajería y tiene restricciones propias para bases de datos y autenticación. Consulta la [compatibilidad](../reference/compatibility) antes de añadir funciones.
+Una API puede usar un proveedor HTTP y una capa de API. Un microservicio se organiza alrededor de un transporte de mensajería y tiene restricciones propias para bases de datos y autenticación. Consulta la [compatibilidad](../reference/compatibility.mdx) antes de añadir funciones.

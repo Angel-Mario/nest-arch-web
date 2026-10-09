@@ -21,6 +21,7 @@ import * as React from "react";
 import { useUi } from "@/components/locale-provider";
 import { LocaleSelect } from "@/components/locale-select";
 import { builderMessages } from "@/lib/builder-messages";
+import { getDocumentationUrl } from "@/lib/documentation";
 
 import { ModeToggle } from "./mode-toggle";
 
@@ -61,6 +62,11 @@ const Header = () => {
       label: builderMessages[locale].nav,
     },
     { href: undefined, id: "undefined", label: "|" },
+    {
+      href: getDocumentationUrl(locale),
+      id: "documentation",
+      label: t.header.nav.documentation,
+    },
     {
       href: `/${locale}/roadmap`,
       id: "roadmap",
@@ -151,19 +157,34 @@ const Header = () => {
           {NAV_LINKS.map(({ href, id, label }, index) => {
             const isActive = active === id;
 
-            return id === "undefined" ? (
-              <span
-                key={`href-${index}`}
-                className="mb-1 text-red-500 opacity-80"
-              >
-                |
-              </span>
-            ) : (
+            if (id === "undefined") {
+              return (
+                <span
+                  key={`href-${index}`}
+                  className="mb-1 text-red-500 opacity-80"
+                >
+                  |
+                </span>
+              );
+            }
+
+            const linkClassName = `rounded-lg border px-3 py-1.5 font-mono text-xs transition-colors ${isActive ? "border-red-500/40 bg-red-500/10 text-red-600 dark:text-red-300" : "text-foreground/60 hover:border-border hover:bg-muted/50 hover:text-foreground dark:text-muted-foreground border-transparent"}`;
+
+            // Documentation lives in a separate Next.js zone and needs a full navigation.
+            if (id === "documentation") {
+              return (
+                <a key={href} href={href} className={linkClassName}>
+                  {label}
+                </a>
+              );
+            }
+
+            return (
               <Link
                 key={href}
                 aria-current={isActive ? "page" : undefined}
                 href={href as Route}
-                className={`rounded-lg border px-3 py-1.5 font-mono text-xs transition-colors ${isActive ? "border-red-500/40 bg-red-500/10 text-red-600 dark:text-red-300" : "text-foreground/60 hover:border-border hover:bg-muted/50 hover:text-foreground dark:text-muted-foreground border-transparent"}`}
+                className={linkClassName}
               >
                 {label}
               </Link>
@@ -191,10 +212,14 @@ const Header = () => {
                       className="min-h-10 rounded-md"
                       nativeButton={false}
                       render={
-                        <Link
-                          href={href as Route}
-                          aria-current={active === id ? "page" : undefined}
-                        />
+                        id === "documentation" ? (
+                          <a href={href} aria-label={label} />
+                        ) : (
+                          <Link
+                            href={href as Route}
+                            aria-current={active === id ? "page" : undefined}
+                          />
+                        )
                       }
                     >
                       {label}

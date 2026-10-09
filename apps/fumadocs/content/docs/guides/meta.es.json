@@ -2,6 +2,7 @@
   "title": "Guías",
   "pages": [
     "wizard",
+    "headless",
     "project-structure",
     "environment",
     "starter-templates",

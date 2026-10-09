@@ -7,6 +7,7 @@ import Link from "next/link";
 import { AnalyticsPreferences } from "@/components/analytics-preferences";
 import { useUi } from "@/components/locale-provider";
 import { trackAnalyticsEvent } from "@/lib/analytics";
+import { getDocumentationUrl } from "@/lib/documentation";
 
 const GithubIcon = ({ className }: { className?: string }) => (
   <svg
@@ -33,7 +34,7 @@ const Footer = () => {
   ];
 
   const RESOURCE_LINKS = [
-    { href: `/${locale}/#docs`, label: "Documentation" },
+    { href: getDocumentationUrl(locale), label: t.header.nav.documentation },
     {
       href: "https://github.com/Angel-Mario/nest-arch/tags",
       label: "Changelog",
@@ -135,7 +136,7 @@ const Footer = () => {
               {RESOURCE_LINKS.map(({ href, label }) => (
                 <li key={href}>
                   <a
-                    target="_blank"
+                    target={href.startsWith("https://") ? "_blank" : undefined}
                     rel="noopener noreferrer"
                     href={href}
                     className="text-muted-foreground hover:text-foreground font-mono text-xs transition-colors"

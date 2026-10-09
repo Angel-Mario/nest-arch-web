@@ -1,0 +1,69 @@
+---
+title: Create headless projects
+description: Generate without prompts, use JSONC configuration, and reproduce projects from the CLI.
+---
+
+Starting with `@nest-arch/tui` **0.5.1**, you can generate projects without opening the interactive wizard. Pass a project name or `--config`; an interactive terminal is unnecessary. Running without arguments or with `--ui` opens the wizard.
+
+## Generate from the terminal
+
+```sh
+pnpm dlx @nest-arch/tui@0.5.1 my-api --package-manager pnpm --architecture nest-api --api rest --install-dependencies yes --git
+```
+
+This creates `my-api` inside the current directory, installs dependencies, and initializes Git. To generate files only:
+
+```sh
+pnpm dlx @nest-arch/tui@0.5.1 my-api --install-dependencies no --no-git
+```
+
+Defaults are project type `single`, architecture `nest-api`, Express, REST, and pnpm; no database, ORM, authentication, formatter, extras, or addons. Installation and Git are disabled by default. Headless describes how the generator runs: the default output is still a NestJS HTTP API.
+
+## Use a JSONC file
+
+Save this example as `nest-arch.jsonc`. JSONC accepts comments and trailing commas:
+
+```jsonc
+{
+  "projectName": "my-api",
+  "projectType": "single",
+  "architecture": "nest-api",
+  "httpProvider": "express",
+  "api": ["rest"],
+  "packageManager": "pnpm",
+  "installDependencies": false,
+  "initGit": false,
+}
+```
+
+```sh
+pnpm dlx @nest-arch/tui@0.5.1 --config ./nest-arch.jsonc --output-dir ./generated/my-api
+```
+
+`--output-dir` is the exact destination, rather than its parent. Without it, the destination comes from `projectName` inside the current directory. New or empty destinations are accepted; nonempty directories are rejected.
+
+CLI options override configuration fields. You can also replace the name:
+
+```sh
+pnpm dlx @nest-arch/tui@0.5.1 my-api-copy --config ./nest-arch.jsonc --output-dir ./generated/my-api-copy --install-dependencies no --no-git
+```
+
+## Lists and validation
+
+Lists take space-separated values, such as `--extras docker health-check`. Use `none` to clear a configured list, such as `--extras none`. Do not combine `none` with other values or repeat an option. Use `--description "My application"` for a description written by hand.
+
+See the [CLI reference](../reference/cli.mdx) for available flags. Unknown options, invalid values, malformed JSONC, and unsupported combinations produce an error and a nonzero exit code. Headless generation uses the same generator validation; check [compatibility](../reference/compatibility.mdx) before combining integrations.
+
+## Reproduce a project
+
+Each generated project includes `nest-arch.jsonc` with its selections and a `reproducibleCommand` pinned to the CLI version. To recreate it in another directory:
+
+```sh
+pnpm dlx @nest-arch/tui@0.5.1 --config ./previous-project/nest-arch.jsonc --output-dir ./recreated-project --install-dependencies no --no-git
+```
+
+Use the version recorded in the file to preserve the original options and templates. `--config` reads fields; it does not execute `reproducibleCommand` or automatically select the version in the `version` field. Older metadata remains accepted even when its recorded command mentions `create-nest-arch`.
+
+Recorded commands use PowerShell quoting on Windows and POSIX shell quoting elsewhere. Descriptions use `--description-base64` to preserve quotes and Unicode. Use the file with `--config` to move configurations between systems. The recorded version must be published on npm before it can be downloaded.
+
+Keep the lockfile too if you need the same dependency versions. Timestamps, Git history, and installed artifacts may differ. Generation does not replace `.env` setup, migrations, or the [first-run steps](../getting-started/first-run.mdx).

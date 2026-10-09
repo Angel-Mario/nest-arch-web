@@ -1,16 +1,16 @@
 ---
 title: Install Nest Arch
-description: Run the Nest Arch interactive terminal wizard.
+description: Install Nest Arch and choose the interactive wizard or headless generation.
 ---
 
-The instructions on this site target **`@nest-arch/tui` 0.5.0**. Nest Arch is in alpha, and later releases may change the wizard or generated files.
+The instructions on this site target **`@nest-arch/tui` 0.5.1**. Nest Arch is in alpha, and later releases may change the wizard or generated files.
 
 ## Run once with npx
 
 Use an interactive terminal and a new output directory. Pin the version to reproduce these guides:
 
 ```sh
-npx @nest-arch/tui@0.5.0
+npx @nest-arch/tui@0.5.1
 ```
 
 To run the newest published release instead, use `npx @nest-arch/tui@latest`.
@@ -18,7 +18,7 @@ To run the newest published release instead, use `npx @nest-arch/tui@latest`.
 ## Install globally
 
 ```sh
-npm install --global @nest-arch/tui@0.5.0
+npm install --global @nest-arch/tui@0.5.1
 nest-arch
 ```
 
@@ -28,4 +28,4 @@ Check the installed version with:
 nest-arch --version
 ```
 
-The published package includes the generator and templates. You do not need to clone the source repository to create an application. Nest Arch needs a terminal that supports interactive keyboard input; avoid piping the command into a non-interactive process.
+The published package includes the generator and templates. You do not need to clone the source repository to create an application. The wizard requires interactive keyboard input; for scripts and CI, use [headless generation](../guides/headless.mdx) with a project name or `--config`.

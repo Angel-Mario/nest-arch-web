@@ -3,7 +3,7 @@ title: Compatibilidade e suporte
 description: Entenda a diferença entre opções selecionáveis e perfis validados do Nest Arch.
 ---
 
-Estes guias correspondem ao **`@nest-arch/tui` 0.5.0**. Esta versão alpha pode mudar suas opções e os arquivos gerados.
+Estes guias correspondem ao **`@nest-arch/tui` 0.5.1**. Esta versão alpha pode mudar suas opções e os arquivos gerados.
 
 A compatibilidade é definida pela configuração completa: projeto, arquitetura, provedor HTTP, API, banco de dados, ORM e versão, autenticação, extras, addons, formatter e transporte. Uma opção disponível no assistente não garante qualquer combinação.
 
@@ -16,6 +16,6 @@ A compatibilidade é definida pela configuração completa: projeto, arquitetura
 
 Use perfis completos aceitos pela política da versão. Se o gerador rejeitar uma combinação como não verificada, remova opções opcionais ou escolha outro perfil. A existência de um template não equivale a certificação.
 
-A matriz de cenários da versão marcada inclui perfis independentes validados de REST, tRPC e GraphQL; PostgreSQL, MySQL, SQLite, SQL Server e algumas configurações MongoDB; variantes Express/Fastify e seleções específicas de Prisma, TypeORM, Drizzle, Passport e Better Auth. A cobertura de extras varia. Consulte os cenários da [guia de validação da versão](https://github.com/Angel-Mario/nest-arch/blob/%40nest-arch%2Ftui%400.5.0/scripts/README.md).
+A matriz de cenários da versão marcada inclui perfis independentes validados de REST, tRPC e GraphQL; PostgreSQL, MySQL, SQLite, SQL Server e algumas configurações MongoDB; variantes Express/Fastify e seleções específicas de Prisma, TypeORM, Drizzle, Passport e Better Auth. A cobertura de extras varia. Consulte os cenários da [guia de validação da versão](https://github.com/Angel-Mario/nest-arch/blob/%40nest-arch%2Ftui%400.5.1/scripts/README.md).
 
-Monorepos e API Gateway estão previstos para uma versão futura. Em microsserviços, não presuma repetição, persistência ou deduplicação de mensagens. A prévia do site pode ser diferente do pacote npm.
+O assistente oferece projetos independentes; a CLI headless também aceita monorepos e Gateway, sujeitos à validação do perfil completo. Em microsserviços, não presuma repetição, persistência ou deduplicação de mensagens. A prévia do site pode ser diferente do pacote npm.

@@ -5,8 +5,10 @@ description: Conheça as etapas de configuração e as dependências entre opç�
 
 O assistente pergunta o nome do projeto, gerenciador de pacotes, formatter, provedor HTTP, tipo e arquitetura do projeto, API, dados, autenticação, recursos opcionais, Git e instalação de dependências.
 
+Execute `npx @nest-arch/tui@0.5.1` sem argumentos ou com `--ui` para abrir o assistente. Para automatizar a criação sem perguntas, consulte o [guia headless](./headless.mdx).
+
 Use as setas para navegar em uma lista de seleção única e Enter para escolher. Nas etapas de seleção múltipla, ative as opções desejadas antes de confirmar. As etapas dependem das escolhas: sem banco de dados o ORM é omitido; a configuração do Ultracite aparece somente quando esse addon é selecionado.
 
 Confira o resumo antes de gerar. A inicialização do Git e a instalação de pacotes dependem das suas escolhas. Ao terminar, siga os comandos de configuração mostrados para o projeto.
 
-A versão 0.5.0 gera projetos independentes. A presença da opção Gateway no código-fonte não significa que monorepos estejam disponíveis nesta versão.
+O assistente da versão 0.5.1 oferece projetos independentes. A CLI headless também aceita `--project-type monorepo`; os tipos e arquiteturas aceitos pelo parser continuam sujeitos à validação do perfil completo.

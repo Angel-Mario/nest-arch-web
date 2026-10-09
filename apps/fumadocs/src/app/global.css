@@ -2,6 +2,64 @@
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 
+@theme {
+  --color-fd-primary: oklch(0.5 0.2 15);
+  --color-fd-ring: oklch(0.55 0.22 15);
+}
+
+.dark {
+  --color-fd-primary: oklch(0.73 0.16 15);
+  --color-fd-primary-foreground: oklch(0.13 0.01 15);
+  --color-fd-ring: oklch(0.73 0.16 15);
+}
+
+.nest-docs {
+  background-image: radial-gradient(
+    ellipse 48rem 24rem at 55% 0%,
+    color-mix(in oklch, var(--color-fd-primary) 4%, transparent),
+    transparent
+  );
+}
+
+.nest-docs #nd-sidebar {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in oklch, var(--color-fd-primary) 5%, transparent),
+    transparent 16rem
+  );
+}
+
+.nest-docs #nd-sidebar a[data-active="true"] {
+  box-shadow: inset 2px 0 var(--color-fd-primary);
+}
+
+.nest-docs-title {
+  font-size: clamp(1.75rem, 3vw, 2.125rem);
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+}
+
+.nest-docs-title::before {
+  display: block;
+  width: 1.5rem;
+  height: 3px;
+  margin-bottom: 1rem;
+  border-radius: 999px;
+  background: var(--color-fd-primary);
+  content: "";
+}
+
+.nest-version-badge {
+  border-color: color-mix(in oklch, var(--color-fd-primary) 25%, transparent);
+  background: color-mix(in oklch, var(--color-fd-primary) 7%, transparent);
+  color: var(--color-fd-primary);
+}
+
+.nest-docs .prose pre {
+  border-inline-start: 2px solid
+    color-mix(in oklch, var(--color-fd-primary) 45%, transparent);
+}
+
 html {
   scrollbar-gutter: stable;
 }

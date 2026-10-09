@@ -13,6 +13,7 @@ export interface UiMessages {
       home: string;
       workflow: string;
       features: string;
+      documentation: string;
       roadmap: string;
       aboutMe: string;
     };
@@ -130,6 +131,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       language: "Language",
       nav: {
         aboutMe: "About Me",
+        documentation: "Documentation",
         features: "Features",
         home: "Home",
         roadmap: "Roadmap",
@@ -265,6 +267,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       language: "Idioma",
       nav: {
         aboutMe: "Sobre mí",
+        documentation: "Documentación",
         features: "Características",
         home: "Inicio",
         roadmap: "Hoja de ruta",
@@ -402,6 +405,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       language: "Idioma",
       nav: {
         aboutMe: "Sobre mim",
+        documentation: "Documentação",
         features: "Funcionalidades",
         home: "Início",
         roadmap: "Roadmap",

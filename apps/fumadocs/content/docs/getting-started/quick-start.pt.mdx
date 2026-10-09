@@ -3,17 +3,25 @@ title: Início rápido
 description: Gere uma API REST NestJS e inicie o servidor de desenvolvimento.
 ---
 
-Este guia usa `@nest-arch/tui` **0.5.0** para criar uma aplicação NestJS independente com REST e Express, sem banco de dados ou autenticação.
+Este guia usa `@nest-arch/tui` **0.5.1** para criar uma aplicação NestJS independente com REST e Express, sem banco de dados ou autenticação.
 
 Execute o assistente na pasta onde deseja criar o projeto:
 
 ```sh
-npx @nest-arch/tui@0.5.0
+npx @nest-arch/tui@0.5.1
 ```
 
 Escolha `hello-nest` como nome, npm (ou outro gerenciador instalado), **Express**, **Single project**, **NestJS API**, nenhum banco de dados, **REST** e nenhuma autenticação. Deixe os extras e addons opcionais desativados. Confira o resumo e confirme a geração.
 
-Se você não instalou as dependências durante o assistente, execute na pasta criada:
+Você também pode gerar a mesma API sem perguntas, usando npm e sem instalar dependências nem inicializar Git:
+
+```sh
+npx @nest-arch/tui@0.5.1 hello-nest --package-manager npm --install-dependencies no --no-git
+```
+
+Escolha um dos dois métodos e uma pasta de saída nova. Consulte o [guia headless](../guides/headless.mdx) para JSONC e outras opções.
+
+Se você não instalou as dependências, execute na pasta criada:
 
 ```sh
 cd hello-nest
@@ -21,4 +29,4 @@ npm install
 npm run dev
 ```
 
-Se o assistente já instalou as dependências, entre em `hello-nest` e execute `npm run dev`. Abra o endereço local mostrado pelo NestJS. Consulte o guia de [primeira execução](./first-run) se sua configuração precisar de variáveis ou serviços adicionais.
+Se o assistente já instalou as dependências, entre em `hello-nest` e execute `npm run dev`. Abra o endereço local mostrado pelo NestJS. Consulte o guia de [primeira execução](./first-run.mdx) se sua configuração precisar de variáveis ou serviços adicionais.
