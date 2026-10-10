@@ -25,7 +25,10 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   outputFileTracingIncludes: {
-    "/api/project-preview": ["./private/nest-arch/**/*"],
+    "/api/project-preview": [
+      "./private/nest-arch/**/*",
+      "./private/nest-arch/**/.*.hbs",
+    ],
   },
   reactCompiler: true,
   serverExternalPackages: ["handlebars", "ts-morph"],

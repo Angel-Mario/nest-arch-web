@@ -30,6 +30,7 @@
 
 # Environment & local files
 .env*
+!private/nest-arch/templates/**/.env*.hbs
 !.env.example
 .DS_Store
 *.pem

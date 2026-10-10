@@ -6,6 +6,7 @@
 **/.env
 **/.env.*
 !**/.env.example
+!apps/web/private/nest-arch/templates/**/.env*.hbs
 .turbo/
 affinity/
 .agents/
