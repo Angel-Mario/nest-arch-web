@@ -3,22 +3,22 @@ title: Install Nest Arch
 description: Install Nest Arch and choose the interactive wizard or headless generation.
 ---
 
-The instructions on this site target **`@nest-arch/tui` 0.5.1**. Nest Arch is in alpha, and later releases may change the wizard or generated files.
+The commands below use `@latest` to run the newest published release. The version reviewed for these guides is shown below the page title. Nest Arch is in alpha, and releases may change the wizard or generated files.
 
 ## Run once with npx
 
-Use an interactive terminal and a new output directory. Pin the version to reproduce these guides:
+Use an interactive terminal and a new output directory:
 
 ```sh
-npx @nest-arch/tui@0.5.1
+npx @nest-arch/tui@latest
 ```
 
-To run the newest published release instead, use `npx @nest-arch/tui@latest`.
+To recreate an existing project, use the version recorded in its `nest-arch.jsonc` rather than `@latest`. See [project reproduction](../guides/headless.mdx#reproduce-a-project).
 
 ## Install globally
 
 ```sh
-npm install --global @nest-arch/tui@0.5.1
+npm install --global @nest-arch/tui@latest
 nest-arch
 ```
 

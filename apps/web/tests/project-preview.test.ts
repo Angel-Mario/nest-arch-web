@@ -27,9 +27,11 @@ import { fileIcon } from "../src/lib/project-preview/file-presentation";
 import manifest from "../src/lib/project-preview/generated/manifest.json";
 import { highlightCode } from "../src/lib/project-preview/highlight";
 import {
+  configuredPreviewStore,
   createPreviewCache,
   localPreviewStore,
   previewKey,
+  PreviewStorageUnavailableError,
 } from "../src/server/project-preview/cache";
 import {
   generatePreview,
@@ -39,6 +41,31 @@ import {
 } from "../src/server/project-preview/generate";
 
 const { join, resolve } = nodePath;
+
+test("Vercel local development uses disk while deployed previews require Blob", async () => {
+  for (const token of [undefined, "unused-local-token"]) {
+    const store = configuredPreviewStore({
+      BLOB_READ_WRITE_TOKEN: token,
+      NODE_ENV: "development",
+      VERCEL: "1",
+    });
+    assert.equal(
+      await store.read("local-vercel-storage-test", "0".repeat(64)),
+      null
+    );
+  }
+  for (const vercelEnvironment of ["preview", "production"]) {
+    assert.throws(
+      () =>
+        configuredPreviewStore({
+          NODE_ENV: "production",
+          VERCEL: "1",
+          VERCEL_ENV: vercelEnvironment,
+        }),
+      PreviewStorageUnavailableError
+    );
+  }
+});
 
 test("DTO files use the standard TypeScript icon", () => {
   assert.equal(fileIcon("src/users/create-user.dto.ts"), "typescript");

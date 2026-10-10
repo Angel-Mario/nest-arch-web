@@ -8,13 +8,13 @@ Desde `@nest-arch/tui` **0.5.1**, puedes generar proyectos sin abrir el asistent
 ## Generar desde la terminal
 
 ```sh
-pnpm dlx @nest-arch/tui@0.5.1 my-api --package-manager pnpm --architecture nest-api --api rest --install-dependencies yes --git
+pnpm dlx @nest-arch/tui@latest my-api --package-manager pnpm --architecture nest-api --api rest --install-dependencies yes --git
 ```
 
 El comando crea `my-api` dentro de la carpeta actual, instala dependencias e inicializa Git. Para generar solo los archivos:
 
 ```sh
-pnpm dlx @nest-arch/tui@0.5.1 my-api --install-dependencies no --no-git
+pnpm dlx @nest-arch/tui@latest my-api --install-dependencies no --no-git
 ```
 
 Los valores predeterminados son proyecto `single`, arquitectura `nest-api`, Express, REST y pnpm; sin base de datos, ORM, autenticación, formatter, extras ni addons. La instalación y Git están desactivados por defecto. Headless describe cómo se ejecuta el generador: el proyecto predeterminado sigue siendo una API HTTP NestJS.
@@ -37,7 +37,7 @@ Guarda este ejemplo como `nest-arch.jsonc`. JSONC permite comentarios y comas fi
 ```
 
 ```sh
-pnpm dlx @nest-arch/tui@0.5.1 --config ./nest-arch.jsonc --output-dir ./generated/my-api
+pnpm dlx @nest-arch/tui@latest --config ./nest-arch.jsonc --output-dir ./generated/my-api
 ```
 
 `--output-dir` es el destino exacto, no la carpeta padre. Sin esta opción, el destino se deriva de `projectName` dentro de la carpeta actual. Se acepta un destino nuevo o vacío; se rechazan directorios con contenido.
@@ -45,7 +45,7 @@ pnpm dlx @nest-arch/tui@0.5.1 --config ./nest-arch.jsonc --output-dir ./generate
 Las opciones de la CLI tienen prioridad sobre los campos del archivo. También puedes sustituir el nombre:
 
 ```sh
-pnpm dlx @nest-arch/tui@0.5.1 my-api-copy --config ./nest-arch.jsonc --output-dir ./generated/my-api-copy --install-dependencies no --no-git
+pnpm dlx @nest-arch/tui@latest my-api-copy --config ./nest-arch.jsonc --output-dir ./generated/my-api-copy --install-dependencies no --no-git
 ```
 
 ## Opciones múltiples y validación

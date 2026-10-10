@@ -1,5 +1,7 @@
+import documentedRelease from "./documented-release.json";
+
 export const appName = "Nest Arch";
-export const documentedVersion = "0.5.1";
+export const documentedVersion = documentedRelease.version;
 export const appDescription =
   "Crea una base clara para tu siguiente aplicación NestJS.";
 export const appBasePath = "/docs";

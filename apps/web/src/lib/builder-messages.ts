@@ -58,6 +58,8 @@ export const builderMessages = {
     selected: "Selected stack",
     single: "Choose one",
     skip: "Skip",
+    sqlServerDescription:
+      "Microsoft relational database with SQL queries and transactional support.",
     title: "Build your NestJS project",
     ultraciteAgents: "Ultracite agents",
     ultraciteEditors: "Ultracite editors",
@@ -142,6 +144,8 @@ export const builderMessages = {
     selected: "Stack seleccionado",
     single: "Elige una opción",
     skip: "Omitir",
+    sqlServerDescription:
+      "Base de datos relacional de Microsoft con consultas SQL y soporte para transacciones.",
     title: "Construye tu proyecto NestJS",
     ultraciteAgents: "Agentes de Ultracite",
     ultraciteEditors: "Editores de Ultracite",
@@ -223,6 +227,8 @@ export const builderMessages = {
     selected: "Stack selecionada",
     single: "Escolha uma opção",
     skip: "Pular",
+    sqlServerDescription:
+      "Banco de dados relacional da Microsoft com consultas SQL e suporte a transações.",
     title: "Crie seu projeto NestJS",
     ultraciteAgents: "Agentes do Ultracite",
     ultraciteEditors: "Editores do Ultracite",
@@ -243,6 +249,20 @@ export const builderMessages = {
     yes: "Sim",
   },
 } as const;
+
+export const getDatabaseDescription = (
+  database: string,
+  locale: keyof typeof builderMessages
+): string | undefined => {
+  const translation = builderMessages[locale];
+  if (database === "mongodb") {
+    return translation.mongoDescription;
+  }
+  if (database === "sqlserver") {
+    return translation.sqlServerDescription;
+  }
+  return undefined;
+};
 
 export const getAuthDescription = (
   auth: string,

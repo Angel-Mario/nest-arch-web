@@ -15,7 +15,7 @@ Set the resulting deployment URL as `NEXT_PUBLIC_CONVEX_URL` in `apps/web/.env`.
 
 ## npm version synchronization
 
-`crons.ts` registers `syncPackageVersionJob` every six hours. It reads the `latest` dist-tag of `@nest-arch/tui`, writes the `npmPackageVersions` record, and exposes it through `getLatestNpmPackageVersion` for the website badge.
+`crons.ts` registers `syncPackageVersionJob` every 15 minutes. It reads the `latest` dist-tag of `@nest-arch/tui`, writes the `npmPackageVersions` record, and exposes it through `getLatestNpmPackageVersion` for the website badge.
 
 This cron updates version metadata. The project explorer's engine, templates and static presets are updated separately by the GitHub Actions workflow described in the [release maintenance guide](../../../docs/NEST-ARCH-RELEASES.md).
 

@@ -50,3 +50,23 @@ test("uses validated npm commit metadata and rejects unexpected packages or prer
     releasePlan({ ...published, version: "1.0.0-beta.1" }, manifest, null)
   );
 });
+
+test("includes a documentation review update even when the generator is already synchronized", () => {
+  const previous = {
+    previewVersion: manifest.version,
+    ref: "refs/tags/@nest-arch/tui@0.5.0",
+    version: "0.5.0",
+  };
+  assert.ok(releasePlan(published, manifest, previous, "0.4.9"));
+  assert.equal(releasePlan(published, manifest, previous, "0.5.0"), null);
+  assert.throws(() => releasePlan(published, manifest, previous, "latest"));
+  assert.equal(
+    releasePlan(
+      { ...published, version: "0.4.9" },
+      manifest,
+      previous,
+      "0.4.9"
+    ),
+    null
+  );
+});

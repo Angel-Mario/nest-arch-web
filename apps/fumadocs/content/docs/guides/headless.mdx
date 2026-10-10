@@ -8,13 +8,13 @@ Starting with `@nest-arch/tui` **0.5.1**, you can generate projects without open
 ## Generate from the terminal
 
 ```sh
-pnpm dlx @nest-arch/tui@0.5.1 my-api --package-manager pnpm --architecture nest-api --api rest --install-dependencies yes --git
+pnpm dlx @nest-arch/tui@latest my-api --package-manager pnpm --architecture nest-api --api rest --install-dependencies yes --git
 ```
 
 This creates `my-api` inside the current directory, installs dependencies, and initializes Git. To generate files only:
 
 ```sh
-pnpm dlx @nest-arch/tui@0.5.1 my-api --install-dependencies no --no-git
+pnpm dlx @nest-arch/tui@latest my-api --install-dependencies no --no-git
 ```
 
 Defaults are project type `single`, architecture `nest-api`, Express, REST, and pnpm; no database, ORM, authentication, formatter, extras, or addons. Installation and Git are disabled by default. Headless describes how the generator runs: the default output is still a NestJS HTTP API.
@@ -37,7 +37,7 @@ Save this example as `nest-arch.jsonc`. JSONC accepts comments and trailing comm
 ```
 
 ```sh
-pnpm dlx @nest-arch/tui@0.5.1 --config ./nest-arch.jsonc --output-dir ./generated/my-api
+pnpm dlx @nest-arch/tui@latest --config ./nest-arch.jsonc --output-dir ./generated/my-api
 ```
 
 `--output-dir` is the exact destination, rather than its parent. Without it, the destination comes from `projectName` inside the current directory. New or empty destinations are accepted; nonempty directories are rejected.
@@ -45,7 +45,7 @@ pnpm dlx @nest-arch/tui@0.5.1 --config ./nest-arch.jsonc --output-dir ./generate
 CLI options override configuration fields. You can also replace the name:
 
 ```sh
-pnpm dlx @nest-arch/tui@0.5.1 my-api-copy --config ./nest-arch.jsonc --output-dir ./generated/my-api-copy --install-dependencies no --no-git
+pnpm dlx @nest-arch/tui@latest my-api-copy --config ./nest-arch.jsonc --output-dir ./generated/my-api-copy --install-dependencies no --no-git
 ```
 
 ## Lists and validation

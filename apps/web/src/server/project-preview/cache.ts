@@ -87,11 +87,16 @@ export const blobPreviewStore = (token: string): PreviewStore => ({
   },
 });
 
-export const configuredPreviewStore = (): PreviewStore => {
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
-    return blobPreviewStore(process.env.BLOB_READ_WRITE_TOKEN);
+export const configuredPreviewStore = (
+  environment: NodeJS.ProcessEnv = process.env
+): PreviewStore => {
+  if (environment.NODE_ENV === "development") {
+    return localPreviewStore(join(process.cwd(), ".cache"));
   }
-  if (process.env.VERCEL || process.env.NODE_ENV === "production") {
+  if (environment.BLOB_READ_WRITE_TOKEN) {
+    return blobPreviewStore(environment.BLOB_READ_WRITE_TOKEN);
+  }
+  if (environment.VERCEL || environment.NODE_ENV === "production") {
     throw new PreviewStorageUnavailableError(
       "On-demand previews require persistent storage"
     );

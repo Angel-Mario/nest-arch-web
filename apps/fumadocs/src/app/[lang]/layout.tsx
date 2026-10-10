@@ -62,6 +62,11 @@ export default async function LocaleLayout({
             {...options}
             nav={{
               ...options.nav,
+              children: (
+                <span className="flex items-center px-2">
+                  <NpmVersionBadge locale={lang} />
+                </span>
+              ),
               title: (
                 <span className="flex items-center gap-2 leading-none whitespace-nowrap">
                   <Image
@@ -75,7 +80,6 @@ export default async function LocaleLayout({
                   <span className="leading-none font-semibold tracking-tight">
                     {appName}
                   </span>
-                  <NpmVersionBadge locale={lang} />
                 </span>
               ),
             }}

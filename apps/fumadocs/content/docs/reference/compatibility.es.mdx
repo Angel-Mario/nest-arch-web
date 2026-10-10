@@ -3,7 +3,7 @@ title: Compatibilidad y soporte
 description: Diferencia entre opciones seleccionables y perfiles Nest Arch validados.
 ---
 
-Estas guías corresponden a **`@nest-arch/tui` 0.5.1**. Esta versión alpha puede cambiar sus opciones y su salida.
+La versión revisada para estas guías aparece debajo del título. Consulta el <ReviewedReleaseLink kind="source">código de esa release</ReviewedReleaseLink>. Nest Arch está en fase alpha; las versiones pueden cambiar sus opciones y su salida.
 
 La compatibilidad se determina para una configuración completa: proyecto, arquitectura, proveedor HTTP, API, base de datos, ORM y versión, autenticación, extras, addons, formatter y transporte. Que el asistente permita elegir una opción en cierto contexto no garantiza cualquier combinación.
 
@@ -16,6 +16,6 @@ La compatibilidad se determina para una configuración completa: proyecto, arqui
 
 Usa perfiles completos admitidos por la política de la release. Si el generador rechaza una configuración como no verificada, quita opciones opcionales o elige otro perfil. La existencia de una plantilla no equivale a certificación.
 
-La matriz de escenarios de la versión etiquetada incluye perfiles independientes validados de REST, tRPC y GraphQL; PostgreSQL, MySQL, SQLite, SQL Server y algunas configuraciones MongoDB; variantes Express/Fastify y selecciones concretas de Prisma, TypeORM, Drizzle, Passport y Better Auth. La cobertura de extras varía. Revisa los escenarios exactos en la [guía de validación de la release](https://github.com/Angel-Mario/nest-arch/blob/%40nest-arch%2Ftui%400.5.1/scripts/README.md).
+La matriz de escenarios de la versión etiquetada incluye perfiles independientes validados de REST, tRPC y GraphQL; PostgreSQL, MySQL, SQLite, SQL Server y algunas configuraciones MongoDB; variantes Express/Fastify y selecciones concretas de Prisma, TypeORM, Drizzle, Passport y Better Auth. La cobertura de extras varía. Revisa los escenarios exactos en la <ReviewedReleaseLink kind="validation">guía de validación de la release</ReviewedReleaseLink>.
 
 El asistente ofrece proyectos independientes; la referencia de la CLI incluye opciones de monorepo y Gateway previstas para la versión 2.0; no se presentan como funcionalidades publicadas. En microservicios no supongas que hay reintentos, persistencia o deduplicación de mensajes. La vista previa de la web puede diferir del paquete npm.

@@ -2,15 +2,18 @@
 
 El paquete que hay que seguir es **`@nest-arch/tui`**, cuya CLI se ejecuta con `npx @nest-arch/tui@latest`.
 
-Hay tres actualizaciones distintas:
+Hay cuatro actualizaciones distintas:
 
 | Parte | Cómo se actualiza |
 | --- | --- |
-| Badge de versión npm | Convex consulta `latest` cada seis horas (`packages/backend/convex/crons.ts`) |
+| Badge de versión npm | Convex consulta `latest` cada 15 minutos (`packages/backend/convex/crons.ts`) |
+| Versión revisada de Fumadocs | El workflow propone `apps/fumadocs/src/lib/documented-release.json` en la misma PR; fusionarla confirma la revisión |
 | Motor, plantillas y presets del preview | `preview:sync`, seguido de commit y despliegue |
 | Opciones y reglas del wizard web | Revisión explícita cuando cambie el contrato del generador |
 
-Publicar npm no sustituye por sí solo el snapshot que ya está desplegado. La automatización de este repositorio resuelve la segunda parte y valida el resultado; si una nueva versión cambia opciones o compatibilidad, habrá que adaptar el wizard y su esquema.
+El badge de npm en Fumadocs consulta directamente el registro desde el servidor y revalida cada seis horas. Los comandos generales de las guías usan `@latest`; los ejemplos para reproducir proyectos fijan la versión original. La nota de versión revisada y los enlaces al código y la validación de la release comparten `documented-release.json`.
+
+Publicar npm no sustituye por sí solo el snapshot que ya está desplegado. La automatización actualiza el generador y propone la versión revisada de la documentación en la misma PR; si una nueva versión cambia opciones o compatibilidad, habrá que adaptar el wizard, su esquema y las guías antes de fusionarla.
 
 ## Automatización preparada
 
@@ -21,11 +24,13 @@ Cuando detecta una publicación pendiente:
 1. Consulta `@nest-arch/tui@latest` en npm y compara la versión con el snapshot y la última sincronización registrada.
 2. Obtiene el código privado del commit `gitHead` de npm, si existe. Si npm no lo incluye, usa el tag `@nest-arch/tui@<versión>`, que coincide con el workflow de publicación del generador.
 3. Comprueba que `apps/tui/package.json` tiene el nombre y la versión publicados.
-4. Ejecuta `preview:sync` para actualizar el motor privado, plantillas, manifest y seis presets.
-5. Ejecuta los tests, tipos, Ultracite y build de la web.
+4. Ejecuta `preview:sync` para actualizar el motor privado, plantillas, manifest y presets, y `sync-docs-version.mjs` para proponer la misma versión en Fumadocs. El script rechaza versiones distintas del generador, prereleases y degradaciones.
+5. Ejecuta los tests, tipos, Ultracite y builds de la web y Fumadocs.
 6. Registra la publicación en `apps/web/src/lib/project-preview/generated/release.json` y crea o actualiza una PR en `automation/nest-arch-preview`.
 
 El workflow no degrada un snapshot de desarrollo a una versión npm anterior. Solo sigue versiones estables de `latest`; para prereleases usa el procedimiento manual. Si una publicación rompe la compatibilidad del adaptador, falla antes de abrir la PR.
+
+Aunque el generador ya esté sincronizado, una versión revisada de documentación anterior activa la PR. Antes de fusionarla, revisa las guías en los tres idiomas contra la release propuesta y actualiza el contenido afectado. La automatización cambia la referencia de versión; la aprobación de la PR confirma la revisión del contenido. Los números históricos de introducción de funciones y los ejemplos de reproducción no se reemplazan automáticamente.
 
 ### Configuración inicial en GitHub
 

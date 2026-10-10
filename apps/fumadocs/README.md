@@ -1,6 +1,6 @@
 # Nest Arch documentation app
 
-Fumadocs/Next.js application for Nest Arch. It documents the published `@nest-arch/tui` 0.5.1 release, including interactive and headless generation, in English, Spanish, and Portuguese. Nest Arch is alpha; see the compatibility guide before relying on a specific integration.
+Fumadocs/Next.js application for Nest Arch, including interactive and headless generation, in English, Spanish, and Portuguese. General commands use `@nest-arch/tui@latest`. Every page shows the reviewed release from `src/lib/documented-release.json`. Nest Arch is alpha; see the compatibility guide before relying on a specific integration.
 
 ## Development
 
@@ -36,12 +36,12 @@ pnpm --filter fumadocs build
 
 `types:check` remains available as an alias for `check-types`.
 
-The npm version badge is fetched on the server and revalidated every six hours, without requiring a redeploy or Convex credentials. If npm is unreachable or returns unexpected metadata, it shows the documented version with a `docs` label. MDX examples stay pinned to the reviewed release; changing npm `latest` does not silently rewrite compatibility claims. Run the badge's registry and failure tests with `node --import tsx --test apps/fumadocs/src/lib/npm-version.test.ts` from the repository root.
+The npm version badge is fetched on the server and revalidated every six hours, without requiring a redeploy or Convex credentials. If npm is unreachable or returns unexpected metadata, it shows the reviewed version with a `docs` label. General commands use `@latest`; project reproduction examples pin the original CLI version. The review note and source/validation links share `src/lib/documented-release.json`. Run the badge's registry and failure tests with `node --import tsx --test apps/fumadocs/src/lib/npm-version.test.ts` from the repository root.
 
 For both Next.js apps on one domain, see [Vercel Services setup](../../docs/VERCEL-SERVICES.md).
 
 ## Keeping documentation aligned with npm
 
-Follow the [Nest Arch release maintenance guide](../../docs/NEST-ARCH-RELEASES.md) when `@nest-arch/tui` is published. Review option names, validated combinations, generated setup commands and CLI behavior against the published source tag. The current docs target `0.5.1`. The headless guide and CLI reference cover named generation, JSONC configuration, overrides, destination validation, and version-pinned reproduction. Keep all three languages aligned and use relative links between MDX pages so locale and `/docs` prefixes are applied once.
+Follow the [Nest Arch release maintenance guide](../../docs/NEST-ARCH-RELEASES.md) when `@nest-arch/tui` is published. Review option names, validated combinations, generated setup commands and CLI behavior against the published source tag. The headless guide and CLI reference cover named generation, JSONC configuration, overrides, destination validation, and version-pinned reproduction. Keep all three languages aligned and use relative links between MDX pages so locale and `/docs` prefixes are applied once.
 
-The preview automation updates the website's private snapshot and presets. MDX content and product claims require a separate editorial review when features change. See the [website README](../web/README.md) for preview behavior and storage configuration.
+The preview automation updates the website's private snapshot and presets, then proposes the same release in `src/lib/documented-release.json` in its synchronization PR. It also detects an outdated documentation version when the generator is already synchronized. The workflow validates both apps. Review the guides in all three languages and update any affected content in that PR before merging; merging confirms the reviewed version. Historical feature versions and pinned reproduction examples are preserved. See the [website README](../web/README.md) for preview behavior and storage configuration.

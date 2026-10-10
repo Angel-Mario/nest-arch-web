@@ -33,8 +33,8 @@ jobs:
         with:
           node-version: 24
 
-      - name: Test release detection
-        run: node --test .github/scripts/check-preview-release.test.mjs
+      - name: Test release detection and documentation synchronization
+        run: node --test .github/scripts/check-preview-release.test.mjs .github/scripts/sync-docs-version.test.mjs
 
       - name: Check npm latest
         id: release
@@ -85,7 +85,11 @@ jobs:
         if: steps.release.outputs.should_sync == 'true'
         run: pnpm --filter web preview:sync "$GITHUB_WORKSPACE/.cache/nest-arch-source"
 
-      - name: Validate generated preview
+      - name: Propose documentation review version
+        if: steps.release.outputs.should_sync == 'true'
+        run: node .github/scripts/sync-docs-version.mjs "${{ steps.release.outputs.version }}"
+
+      - name: Validate generated preview and documentation
         if: steps.release.outputs.should_sync == 'true'
         env:
           NEXT_PUBLIC_CONVEX_URL: https://preview-ci.convex.cloud
@@ -93,6 +97,8 @@ jobs:
           pnpm --filter web test:preview
           pnpm --filter web build
           pnpm --filter web check-types
+          pnpm --filter fumadocs check-types
+          pnpm --filter fumadocs build
           pnpm check
 
       - name: Record synchronized release
@@ -108,13 +114,14 @@ jobs:
             apps/web/private/nest-arch
             apps/web/public/project-previews
             apps/web/src/lib/project-preview/generated
+            apps/fumadocs/src/lib/documented-release.json
           commit-message: "chore: sync nest-arch preview to ${{ steps.release.outputs.version }}"
           title: "chore: sync nest-arch preview to ${{ steps.release.outputs.version }}"
           body: |
-            Updates the generator snapshot, file previews and versioned cache namespace to npm latest.
+            Updates the generator snapshot, file previews, versioned cache namespace and proposed documentation review version to npm latest.
 
             Package: @nest-arch/tui@${{ steps.release.outputs.version }}
             Source: ${{ steps.release.outputs.ref }}
 
-            Validation: release detection tests, preview tests, TypeScript, Ultracite and web production build.
-            Merge after reviewing the generated files and supported wizard selections. The usual Vercel Git integration handles deployment.
+            Validation: release detection and documentation sync tests, preview tests, TypeScript, Ultracite, and web and Fumadocs production builds.
+            Before merging, review the generated files, supported wizard selections and documentation in all three languages against this release. Update any affected guides in this PR; merging confirms the documentation review version. General documentation commands use @latest; reproduction examples remain version-pinned. The usual Vercel Git integration handles deployment.

@@ -102,7 +102,7 @@ const crons = cronJobs();
 
 crons.interval(
   "syncPackageVersionJob",
-  { hours: 6 },
+  { minutes: 15 },
   internal.crons.syncPackageVersion,
   {}
 );

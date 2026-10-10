@@ -7,15 +7,14 @@ El paquete `@nest-arch/tui` publica el ejecutable `nest-arch`.
 
 | Acción | Comando |
 | --- | --- |
-| Ejecutar 0.5.1 una vez | `npx @nest-arch/tui@0.5.1` |
 | Ejecutar la versión más reciente | `npx @nest-arch/tui@latest` |
-| Instalar 0.5.1 globalmente | `npm install --global @nest-arch/tui@0.5.1` |
+| Instalar globalmente | `npm install --global @nest-arch/tui@latest` |
 | Iniciar la instalación global | `nest-arch` |
 | Consultar la versión | `nest-arch --version` |
 | Mostrar ayuda | `nest-arch --help` |
 | Abrir el asistente explícitamente | `nest-arch --ui` |
-| Generar sin preguntas | `pnpm dlx @nest-arch/tui@0.5.1 my-api` |
-| Generar desde JSONC | `pnpm dlx @nest-arch/tui@0.5.1 --config ./nest-arch.jsonc` |
+| Generar sin preguntas | `pnpm dlx @nest-arch/tui@latest my-api` |
+| Generar desde JSONC | `pnpm dlx @nest-arch/tui@latest --config ./nest-arch.jsonc` |
 
 Sin argumentos o con `--ui`, la CLI abre el asistente y requiere una terminal interactiva. Con un nombre de proyecto o `--config`, genera sin preguntas. Consulta la [guía headless](../guides/headless.mdx) para ejemplos y reproducción de proyectos. Este paquete no publica el comando `generate:module`.
 

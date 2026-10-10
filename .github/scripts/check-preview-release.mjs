@@ -14,11 +14,17 @@ const statePath = new URL(
 );
 const candidatePath = new URL(".cache/npm-preview-release.json", root);
 
-export const releasePlan = (metadata, manifest, previous) => {
+export const releasePlan = (
+  metadata,
+  manifest,
+  previous,
+  documentedVersion = manifest.generatorVersion
+) => {
   if (
     metadata.name !== packageName ||
     !stableVersion.test(metadata.version) ||
-    !stableVersion.test(manifest.generatorVersion)
+    !stableVersion.test(manifest.generatorVersion) ||
+    !stableVersion.test(documentedVersion)
   ) {
     throw new Error(
       "Automatic preview sync requires stable major.minor.patch versions of @nest-arch/tui"
@@ -41,7 +47,8 @@ export const releasePlan = (metadata, manifest, previous) => {
   if (
     previous?.version === metadata.version &&
     previous.ref === ref &&
-    previous.previewVersion === manifest.version
+    previous.previewVersion === manifest.version &&
+    documentedVersion === metadata.version
   ) {
     return null;
   }
@@ -87,7 +94,13 @@ const main = async () => {
   const plan = releasePlan(
     await response.json(),
     manifest,
-    await optionalState()
+    await optionalState(),
+    JSON.parse(
+      await readFile(
+        new URL("apps/fumadocs/src/lib/documented-release.json", root),
+        "utf-8"
+      )
+    ).version
   );
   const output = plan
     ? `should_sync=true\nversion=${plan.version}\nref=${plan.ref}\n`

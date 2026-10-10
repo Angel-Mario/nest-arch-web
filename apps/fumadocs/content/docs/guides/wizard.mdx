@@ -5,10 +5,10 @@ description: Learn what the Nest Arch setup steps ask and how options depend on 
 
 The wizard gathers a project name, package manager, formatter, HTTP provider, project type, architecture, API, data and authentication choices, optional features, Git preference, and whether to install dependencies.
 
-Run `npx @nest-arch/tui@0.5.1` without arguments or with `--ui` to open it. To automate creation without prompts, see the [headless guide](./headless.mdx).
+Run `npx @nest-arch/tui@latest` without arguments or with `--ui` to open it. To automate creation without prompts, see the [headless guide](./headless.mdx).
 
 Use the arrow keys to move through a single-select list and Enter to choose. Multi-select steps let you toggle options before confirming. The exact step count changes with your selections: for example, the ORM step is skipped when no database is selected, and Ultracite configuration steps appear only when that addon is selected.
 
 Review the summary before confirming generation. Nest Arch can initialize Git and install packages based on your choices. At the end, the wizard shows setup commands and next steps for the generated project. Run commands from that screen rather than assuming every project needs the same database or migration setup.
 
-The `0.5.1` wizard offers standalone applications. Monorepo generation is planned for version 2.0; an option accepted by a parser does not imply supported generation. The wizard filters unsupported selections and may clear a conflicting authentication option after a database or ORM change.
+The wizard offers standalone applications. Monorepo generation is planned for version 2.0; an option accepted by a parser does not imply supported generation. The wizard filters unsupported selections and may clear a conflicting authentication option after a database or ORM change.

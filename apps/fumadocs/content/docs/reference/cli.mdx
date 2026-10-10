@@ -7,15 +7,14 @@ The `@nest-arch/tui` package publishes the `nest-arch` executable.
 
 | Task | Command |
 | --- | --- |
-| Run release 0.5.1 once | `npx @nest-arch/tui@0.5.1` |
 | Run the newest release once | `npx @nest-arch/tui@latest` |
-| Install release 0.5.1 globally | `npm install --global @nest-arch/tui@0.5.1` |
+| Install globally | `npm install --global @nest-arch/tui@latest` |
 | Start a global installation | `nest-arch` |
 | Print the installed version | `nest-arch --version` |
 | Show help | `nest-arch --help` |
 | Open the wizard explicitly | `nest-arch --ui` |
-| Generate without prompts | `pnpm dlx @nest-arch/tui@0.5.1 my-api` |
-| Generate from JSONC | `pnpm dlx @nest-arch/tui@0.5.1 --config ./nest-arch.jsonc` |
+| Generate without prompts | `pnpm dlx @nest-arch/tui@latest my-api` |
+| Generate from JSONC | `pnpm dlx @nest-arch/tui@latest --config ./nest-arch.jsonc` |
 
 Without arguments or with `--ui`, the CLI opens the wizard and requires an interactive terminal. A project name or `--config` generates without prompts. See the [headless guide](../guides/headless.mdx) for examples and project reproduction.
 

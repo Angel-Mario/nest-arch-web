@@ -22,7 +22,7 @@ Eight presets are pregenerated and served as static JSON. Custom configurations 
 
 | Environment | Custom preview storage |
 | --- | --- |
-| Local development | `.cache/project-previews` on disk |
+| Local development, including `vercel dev` | `.cache/project-previews` on disk; no Blob token required |
 | Vercel/production | Public Blob store with server-only `BLOB_READ_WRITE_TOKEN` |
 | Production without Blob | Custom previews return 503; static presets remain available |
 

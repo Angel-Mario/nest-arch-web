@@ -22,7 +22,11 @@ import { useUi } from "@/components/locale-provider";
 import { ProjectCommand } from "@/components/project-command";
 import { TechnologyIcon } from "@/components/technology-icon";
 import { updateBuilderConfig } from "@/lib/builder-config";
-import { builderMessages, getAuthDescription } from "@/lib/builder-messages";
+import {
+  builderMessages,
+  getAuthDescription,
+  getDatabaseDescription,
+} from "@/lib/builder-messages";
 import { buildProjectCommand } from "@/lib/project-command";
 import {
   canonicalConfig,
@@ -95,9 +99,7 @@ export const BuilderContent = () => {
         ...options.databaseOptions.map((option) => ({
           ...option,
           description:
-            option.value === "mongodb"
-              ? t.mongoDescription
-              : option.description,
+            getDatabaseDescription(option.value, locale) ?? option.description,
         })),
       ],
     },
