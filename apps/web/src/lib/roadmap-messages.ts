@@ -283,7 +283,7 @@ export const roadmapMessages: Record<Locale, RoadmapMessages> = {
           title: "Comunidade no Discord",
         },
         {
-          description: "Planejado para depois que eu encontrar um emprego.",
+          description: "Planejado para uma etapa futura do projeto.",
           status: "Planejado",
           title: "Lançamento como código aberto",
         },

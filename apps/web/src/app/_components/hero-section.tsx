@@ -188,7 +188,7 @@ export const HeroSection = () => {
                       {ASCII_BANNER}
                     </pre>
                     <p className="mt-2 font-mono text-[11px] text-zinc-300 sm:text-xs">
-                      A production-ready CLI
+                      A NestJS project generator
                     </p>
                     <p className="mt-0.5 font-mono text-[11px] font-semibold text-sky-400 sm:text-xs">
                       v{packageVersion?.version || "..."}

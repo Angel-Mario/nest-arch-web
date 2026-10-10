@@ -43,12 +43,12 @@ export const previewMessages = {
     empty: "Ningún archivo coincide con la búsqueda.",
     errors: {
       configuration:
-        "Esta configuración no puede previsualizarse. Vuelve al wizard para ajustar las opciones.",
-      generation: "No pudimos preparar el preview. Inténtalo de nuevo.",
+        "Esta configuración no se puede previsualizar. Vuelve al asistente para ajustar las opciones.",
+      generation: "No se pudo preparar la vista previa. Inténtalo de nuevo.",
       storage:
-        "Este preview no está disponible por ahora. Puedes explorar uno de los presets de abajo.",
+        "Esta vista previa no está disponible por ahora. Puedes explorar una de las plantillas de inicio de abajo.",
       unsupported:
-        "El generador todavía no admite esta combinación. Ajusta las opciones o elige un preset.",
+        "El generador todavía no admite esta combinación. Ajusta las opciones o elige una plantilla de inicio.",
       version:
         "El generador se ha actualizado. Recarga la página para explorar la versión actual.",
     },
@@ -59,8 +59,8 @@ export const previewMessages = {
     nameError:
       "Usa hasta 64 letras minúsculas, números y guiones; empieza con una letra.",
     note: "No se ejecutan scripts postinstall/setup.",
-    notice: "Archivos generados omitidos",
-    presets: "Previews de inicio",
+    notice: "Se omitieron archivos generados",
+    presets: "Vistas previas de inicio",
     retry: "Reintentar",
     search: "Buscar archivos",
     title: "Explorador del proyecto",
@@ -76,16 +76,16 @@ export const previewMessages = {
     empty: "Nenhum arquivo corresponde à busca.",
     errors: {
       configuration:
-        "Esta configuração não pode ser visualizada. Volte ao wizard para ajustar as opções.",
-      generation: "Não foi possível preparar o preview. Tente novamente.",
+        "Esta configuração não pode ser visualizada. Volte ao assistente para ajustar as opções.",
+      generation: "Não foi possível preparar a prévia. Tente novamente.",
       storage:
-        "Este preview está indisponível no momento. Você pode explorar um dos presets abaixo.",
+        "Esta prévia está indisponível no momento. Você pode explorar um dos modelos iniciais abaixo.",
       unsupported:
-        "O gerador ainda não suporta esta combinação. Ajuste as opções ou escolha um preset.",
+        "O gerador ainda não oferece suporte a esta combinação. Ajuste as opções ou escolha um modelo inicial.",
       version:
         "O gerador foi atualizado. Recarregue a página para explorar a versão atual.",
     },
-    explore: "Explorar projeto",
+    explore: "Explorar o projeto",
     files: "Arquivos",
     loading: "Preparando arquivos do projeto…",
     name: "Nome do projeto",
@@ -93,9 +93,9 @@ export const previewMessages = {
       "Use até 64 letras minúsculas, números e hífens; comece com uma letra.",
     note: "Scripts postinstall/setup não são executados.",
     notice: "Arquivos gerados omitidos",
-    presets: "Previews iniciais",
+    presets: "Prévia de projetos iniciais",
     retry: "Tentar novamente",
     search: "Buscar arquivos",
-    title: "Explorador do projeto",
+    title: "Explorador de projetos",
   },
 } as const;

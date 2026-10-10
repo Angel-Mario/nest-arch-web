@@ -15,7 +15,7 @@ export const buildProjectCommand = (state: ProjectCommandState): string => {
     ? state.projectName
     : "my-nest-app";
   const parts = [
-    `pnpm create nest-arch@latest ${name}`,
+    `pnpm dlx @nest-arch/tui@latest ${name}`,
     `--package-manager ${state.packageManager ?? "pnpm"}`,
     `--http-provider ${state.httpProvider ?? "express"}`,
     `--project-type ${state.projectType ?? "single"}`,

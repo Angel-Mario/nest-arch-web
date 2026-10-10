@@ -100,18 +100,18 @@ export const uiMessages: Record<Locale, UiMessages> = {
         },
         {
           description:
-            "ORMs, auth, Docker, testing, linting, and modern tooling out of the box.",
-          title: "Production defaults",
+            "Choose from supported database, API, authentication and tooling options.",
+          title: "Project options",
         },
         {
           description:
-            "TurboRepo powered workspaces for scalable architectures and shared packages.",
-          title: "Monorepo-ready",
+            "Choose the runtime, data layer and tools for a standalone NestJS project.",
+          title: "Configuration that fits",
         },
         {
           description:
-            "Pluggable engine, custom templates, and limitless architecture possibilities.",
-          title: "Room to adapt",
+            "Preview the files your selected options produce before generating the project.",
+          title: "Project file preview",
         },
       ],
       sectionLabel: "Designed around choices",
@@ -120,12 +120,12 @@ export const uiMessages: Record<Locale, UiMessages> = {
       builtWith: "Built with",
       copyright: "© 2026 Nest Arch. MIT License.",
       description:
-        "The modern CLI and TUI generator for building opinionated, production-ready NestJS applications and microservices.",
+        "The modern CLI and TUI generator for configuring NestJS applications and microservices. Currently in pre-alpha.",
       forDevelopers: "for developers.",
       product: "Product",
       readyWhenYouAre: "Ready when you are",
       resources: "Resources",
-      scaffoldRight: "scaffold right, ship fast.",
+      scaffoldRight: "choose your stack, start with clarity.",
     },
     header: {
       language: "Language",
@@ -142,21 +142,22 @@ export const uiMessages: Record<Locale, UiMessages> = {
       toggleTheme: "Toggle theme",
     },
     hero: {
-      badge: "is available",
+      badge: "pre-alpha · available",
       description:
-        "A guided terminal flow for choosing the runtime, data layer and tooling before your first file exists. Clear decisions in, a production-ready foundation out.",
+        "A guided terminal flow for choosing the runtime, data layer and tools for a standalone NestJS project. Review the generated files before you create it.",
       downloads: "downloads",
       exitInteractiveDemo: "Exit Interactive Demo",
       exploreDocs: "Explore docs",
       headline: "Build the NestJS project you actually meant to build.",
       interactiveByDefault: "Interactive by default",
       launchDemo: "Launch Interactive Live Demo",
-      launchDemoDescription: "Click to test all CLI steps in browser",
-      noConfigFiles: "No config files",
+      launchDemoDescription:
+        "Explore a simulated browser demo of the CLI configuration flow",
+      noConfigFiles: "No config guesswork",
       start: "START",
       tagline: "Your architecture, made explicit",
       terminal: {
-        buildProductionReady: "Build production-ready NestJS projects.",
+        buildProductionReady: "Configure your NestJS project.",
         createNewProject: "Create a new NestJS project",
         documentation: "Documentation",
         exit: "Exit",
@@ -172,7 +173,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       tryLiveDemo: "Try Live Demo",
     },
     metaDescription:
-      "Powerful CLI and interactive TUI generator for building opinionated, production-ready NestJS applications and microservices.",
+      "CLI and interactive TUI for configuring NestJS applications and microservices. Currently in pre-alpha.",
     roadmap: roadmapMessages.en,
     workflow: {
       description:
@@ -180,7 +181,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       expand: "expand",
       heading: "A generator you can inspect as it works.",
       highlights: [
-        "Pure terminal interface with zero heavy dependencies",
+        "Terminal interface without heavy dependencies",
         "Instant input validation & condition checks",
       ],
       sectionLabel: "The workflow",
@@ -211,7 +212,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
         },
         {
           description:
-            "Finish with a usable project structure, git initialization and the tooling selected in the wizard.",
+            "Finish with a project structure and the tools you selected. Git initialization is optional.",
           tag: "05 / Done",
           title: "Leave with a real project",
         },
@@ -226,7 +227,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       items: [
         {
           description:
-            "Experiencia de terminal guiada, intuitiva y hermosa con prompts inteligentes.",
+            "Flujo de terminal guiado con opciones que se adaptan a tu proyecto NestJS independiente.",
           title: "Una CLI guiada",
         },
         {
@@ -236,18 +237,18 @@ export const uiMessages: Record<Locale, UiMessages> = {
         },
         {
           description:
-            "ORMs, autenticación, Docker, testing, linting y herramientas modernas listas para usar.",
-          title: "Valores por defecto de producción",
+            "Elige entre opciones compatibles de base de datos, API, autenticación y herramientas.",
+          title: "Opciones para tu proyecto",
         },
         {
           description:
-            "Workspaces potenciados por TurboRepo para arquitecturas escalables y paquetes compartidos.",
-          title: "Listo para monorepos",
+            "Elige el runtime, la capa de datos y las herramientas para una aplicación NestJS independiente.",
+          title: "Configuración a tu medida",
         },
         {
           description:
-            "Motor extensible, plantillas personalizadas y posibilidades de arquitectura ilimitadas.",
-          title: "Espacio para adaptar",
+            "Explora los archivos que generan las opciones seleccionadas antes de crear el proyecto.",
+          title: "Vista previa del proyecto",
         },
       ],
       sectionLabel: "Diseñado alrededor de decisiones",
@@ -256,12 +257,12 @@ export const uiMessages: Record<Locale, UiMessages> = {
       builtWith: "Hecho con",
       copyright: "© 2026 Nest Arch. Licencia MIT.",
       description:
-        "El moderno CLI y generador TUI para construir aplicaciones y microservicios NestJS opinionados y listos para producción.",
+        "El moderno CLI y generador TUI para configurar aplicaciones y microservicios NestJS. Actualmente en pre-alpha.",
       forDevelopers: "para desarrolladores.",
       product: "Producto",
       readyWhenYouAre: "Listo cuando tú lo estés",
       resources: "Recursos",
-      scaffoldRight: "escarpa bien, lanza rápido.",
+      scaffoldRight: "elige tu stack, empieza con claridad.",
     },
     header: {
       language: "Idioma",
@@ -278,9 +279,9 @@ export const uiMessages: Record<Locale, UiMessages> = {
       toggleTheme: "Cambiar tema",
     },
     hero: {
-      badge: "está disponible",
+      badge: "pre-alpha · disponible",
       description:
-        "Un flujo guiado en terminal para elegir el runtime, la capa de datos y las herramientas antes de que exista tu primer archivo. Decisiones claras, una base lista para producción.",
+        "Un flujo guiado en terminal para elegir el runtime, la capa de datos y las herramientas de una aplicación NestJS independiente. Revisa los archivos antes de generarla.",
       downloads: "descargas",
       exitInteractiveDemo: "Salir de la demo interactiva",
       exploreDocs: "Explorar docs",
@@ -288,13 +289,12 @@ export const uiMessages: Record<Locale, UiMessages> = {
       interactiveByDefault: "Interactivo por defecto",
       launchDemo: "Lanzar demo interactiva en vivo",
       launchDemoDescription:
-        "Haz clic para probar todos los pasos de la CLI en el navegador",
-      noConfigFiles: "Sin archivos de configuración",
+        "Explora una demostración simulada en el navegador del flujo de configuración",
+      noConfigFiles: "Sin adivinar la configuración",
       start: "INICIAR",
       tagline: "Tu arquitectura, hecha explícita",
       terminal: {
-        buildProductionReady:
-          "Construye proyectos NestJS listos para producción.",
+        buildProductionReady: "Configura tu proyecto NestJS.",
         createNewProject: "Crear un nuevo proyecto NestJS",
         documentation: "Documentación",
         exit: "Salir",
@@ -310,7 +310,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       tryLiveDemo: "Probar demo en vivo",
     },
     metaDescription:
-      "CLI potente e interactivo generador TUI para construir aplicaciones y microservicios NestJS listos para producción.",
+      "CLI y generador TUI interactivo para configurar aplicaciones y microservicios NestJS. Actualmente en pre-alpha.",
     roadmap: roadmapMessages.es,
     workflow: {
       description:
@@ -318,7 +318,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       expand: "ampliar",
       heading: "Un generador que puedes inspeccionar mientras funciona.",
       highlights: [
-        "Interfaz pura de terminal con cero dependencias pesadas",
+        "Interfaz de terminal sin dependencias pesadas",
         "Validación instantánea de entrada y verificación de condiciones",
       ],
       sectionLabel: "El flujo",
@@ -349,7 +349,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
         },
         {
           description:
-            "Termina con una estructura de proyecto usable, inicialización de git y las herramientas seleccionadas en el asistente.",
+            "Termina con la estructura y las herramientas seleccionadas. La inicialización de Git es opcional.",
           tag: "05 / Listo",
           title: "Ve con un proyecto real",
         },
@@ -374,18 +374,18 @@ export const uiMessages: Record<Locale, UiMessages> = {
         },
         {
           description:
-            "ORMs, auth, Docker, testes, linting e ferramentas modernas prontas para uso.",
-          title: "Valores padrão de produção",
+            "Escolha entre opções compatíveis de banco de dados, API, autenticação e ferramentas.",
+          title: "Opções para seu projeto",
         },
         {
           description:
-            "Workspaces potenciados por TurboRepo para arquiteturas escaláveis e pacotes compartilhados.",
-          title: "Pronto para monorepos",
+            "Escolha runtime, camada de dados e ferramentas para uma aplicação NestJS independente.",
+          title: "Configuração sob medida",
         },
         {
           description:
-            "Motor extensível, templates personalizados e possibilidades de arquitetura ilimitadas.",
-          title: "Espaço para adaptar",
+            "Visualize os arquivos gerados pelas opções escolhidas antes de criar o projeto.",
+          title: "Prévia dos arquivos",
         },
       ],
       sectionLabel: "Projetado em torno de escolhas",
@@ -394,12 +394,12 @@ export const uiMessages: Record<Locale, UiMessages> = {
       builtWith: "Feito com",
       copyright: "© 2026 Nest Arch. Licença MIT.",
       description:
-        "O moderno CLI e gerador TUI para construir aplicações e microserviços NestJS opinativos e prontos para produção.",
+        "CLI e gerador TUI interativo para configurar aplicações e microsserviços NestJS. Atualmente em pré-alpha.",
       forDevelopers: "para desenvolvedores.",
       product: "Produto",
       readyWhenYouAre: "Pronto quando você estiver",
       resources: "Recursos",
-      scaffoldRight: "escarpe bem, envie rápido.",
+      scaffoldRight: "escolha sua stack, comece com clareza.",
     },
     header: {
       language: "Idioma",
@@ -416,9 +416,9 @@ export const uiMessages: Record<Locale, UiMessages> = {
       toggleTheme: "Alternar tema",
     },
     hero: {
-      badge: "está disponível",
+      badge: "pre-alpha · disponível",
       description:
-        "Um fluxo guiado no terminal para escolher o runtime, camada de dados e ferramentas antes que seu primeiro arquivo exista. Decisões claras, uma base pronta para produção.",
+        "Um fluxo guiado no terminal para escolher o runtime, a camada de dados e as ferramentas para uma aplicação NestJS independente. Revise os arquivos antes de gerar o projeto.",
       downloads: "downloads",
       exitInteractiveDemo: "Sair da demo interativa",
       exploreDocs: "Explorar docs",
@@ -426,12 +426,12 @@ export const uiMessages: Record<Locale, UiMessages> = {
       interactiveByDefault: "Interativo por padrão",
       launchDemo: "Iniciar demo interativa ao vivo",
       launchDemoDescription:
-        "Clique para testar todos os passos da CLI no navegador",
-      noConfigFiles: "Sem arquivos de configuração",
+        "Explore uma demonstração simulada no navegador do fluxo de configuração",
+      noConfigFiles: "Sem adivinhar as configurações",
       start: "INICIAR",
       tagline: "Sua arquitetura, tornada explícita",
       terminal: {
-        buildProductionReady: "Construa projetos NestJS prontos para produção.",
+        buildProductionReady: "Configure seu projeto NestJS.",
         createNewProject: "Criar um novo projeto NestJS",
         documentation: "Documentação",
         exit: "Sair",
@@ -447,7 +447,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       tryLiveDemo: "Experimentar demo ao vivo",
     },
     metaDescription:
-      "CLI poderoso e gerador TUI interativo para construir aplicações e microserviços NestJS prontos para produção.",
+      "CLI e gerador TUI interativo para configurar aplicações e microsserviços NestJS. Atualmente em pré-alpha.",
     roadmap: roadmapMessages.pt,
     workflow: {
       description:
@@ -455,7 +455,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       expand: "ampliar",
       heading: "Um gerador que você pode inspecionar enquanto funciona.",
       highlights: [
-        "Interface pura de terminal com zero dependências pesadas",
+        "Interface de terminal sem dependências pesadas",
         "Validação instantânea de entrada e verificação de condições",
       ],
       sectionLabel: "O fluxo",
@@ -486,7 +486,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
         },
         {
           description:
-            "Termine com uma estrutura de projeto utilizável, inicialização do git e as ferramentas selecionadas no assistente.",
+            "Termine com a estrutura e as ferramentas escolhidas. A inicialização do Git é opcional.",
           tag: "05 / Pronto",
           title: "Vá com um projeto real",
         },

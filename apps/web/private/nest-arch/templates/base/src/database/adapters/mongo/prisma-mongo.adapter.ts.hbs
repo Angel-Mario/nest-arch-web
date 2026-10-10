@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { IMongoAdapter } from '../interfaces/db-adapter.interface.js';
 {{#if isPrisma8}}
 {{#if isMonorepo}}
@@ -28,7 +28,7 @@ export class PrismaMongoAdapter implements IMongoAdapter {
   readonly client = db;
 
   collection<T = unknown>(name: string): T {
-    return ((this.client as any).orm as any)?.[name] as T;
+    return ((this.client as unknown as { orm?: Record<string, unknown> }).orm?.[name]) as T;
   }
 
   runCommand(command: unknown): Promise<unknown> {

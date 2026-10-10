@@ -43,19 +43,19 @@ const CATEGORIES = [
     label: "Microservices",
   },
   {
-    desc: "Turborepo workspace setups with shared UI packages, configs & zero-config linting.",
+    desc: "Choose the runtime, database, API style and tools for a standalone NestJS project.",
     details: [
-      "Turborepo task pipeline optimization",
-      "Shared @ui, @config, and @env packages",
-      "Ultracite zero-config linting & oxlint",
-      "Fast cached builds & CI/CD workflows",
+      "Express or Fastify HTTP provider",
+      "PostgreSQL, MySQL, SQLite or other supported databases",
+      "REST, GraphQL or tRPC API options",
+      "Select only the tooling your project needs",
     ],
     icon: Layers,
-    id: "monorepos",
-    label: "Monorepos",
+    id: "project-options",
+    label: "Project options",
   },
   {
-    desc: "Production-ready NestJS REST & GraphQL backend services with OpenAPI docs.",
+    desc: "NestJS REST & GraphQL backend options with OpenAPI documentation.",
     details: [
       "NestJS REST API + Swagger/OpenAPI",
       "Prisma / TypeORM / Drizzle ORM setup",

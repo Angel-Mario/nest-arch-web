@@ -125,16 +125,16 @@ export const FeaturesGrid = () => {
                 {index === 2 ? <ConfigPreview /> : null}
                 {index === 3 ? (
                   <FooterPreview>
-                    apps/ <span className="mx-2">·</span> packages/{" "}
-                    <span className="mx-2">·</span> turbo.json{" "}
-                    <span className="mx-2">·</span> shared configs
+                    Runtime <span className="mx-2">·</span> data layer{" "}
+                    <span className="mx-2">·</span> API{" "}
+                    <span className="mx-2">·</span> tooling
                   </FooterPreview>
                 ) : null}
                 {index === 4 ? (
                   <FooterPreview>
-                    Custom templates <span className="mx-2">·</span> Multiple
-                    API types <span className="mx-2">·</span> Microservices{" "}
-                    <span className="mx-2">·</span> and more
+                    REST <span className="mx-2">·</span> GraphQL{" "}
+                    <span className="mx-2">·</span> tRPC{" "}
+                    <span className="mx-2">·</span> Microservices
                   </FooterPreview>
                 ) : null}
               </div>

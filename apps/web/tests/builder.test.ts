@@ -68,7 +68,7 @@ test("the command preserves installation preferences and Ultracite choices", () 
     installDependencies: "yes",
     projectName: "test-api",
   });
-  assert.match(command, /^pnpm create nest-arch@latest test-api /u);
+  assert.match(command, /^pnpm dlx @nest-arch\/tui@latest test-api /u);
   assert.ok(command.includes("--database postgresql --orm prisma"));
   assert.ok(command.includes("--install-dependencies yes --no-git"));
   assert.ok(

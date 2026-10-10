@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   description:
-    "Powerful CLI and interactive TUI generator for building opinionated, production-ready NestJS applications and microservices.",
+    "CLI and interactive TUI for configuring NestJS applications and microservices. Currently in pre-alpha.",
   title: "Nest Arch — Scaffold Smarter. Ship Faster.",
   verification: {
     google: env.GOOGLE_SITE_VERIFICATION,

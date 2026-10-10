@@ -25,7 +25,7 @@ export const ProjectMapSection = () => (
         ],
         [
           "Tooling",
-          "Linting, tests, Docker and workspace conventions added only when you choose them.",
+          "Add linting, tests and Docker when they fit your project.",
         ],
       ].map(([label, description]) => (
         <div
