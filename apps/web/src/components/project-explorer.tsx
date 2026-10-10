@@ -15,13 +15,13 @@ import { useEffect, useRef, useState } from "react";
 
 import { useUi } from "@/components/locale-provider";
 import { PreviewCode } from "@/components/preview-code";
-import { builderMessages } from "@/lib/builder-messages";
 import {
   configFromWizard,
   fetchProjectPreview,
   PreviewRequestError,
 } from "@/lib/project-preview/client";
 import {
+  canonicalConfig,
   normalizePreviewConfig,
   personalizePreview,
 } from "@/lib/project-preview/config";
@@ -39,13 +39,17 @@ interface FileTreeProps {
   prefix?: string;
   selected: string;
   onSelect: (path: string) => void;
+  expandFolders?: boolean;
 }
+
+const COLLAPSED_FOLDERS = new Set(["src/database/adapters/", "test/"]);
 
 const FileTree = ({
   files,
   prefix = "",
   selected,
   onSelect,
+  expandFolders = false,
 }: FileTreeProps) => {
   const directories = new Set<string>();
   const leaves: PreviewFile[] = [];
@@ -64,7 +68,9 @@ const FileTree = ({
         const childPrefix = `${prefix}${directory}/`;
         return (
           <li key={childPrefix}>
-            <details open>
+            <details
+              open={expandFolders || !COLLAPSED_FOLDERS.has(childPrefix)}
+            >
               <summary className="text-muted-foreground focus-visible:outline-ring cursor-pointer px-2 py-1.5 text-xs focus-visible:outline-2">
                 <Image
                   src={`/material-icons/${folderIcon(directory)}.svg`}
@@ -83,6 +89,7 @@ const FileTree = ({
                   prefix={childPrefix}
                   selected={selected}
                   onSelect={onSelect}
+                  expandFolders={expandFolders}
                 />
               </div>
             </details>
@@ -140,6 +147,13 @@ const ProjectExplorer = ({
       return null;
     }
   });
+  const activePreset = config
+    ? manifest.presets.find(
+        (preset) =>
+          canonicalConfig(normalizePreviewConfig(preset.config)) ===
+          canonicalConfig(config)
+      )?.id
+    : undefined;
   const [preview, setPreview] = useState<ProjectPreview | null>(null);
   const [failure, setFailure] = useState<PreviewRequestError | null>(null);
 
@@ -231,12 +245,6 @@ const ProjectExplorer = ({
               <Badge variant="outline">v{manifest.generatorVersion}</Badge>
             </div>
             <p className="text-muted-foreground text-xs">{t.description}</p>
-            {config?.database.includes("mongodb") &&
-              config.orm.includes("prisma") && (
-                <output className="mt-2 block text-xs text-amber-600 dark:text-amber-300">
-                  {builderMessages[locale].prismaMongoPending}
-                </output>
-              )}
           </div>
           <Button
             variant="ghost"
@@ -306,6 +314,7 @@ const ProjectExplorer = ({
               <FileTree
                 files={visible}
                 selected={current?.path ?? ""}
+                expandFolders={search.trim().length > 0}
                 onSelect={(path) => {
                   setSelected(path);
                   setCopiedPath(null);
@@ -389,14 +398,15 @@ const ProjectExplorer = ({
           </div>
         </div>
         <footer className="border-border flex shrink-0 flex-col gap-3 border-t p-4">
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="hidden flex-wrap items-center gap-1.5 sm:flex">
             <span className="text-muted-foreground mr-2 text-xs">
               {t.presets}
             </span>
             {manifest.presets.map((preset) => (
               <Button
                 key={preset.id}
-                variant="outline"
+                variant={activePreset === preset.id ? "default" : "outline"}
+                aria-pressed={activePreset === preset.id}
                 size="xs"
                 className="cursor-pointer"
                 onClick={() => {
@@ -405,8 +415,12 @@ const ProjectExplorer = ({
                   onPresetSelect?.(presetConfig);
                   setSelected("package.json");
                   setCopiedPath(null);
+                  setCopyError(false);
                 }}
               >
+                {activePreset === preset.id && (
+                  <Check data-icon="inline-start" />
+                )}
                 {preset.label}
               </Button>
             ))}

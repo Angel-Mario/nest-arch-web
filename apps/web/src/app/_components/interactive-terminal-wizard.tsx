@@ -14,8 +14,10 @@ import { trackAnalyticsEvent } from "@/lib/analytics";
 import { useUi } from "@/components/locale-provider";
 import { ProjectCommand } from "@/components/project-command";
 import { buildProjectCommand } from "@/lib/project-command";
-import { builderMessages } from "@/lib/builder-messages";
-import { resolvePrismaVersion } from "@/lib/project-preview/config";
+import { builderMessages, getAuthDescription } from "@/lib/builder-messages";
+import { getSupportedPrismaVersions, resolvePrismaVersion } from "@/lib/project-preview/config";
+import type { PrismaVersion } from "@/lib/project-preview/config";
+import manifest from "@/lib/project-preview/generated/manifest.json";
 import { previewMessages } from "@/lib/project-preview/messages";
 
 const ProjectExplorer = dynamic(() => import("@/components/project-explorer"), { ssr: false });
@@ -101,7 +103,7 @@ export interface WizardOption<T extends string = string> {
 }
 
 export interface CreateProjectWizardState {
-  prismaVersion?: "7" | "8" | null;
+  prismaVersion?: PrismaVersion | null;
   projectName: string;
   packageManager: PackageManager | null;
   formatter: FormatterOption | null;
@@ -847,10 +849,9 @@ export const InteractiveTerminalWizard = ({
       case "prismaVersion":
         return {
           isMulti: false,
-          options: [
-            ...(!state.database.includes("mongodb") ? [{ value: "7", label: "Prisma 7", description: "Classic Prisma ORM" }] : []),
-            { value: "8", label: "Prisma 8 (preview)", description: state.database.includes("mongodb") ? builderMessages[locale].prismaMongoPending : builderMessages[locale].prisma8Description },
-          ],
+          options: manifest.options.prismaVersionOptions.filter((option) =>
+            getSupportedPrismaVersions(state.database).some((version) => version === option.value)
+          ),
           prompt: builderMessages[locale].prismaVersion,
         };
       case "apiLayer": {
@@ -871,7 +872,10 @@ export const InteractiveTerminalWizard = ({
             : AUTH_OPTIONS;
         return {
           isMulti: false,
-          options: authOpts,
+          options: authOpts.map((option) => ({
+            ...option,
+            description: getAuthDescription(option.value, locale) ?? option.description,
+          })),
           prompt: "Choose an authentication strategy",
         };
       }
@@ -1022,7 +1026,7 @@ export const InteractiveTerminalWizard = ({
           next.orm = value === "none" ? [] : [value as Orm];
           break;
         case "prismaVersion":
-          if (value === "7" || value === "8") next.prismaVersion = value;
+          if (value === "6" || value === "7" || value === "8") next.prismaVersion = value;
           break;
         case "auth":
           next.auth = value as AuthOption;
@@ -1272,7 +1276,7 @@ export const InteractiveTerminalWizard = ({
     }
     if (state.database.length > 0) parts.push(state.database.join(", "));
     if (state.orm.length > 0) parts.push(state.orm.join(", "));
-    if (state.orm.includes("prisma")) parts.push(`Prisma ${state.prismaVersion ?? "7"}`);
+    if (state.orm.includes("prisma")) parts.push(`Prisma ${resolvePrismaVersion(state.database, state.prismaVersion)}`);
     if (state.api.length > 0) parts.push(state.api.join(", "));
     if (state.auth && state.auth !== "none") parts.push(state.auth);
     if (state.microservices.length > 0)
@@ -1465,9 +1469,6 @@ export const InteractiveTerminalWizard = ({
 
       {/* Terminal Inner Body */}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[#0a0a0f]/95 p-4 font-mono text-xs leading-relaxed text-zinc-300 sm:p-5 sm:text-sm">
-        {state.database.includes("mongodb") && state.orm.includes("prisma") && (
-          <output className="mb-3 block text-xs text-amber-300">{builderMessages[locale].prismaMongoPending}</output>
-        )}
         {/* Context Bar & Header (Hidden during install / done) */}
         {stepId !== "installing" && stepId !== "done" && (
           <div className="mb-3 shrink-0 space-y-1.5 border-b border-white/10 pb-2.5">
@@ -1675,7 +1676,7 @@ export const InteractiveTerminalWizard = ({
                   <span className="text-[#e96142ff]">ORM: </span>
                   <span className="text-[#E8C468]">
                     {state.orm.length > 0 ? state.orm.join(", ") : "None"}
-                    {state.orm.includes("prisma") ? ` ${state.prismaVersion ?? "7"}` : ""}
+                    {state.orm.includes("prisma") ? ` ${resolvePrismaVersion(state.database, state.prismaVersion)}` : ""}
                   </span>
                 </div>
                 <div>

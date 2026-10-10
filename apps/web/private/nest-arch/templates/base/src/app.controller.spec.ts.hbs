@@ -5,30 +5,13 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import { AppController } from "./app.controller.js";
 import { AppService } from "./app.service.js";
-{{#if (or hasDatabase hasOrm)}}
-import { DbService } from "./database/db.service.js";
-{{#if (and (eq architecture "nest-microservice") hasTodoExample)}}
-import { TodoService } from "./api/todo/todo.service.js";
-{{/if}}
-{{/if}}
-
-
-
 describe(AppController, () => {
   let appController: AppController;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AppController],
-      providers: [
-        AppService,
-        {{#if (or hasDatabase hasOrm)}}
-        { provide: DbService, useValue: {} },
-{{#if (and (eq architecture "nest-microservice") hasTodoExample)}}
-        { provide: TodoService, useValue: {} },
-{{/if}}
-        {{/if}}
-      ],
+      providers: [AppService],
     }).compile();
 
     appController = app.get<AppController>(AppController);

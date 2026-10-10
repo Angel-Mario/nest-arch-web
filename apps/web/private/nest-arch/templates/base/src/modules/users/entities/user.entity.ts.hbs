@@ -1,11 +1,27 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  {{#if hasMongodb}}
+  ObjectIdColumn,
+  {{else}}
+  PrimaryGeneratedColumn,
+  {{/if}}
+} from "typeorm";
+{{#if hasMongodb}}
+import type { ObjectId } from "mongodb";
+{{/if}}
 
 @Entity("users")
 export class UserEntity {
+  {{#if hasMongodb}}
+  @ObjectIdColumn()
+  id: ObjectId;
+  {{else}}
   @PrimaryGeneratedColumn("uuid")
   id: string;
+  {{/if}}
 
-  @Column({ type: "varchar", unique: true })
+  @Column({ type: "varchar"{{#unless hasMongodb}}, unique: true{{/unless}} })
   email: string;
 
   @Column({ type: "varchar", nullable: true })

@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable{{#unless isPrisma8}}, Inject{{/unless}} } from '@nestjs/common';
 import { IMongoAdapter } from '../interfaces/db-adapter.interface.js';
 {{#if isPrisma8}}
 {{#if isMonorepo}}
 import { db } from '../../../prisma/db.js';
 {{else}}
-import { db } from '../../prisma/db.js';
+import { db } from '../../../prisma/db.js';
 {{/if}}
 {{else}}
 {{#if isMonorepo}}
@@ -32,7 +32,7 @@ export class PrismaMongoAdapter implements IMongoAdapter {
   }
 
   runCommand(command: unknown): Promise<unknown> {
-    return (this.client as { query?: (input: unknown) => Promise<unknown> }).query?.(command) ?? Promise.resolve(undefined);
+    return (this.client as unknown as { query?: (input: unknown) => Promise<unknown> }).query?.(command) ?? Promise.resolve(undefined);
   }
 
   getClient() {

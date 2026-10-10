@@ -22,10 +22,11 @@ import { useUi } from "@/components/locale-provider";
 import { ProjectCommand } from "@/components/project-command";
 import { TechnologyIcon } from "@/components/technology-icon";
 import { updateBuilderConfig } from "@/lib/builder-config";
-import { builderMessages } from "@/lib/builder-messages";
+import { builderMessages, getAuthDescription } from "@/lib/builder-messages";
 import { buildProjectCommand } from "@/lib/project-command";
 import {
   canonicalConfig,
+  getSupportedPrismaVersions,
   normalizePreviewConfig,
 } from "@/lib/project-preview/config";
 import type { PreviewConfig } from "@/lib/project-preview/config";
@@ -91,7 +92,13 @@ export const BuilderContent = () => {
       field: "database",
       options: [
         noneOption(t.withoutDatabase, t.noDatabase),
-        ...options.databaseOptions,
+        ...options.databaseOptions.map((option) => ({
+          ...option,
+          description:
+            option.value === "mongodb"
+              ? t.mongoDescription
+              : option.description,
+        })),
       ],
     },
     {
@@ -127,6 +134,8 @@ export const BuilderContent = () => {
       field: "auth",
       options: options.authOptions.map((option) => ({
         ...option,
+        description:
+          getAuthDescription(option.value, locale) ?? option.description,
         disabledReason:
           option.value === "better-auth" && config.database.length === 0
             ? t.requiresDatabase
@@ -187,11 +196,10 @@ export const BuilderContent = () => {
     const ormIndex = groups.findIndex((group) => group.field === "orm");
     groups.splice(ormIndex + 1, 0, {
       field: "prismaVersion",
-      notice: config.database.includes("mongodb")
-        ? t.prismaMongoPending
-        : undefined,
-      options: options.prismaVersionOptions.filter(
-        (option) => !config.database.includes("mongodb") || option.value === "8"
+      options: options.prismaVersionOptions.filter((option) =>
+        getSupportedPrismaVersions(config.database).some(
+          (version) => version === option.value
+        )
       ),
     });
   }

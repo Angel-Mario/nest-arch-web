@@ -1,4 +1,66 @@
-{{#if (and hasMongodb useTypeorm)}}
+{{#if (and isPrisma8 hasMongodb)}}
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+
+import { DbService } from "../../database/db.service.js";
+import type { Models } from "../../prisma/contract.js";
+import { CreateTodoDto } from "./dto/create-todo.dto.js";
+import { UpdateTodoDto } from "./dto/update-todo.dto.js";
+
+type Todo = Omit<Models.unbound_Todo, "_id"> & { id: string };
+
+function assertMongoId(id: string): void {
+  if (!/^[a-f0-9]{24}$/iu.test(id)) {
+    throw new BadRequestException("Invalid todo identifier");
+  }
+}
+
+const serialize = ({ _id, ...todo }: Models.unbound_Todo): Todo => ({
+  ...todo,
+  id: _id,
+});
+
+@Injectable()
+export class TodoService {
+  constructor(private readonly db: DbService) {}
+
+  async findAll({{#if hasAuth}}ownerId: string{{/if}}): Promise<Todo[]> {
+    const todos: Todo[] = [];
+    const query = {{#if hasAuth}}this.db.prisma.orm.todos.where({ authorId: ownerId }){{else}}this.db.prisma.orm.todos{{/if}};
+    for await (const todo of query.limit(100).all()) {
+      todos.push(serialize(todo));
+    }
+    return todos;
+  }
+
+  async create(input: CreateTodoDto{{#if hasAuth}}, ownerId: string{{/if}}): Promise<Todo> {
+    const todo = await this.db.prisma.orm.todos.create({
+      {{#if hasAuth}}authorId: ownerId,{{/if}}
+      completed: input.completed ?? false,
+      ...(input.description === undefined ? {} : { description: input.description }),
+      title: input.title,
+    });
+    return serialize(todo);
+  }
+
+  async update(id: string, input: UpdateTodoDto{{#if hasAuth}}, ownerId: string{{/if}}): Promise<Todo> {
+    assertMongoId(id);
+    const todo = await this.db.prisma.orm.todos.where({ _id: id{{#if hasAuth}}, authorId: ownerId{{/if}} }).update(input);
+    if (!todo) {
+      throw new NotFoundException("Todo not found");
+    }
+    return serialize(todo);
+  }
+
+  async delete(id: string{{#if hasAuth}}, ownerId: string{{/if}}): Promise<{ message: string }> {
+    assertMongoId(id);
+    const todo = await this.db.prisma.orm.todos.where({ _id: id{{#if hasAuth}}, authorId: ownerId{{/if}} }).delete();
+    if (!todo) {
+      throw new NotFoundException("Todo not found");
+    }
+    return { message: "Todo deleted successfully" };
+  }
+}
+{{else if (and hasMongodb useTypeorm)}}
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { ObjectId } from "mongodb";
 import type { Document, WithId } from "mongodb";
@@ -8,6 +70,7 @@ import { CreateTodoDto } from "./dto/create-todo.dto.js";
 import { UpdateTodoDto } from "./dto/update-todo.dto.js";
 
 interface TodoDocument extends Document {
+  authorId?: string;
   completed: boolean;
   createdAt: Date;
   description?: string;
@@ -35,16 +98,21 @@ export class TodoService {
     return this.db.mongo.collection<TodoDocument>("todos");
   }
 
-  async findAll() {
-    const todos = await this.todos.find().sort({ _id: 1 }).limit(100).toArray();
+  async findAll(ownerId?: string) {
+    const todos = await this.todos
+      .find(ownerId === undefined ? {} : { authorId: ownerId })
+      .sort({ _id: 1 })
+      .limit(100)
+      .toArray();
     return todos.map(serialize);
   }
 
-  async create(input: CreateTodoDto) {
+  async create(input: CreateTodoDto, ownerId?: string) {
     const now = new Date();
     const todo = {
       completed: input.completed ?? false,
       createdAt: now,
+      ...(ownerId === undefined ? {} : { authorId: ownerId }),
       ...(input.description === undefined ? {} : { description: input.description }),
       title: input.title,
       updatedAt: now,
@@ -53,18 +121,19 @@ export class TodoService {
     return { ...todo, id: result.insertedId.toHexString() };
   }
 
-  async update(id: string, input: UpdateTodoDto) {
+  async update(id: string, input: UpdateTodoDto, ownerId?: string) {
     const _id = objectId(id);
-    await this.todos.updateOne({ _id }, { $set: { ...input, updatedAt: new Date() } });
-    const todo = await this.todos.findOne({ _id });
+    const ownerFilter = ownerId === undefined ? {} : { authorId: ownerId };
+    await this.todos.updateOne({ _id, ...ownerFilter }, { $set: { ...input, updatedAt: new Date() } });
+    const todo = await this.todos.findOne({ _id, ...ownerFilter });
     if (!todo) {
       throw new NotFoundException("Todo not found");
     }
     return serialize(todo);
   }
 
-  async delete(id: string) {
-    const result = await this.todos.deleteOne({ _id: objectId(id) });
+  async delete(id: string, ownerId?: string) {
+    const result = await this.todos.deleteOne({ _id: objectId(id), ...(ownerId === undefined ? {} : { authorId: ownerId }) });
     if (result.deletedCount === 0) {
       throw new NotFoundException("Todo not found");
     }
@@ -82,9 +151,12 @@ import { CreateTodoDto } from "./dto/create-todo.dto.js";
 import { UpdateTodoDto } from "./dto/update-todo.dto.js";
 
 interface TodoDocument extends Document {
+  authorId?: string;
   completed: boolean;
+  createdAt: Date;
   description?: string;
   title: string;
+  updatedAt: Date;
 }
 
 const serialize = ({ _id, ...todo }: WithId<TodoDocument>) => ({
@@ -107,33 +179,38 @@ export class TodoService {
     return this.db.raw.mongo.collection<TodoDocument>("todos");
   }
 
-  async findAll() {
-    const todos = await this.todos.find().sort({ _id: 1 }).limit(100).toArray();
+  async findAll(ownerId?: string) {
+    const todos = await this.todos.find(ownerId === undefined ? {} : { authorId: ownerId }).sort({ _id: 1 }).limit(100).toArray();
     return todos.map(serialize);
   }
 
-  async create(input: CreateTodoDto) {
+  async create(input: CreateTodoDto, ownerId?: string) {
+    const now = new Date();
     const todo = {
       completed: input.completed ?? false,
+      createdAt: now,
+      ...(ownerId === undefined ? {} : { authorId: ownerId }),
       ...(input.description === undefined ? {} : { description: input.description }),
       title: input.title,
+      updatedAt: now,
     };
     const result = await this.todos.insertOne(todo);
     return { ...todo, id: result.insertedId.toHexString() };
   }
 {{#if isPrisma8}}
-  update(id: string, input: UpdateTodoDto) {
+  update(id: string, input: UpdateTodoDto, ownerId?: string) {
 {{else}}
-  async update(id: string, input: UpdateTodoDto) {
+  async update(id: string, input: UpdateTodoDto, ownerId?: string) {
 {{/if}}
-    const todo = await this.todos.findOneAndUpdate({ _id: objectId(id) }, { $set: input }, { returnDocument: "after" });
+    const ownerFilter = ownerId === undefined ? {} : { authorId: ownerId };
+    const todo = await this.todos.findOneAndUpdate({ _id: objectId(id), ...ownerFilter }, { $set: { ...input, updatedAt: new Date() } }, { returnDocument: "after" });
     if (!todo) {
       throw new NotFoundException("Todo not found");
     }
     return serialize(todo);
   }
-  async delete(id: string) {
-    const result = await this.todos.deleteOne({ _id: objectId(id) });
+  async delete(id: string, ownerId?: string) {
+    const result = await this.todos.deleteOne({ _id: objectId(id), ...(ownerId === undefined ? {} : { authorId: ownerId }) });
     if (result.deletedCount === 0) {
       throw new NotFoundException("Todo not found");
     }
@@ -141,8 +218,8 @@ export class TodoService {
   }
 }
 {{else}}
-{{#if (or (and hasTodoExample (not hasDatabase)) hasAuth isPrisma8 (and hasDatabase useTypeorm) (and hasDatabase useDrizzle (or hasMysql hasSqlserver)) (and hasMongodb usePrisma))}}
-import { {{#if (and hasMongodb usePrisma (not isPrisma8))}}BadRequestException, {{/if}}Injectable, NotFoundException{{#if (and hasAuth hasPostgres useRawSql)}}, type OnModuleInit{{/if}} } from "@nestjs/common";
+{{#if (or (and hasTodoExample (not hasDatabase)) hasAuth isPrisma8 (and hasDatabase useTypeorm) (and hasDatabase useDrizzle (or hasMysql hasSqlserver)) (and hasSqlserver useRawSql) (and hasMongodb usePrisma))}}
+import { {{#if (and hasMongodb usePrisma (not isPrisma8))}}BadRequestException, {{/if}}Injectable, NotFoundException{{#if (or (and hasAuth hasPostgres useRawSql) (and hasSqlserver useRawSql))}}, type OnModuleInit{{/if}} } from "@nestjs/common";
 {{else}}
 import { Injectable } from "@nestjs/common";
 {{/if}}
@@ -166,17 +243,30 @@ import { Todo } from "../../database/entities/todo.entity.js";
 {{#if (and hasAuth hasPostgres useRawSql)}}
 import type { Pool } from "pg";
 {{/if}}
+{{#if (and hasSqlserver useRawSql)}}
+export interface Todo {
+  authorId?: string;
+  completed: boolean;
+  description: string | null;
+  id: number;
+  title: string;
+}
+{{/if}}
 {{/if}}
 import { CreateTodoDto } from "./dto/create-todo.dto.js";
 import { UpdateTodoDto } from "./dto/update-todo.dto.js";
 {{#if isPrisma8}}
 import type { Models } from "../../prisma/contract.js";
 
+{{#if hasMongodb}}
+type Todo = Omit<Models.unbound_Todo, "_id"> & { id: string };
+{{else}}
 type Todo = Models.public_Todo;
+{{/if}}
 {{/if}}
 
 @Injectable()
-{{#if (and hasAuth hasPostgres useRawSql)}}
+{{#if (or (and hasAuth hasPostgres useRawSql) (and hasSqlserver useRawSql))}}
 export class TodoService implements OnModuleInit {
 {{else}}
 export class TodoService {
@@ -218,6 +308,20 @@ export class TodoService {
   }
 
 {{/if}}
+{{#if (and hasSqlserver useRawSql)}}
+  async onModuleInit(): Promise<void> {
+    await this.db.sql.execute(`IF OBJECT_ID(N'todos', N'U') IS NULL
+      CREATE TABLE todos (
+        id INT IDENTITY(1,1) PRIMARY KEY,
+        title NVARCHAR(255) NOT NULL,
+        completed BIT NOT NULL CONSTRAINT DF_todos_completed DEFAULT 0,
+        description NVARCHAR(MAX) NULL,
+        {{#if hasAuth}}author_id NVARCHAR(255) NOT NULL,{{/if}}
+        created_at DATETIME2 NOT NULL CONSTRAINT DF_todos_created_at DEFAULT SYSUTCDATETIME(),
+        updated_at DATETIME2 NOT NULL CONSTRAINT DF_todos_updated_at DEFAULT SYSUTCDATETIME()
+      )`);
+  }
+{{/if}}
 {{#if hasDatabase}}
 {{#if hasAuth}}
 {{#if isPrisma8}}
@@ -238,6 +342,11 @@ export class TodoService {
       [authorId]
     );
     return result.rows;
+{{else if (and hasSqlserver useRawSql)}}
+    return this.db.sql.query<Todo>(
+      'SELECT id, title, completed, description, author_id AS authorId FROM todos WHERE author_id = ? ORDER BY id',
+      [authorId]
+    );
 {{else if useTypeorm}}
     return this.db.typeorm.getRepository(Todo).find({ where: { authorId } });
 {{else if useDrizzle}}
@@ -262,6 +371,12 @@ export class TodoService {
       [input.title, input.completed ?? false, input.description ?? null, authorId]
     );
     const [todo] = result.rows;
+    return todo;
+{{else if (and hasSqlserver useRawSql)}}
+    const [todo] = await this.db.sql.query<Todo>(
+      'INSERT INTO todos (title, completed, description, author_id) OUTPUT INSERTED.id, INSERTED.title, INSERTED.completed, INSERTED.description, INSERTED.author_id AS authorId VALUES (?, ?, ?, ?)',
+      [input.title, input.completed ?? false, input.description ?? null, authorId]
+    );
     return todo;
 {{else if useTypeorm}}
     const todo = await this.db.typeorm.getRepository(Todo).save(this.db.typeorm.getRepository(Todo).create({ ...input, authorId }));
@@ -306,6 +421,15 @@ export class TodoService {
       [input.title ?? null, input.completed ?? null, input.description ?? null, id, authorId]
     );
     const [todo] = result.rows;
+    if (!todo) {
+      throw new NotFoundException("Todo not found");
+    }
+    return todo;
+{{else if (and hasSqlserver useRawSql)}}
+    const [todo] = await this.db.sql.query<Todo>(
+      'UPDATE todos SET title = COALESCE(?, title), completed = COALESCE(?, completed), description = COALESCE(?, description), updated_at = SYSUTCDATETIME() OUTPUT INSERTED.id, INSERTED.title, INSERTED.completed, INSERTED.description, INSERTED.author_id AS authorId WHERE id = ? AND author_id = ?',
+      [input.title ?? null, input.completed ?? null, input.description ?? null, id, authorId]
+    );
     if (!todo) {
       throw new NotFoundException("Todo not found");
     }
@@ -358,6 +482,14 @@ export class TodoService {
     if (!todo) {
       throw new NotFoundException("Todo not found");
     }
+{{else if (and hasSqlserver useRawSql)}}
+    const [todo] = await this.db.sql.query<{ id: number }>(
+      'DELETE FROM todos OUTPUT DELETED.id WHERE id = ? AND author_id = ?',
+      [id, authorId]
+    );
+    if (!todo) {
+      throw new NotFoundException("Todo not found");
+    }
 {{else if useTypeorm}}
     const result = await this.db.typeorm.getRepository(Todo).delete({ authorId, id });
     if (result.affected === 0) {
@@ -396,6 +528,10 @@ export class TodoService {
     return this.db.prisma.todo.findMany();
 {{else if useTypeorm}}
     return this.db.typeorm.getRepository(Todo).find();
+{{else if (and hasSqlserver useRawSql)}}
+    return this.db.sql.query<Todo>(
+      'SELECT id, title, completed, description FROM todos ORDER BY id'
+    );
 {{else if useDrizzle}}
     return this.db.drizzle.select().from(schema.todos);
 {{/if}}
@@ -410,6 +546,12 @@ export class TodoService {
     return await this.db.prisma.orm.public.Todo.create(input);
 {{else if usePrisma}}
     const todo = await this.db.prisma.todo.create({ data: input });
+    return todo;
+{{else if (and hasSqlserver useRawSql)}}
+    const [todo] = await this.db.sql.query<Todo>(
+      'INSERT INTO todos (title, completed, description) OUTPUT INSERTED.id, INSERTED.title, INSERTED.completed, INSERTED.description VALUES (?, ?, ?)',
+      [input.title, input.completed ?? false, input.description ?? null]
+    );
     return todo;
 {{else if useTypeorm}}
     const todo = await this.db.typeorm.getRepository(Todo).save(this.db.typeorm.getRepository(Todo).create(input));
@@ -451,6 +593,15 @@ export class TodoService {
 {{/if}}
     const result = await this.db.prisma.todo.update({ data: input, where: { id } });
     return result;
+{{else if (and hasSqlserver useRawSql)}}
+    const [todo] = await this.db.sql.query<Todo>(
+      'UPDATE todos SET title = COALESCE(?, title), completed = COALESCE(?, completed), description = COALESCE(?, description), updated_at = SYSUTCDATETIME() OUTPUT INSERTED.id, INSERTED.title, INSERTED.completed, INSERTED.description WHERE id = ?',
+      [input.title ?? null, input.completed ?? null, input.description ?? null, id]
+    );
+    if (!todo) {
+      throw new NotFoundException("Todo not found");
+    }
+    return todo;
 {{else if useTypeorm}}
     const repository = this.db.typeorm.getRepository(Todo);
     const result = await repository.update(id, input);
@@ -493,6 +644,14 @@ export class TodoService {
     }
 {{/if}}
     await this.db.prisma.todo.delete({ where: { id } });
+{{else if (and hasSqlserver useRawSql)}}
+    const [todo] = await this.db.sql.query<{ id: number }>(
+      'DELETE FROM todos OUTPUT DELETED.id WHERE id = ?',
+      [id]
+    );
+    if (!todo) {
+      throw new NotFoundException("Todo not found");
+    }
 {{else if useTypeorm}}
     await this.db.typeorm.getRepository(Todo).delete(id);
 {{else if useDrizzle}}

@@ -4,6 +4,8 @@ export const builderMessages = {
     api: "API layer",
     architecture: "Architecture",
     auth: "Authentication",
+    betterAuthDescription:
+      "Authentication library with user management and database-backed sessions.",
     comingInV2: "Available in version 2.0",
     command: "Generation command",
     commandDescription:
@@ -30,6 +32,7 @@ export const builderMessages = {
     microservices: "Microservices",
     microservicesRequired:
       "Select the microservice architecture to enable transport options.",
+    mongoDescription: "Document database with flexible, JSON-like records.",
     multiple: "Choose any",
     name: "Project name",
     nav: "Builder",
@@ -38,15 +41,13 @@ export const builderMessages = {
     none: "None",
     open: "Open builder",
     orm: "ORM",
-    ormNativeMongo:
-      "This MongoDB preview supports the native driver or Prisma 8.",
+    ormNativeMongo: "Use the native MongoDB driver or Prisma 6 or 8.",
     ormRequiresDatabase: "Choose a database to enable ORM selection.",
     packageManager: "Package manager",
+    passportDescription:
+      "Authentication middleware with pluggable strategies for credentials, JWT, and OAuth.",
     presets: "Start from a template",
     preview: "Preview project",
-    prisma8Description: "Prisma 8 preview with contract-based schema.",
-    prismaMongoPending:
-      "MongoDB + Prisma 8 is available as a preview and is pending runtime validation. The published CLI may still reject this profile.",
     prismaVersion: "Prisma version",
     projectType: "Project layout",
     requiresDatabase: "Select a database first",
@@ -83,6 +84,8 @@ export const builderMessages = {
     api: "Capa de API",
     architecture: "Arquitectura",
     auth: "Autenticación",
+    betterAuthDescription:
+      "Biblioteca de autenticación con gestión de usuarios y sesiones persistidas en la base de datos.",
     comingInV2: "Disponible en la versión 2.0",
     command: "Comando de generación",
     commandDescription:
@@ -111,6 +114,8 @@ export const builderMessages = {
     microservices: "Microservicios",
     microservicesRequired:
       "Selecciona la arquitectura de microservicios para habilitar los transportes.",
+    mongoDescription:
+      "Base de datos documental con registros flexibles similares a JSON.",
     multiple: "Elige las que quieras",
     name: "Nombre del proyecto",
     nav: "Builder",
@@ -119,16 +124,14 @@ export const builderMessages = {
     none: "Ninguno",
     open: "Abrir builder",
     orm: "ORM",
-    ormNativeMongo:
-      "Esta vista previa de MongoDB permite el driver nativo o Prisma 8.",
+    ormNativeMongo: "Usa el driver nativo de MongoDB o Prisma 6 u 8.",
     ormRequiresDatabase:
       "Selecciona una base de datos para habilitar las opciones de ORM.",
     packageManager: "Gestor de paquetes",
+    passportDescription:
+      "Middleware de autenticación con estrategias para credenciales, JWT y OAuth.",
     presets: "Empieza con una plantilla",
     preview: "Previsualizar proyecto",
-    prisma8Description: "Prisma 8 en preview con esquema basado en contratos.",
-    prismaMongoPending:
-      "MongoDB + Prisma 8 está disponible como vista previa y sigue pendiente de validación en ejecución. La CLI publicada puede rechazar este perfil.",
     prismaVersion: "Versión de Prisma",
     projectType: "Estructura del proyecto",
     requiresDatabase: "Selecciona una base de datos primero",
@@ -163,6 +166,8 @@ export const builderMessages = {
     api: "Camada de API",
     architecture: "Arquitetura",
     auth: "Autenticação",
+    betterAuthDescription:
+      "Biblioteca de autenticação com gerenciamento de usuários e sessões persistidas no banco de dados.",
     comingInV2: "Disponível na versão 2.0",
     command: "Comando de geração",
     commandDescription:
@@ -190,6 +195,8 @@ export const builderMessages = {
     microservices: "Microsserviços",
     microservicesRequired:
       "Selecione a arquitetura de microsserviços para habilitar os transportes.",
+    mongoDescription:
+      "Banco de dados documental com registros flexíveis semelhantes a JSON.",
     multiple: "Escolha as que quiser",
     name: "Nome do projeto",
     nav: "Builder",
@@ -198,16 +205,14 @@ export const builderMessages = {
     none: "Nenhum",
     open: "Abrir builder",
     orm: "ORM",
-    ormNativeMongo:
-      "Esta prévia do MongoDB permite o driver nativo ou Prisma 8.",
+    ormNativeMongo: "Use o driver nativo do MongoDB ou Prisma 6 ou 8.",
     ormRequiresDatabase:
       "Selecione um banco de dados para habilitar as opções de ORM.",
     packageManager: "Gerenciador de pacotes",
+    passportDescription:
+      "Middleware de autenticação com estratégias para credenciais, JWT e OAuth.",
     presets: "Comece com um template",
     preview: "Visualizar projeto",
-    prisma8Description: "Prisma 8 em prévia com esquema baseado em contratos.",
-    prismaMongoPending:
-      "MongoDB + Prisma 8 está disponível como prévia e aguarda validação em execução. A CLI publicada ainda pode rejeitar este perfil.",
     prismaVersion: "Versão do Prisma",
     projectType: "Estrutura do projeto",
     requiresDatabase: "Selecione um banco de dados primeiro",
@@ -238,3 +243,17 @@ export const builderMessages = {
     yes: "Sim",
   },
 } as const;
+
+export const getAuthDescription = (
+  auth: string,
+  locale: keyof typeof builderMessages
+): string | undefined => {
+  const translation = builderMessages[locale];
+  if (auth === "passport") {
+    return translation.passportDescription;
+  }
+  if (auth === "better-auth") {
+    return translation.betterAuthDescription;
+  }
+  return undefined;
+};

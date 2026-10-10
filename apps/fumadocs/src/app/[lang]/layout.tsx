@@ -63,7 +63,7 @@ export default async function LocaleLayout({
             nav={{
               ...options.nav,
               title: (
-                <span className="flex items-center gap-2 whitespace-nowrap">
+                <span className="flex items-center gap-2 leading-none whitespace-nowrap">
                   <Image
                     alt=""
                     className="shrink-0"
@@ -72,7 +72,7 @@ export default async function LocaleLayout({
                     width={26}
                     unoptimized
                   />
-                  <span className="font-semibold tracking-tight">
+                  <span className="leading-none font-semibold tracking-tight">
                     {appName}
                   </span>
                   <NpmVersionBadge locale={lang} />

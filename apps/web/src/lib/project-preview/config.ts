@@ -60,7 +60,7 @@ export const previewConfigSchema = z
       .pipe(z.array(z.enum(["prisma", "typeorm", "drizzle"])).max(1))
       .default([]),
     packageManager: z.enum(["pnpm", "npm", "yarn", "bun"]).default("pnpm"),
-    prismaVersion: z.enum(["7", "8"]).optional(),
+    prismaVersion: z.enum(["6", "7", "8"]).optional(),
     projectType: z.literal("single").default("single"),
     ultraciteAgents: z
       .array(
@@ -93,14 +93,33 @@ export const previewConfigSchema = z
 
 export type PreviewConfig = z.output<typeof previewConfigSchema>;
 
+export type PrismaVersion = NonNullable<PreviewConfig["prismaVersion"]>;
+
+const MONGO_PRISMA_VERSIONS = ["6", "8"] as const;
+const POSTGRES_PRISMA_VERSIONS = ["7", "8"] as const;
+const SQL_PRISMA_VERSIONS = ["7"] as const;
+
+export const getSupportedPrismaVersions = (
+  database: readonly string[]
+): readonly PrismaVersion[] => {
+  if (database.includes("mongodb")) {
+    return MONGO_PRISMA_VERSIONS;
+  }
+  if (database.includes("postgresql")) {
+    return POSTGRES_PRISMA_VERSIONS;
+  }
+  return SQL_PRISMA_VERSIONS;
+};
+
 export const resolvePrismaVersion = (
   database: readonly string[],
-  version?: "7" | "8" | null
-): "7" | "8" => {
-  if (database.includes("mongodb")) {
-    return "8";
+  version?: PrismaVersion | null
+): PrismaVersion => {
+  const supportedVersions = getSupportedPrismaVersions(database);
+  if (version && supportedVersions.includes(version)) {
+    return version;
   }
-  return database.includes("postgresql") ? (version ?? "7") : "7";
+  return database.includes("mongodb") ? "6" : "7";
 };
 
 export const normalizePreviewConfig = (input: unknown): PreviewConfig => {

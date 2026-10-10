@@ -25,6 +25,46 @@ export class RawSqlAdapter implements ISqlAdapter<Pool> {
     await this.db.end();
   }
 }
+{{else if hasSqlserver}}
+import { Inject, Injectable } from "@nestjs/common";
+import type { ConnectionPool, Request } from "mssql";
+import type { ISqlAdapter } from "../interfaces/db-adapter.interface.js";
+
+@Injectable()
+export class RawSqlAdapter implements ISqlAdapter<ConnectionPool> {
+  constructor(@Inject("SQL_CLIENT") private readonly db: ConnectionPool) {}
+
+  async query<T = unknown>(sqlText: string, params: unknown[] = []): Promise<T[]> {
+    const request = this.bindParameters(this.db.request(), params);
+    const result = await request.query(this.parameterize(sqlText));
+    return (result.recordset ?? []) as T[];
+  }
+
+  async execute(sqlText: string, params: unknown[] = []): Promise<unknown> {
+    const request = this.bindParameters(this.db.request(), params);
+    return request.query(this.parameterize(sqlText));
+  }
+
+  getClient(): ConnectionPool {
+    return this.db;
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    await this.db.close();
+  }
+
+  private bindParameters(request: Request, params: unknown[]): Request {
+    for (const [index, value] of params.entries()) {
+      request.input(`p${index}`, value);
+    }
+    return request;
+  }
+
+  private parameterize(sqlText: string): string {
+    let index = 0;
+    return sqlText.replace(/\?/gu, () => `@p${index++}`);
+  }
+}
 {{else}}
 import { Injectable, Inject } from '@nestjs/common';
 import { ISqlAdapter } from '../interfaces/db-adapter.interface.js';

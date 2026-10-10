@@ -4,11 +4,13 @@ import {
   CircleOff,
   Code,
   Dog,
+  Folder,
   GitBranch,
   ListTodo,
   Monitor,
   Network,
   Package,
+  Server,
   Shield,
   Sparkles,
 } from "lucide-react";
@@ -21,10 +23,13 @@ const featureIcons = {
   grpc: Network,
   "health-check": Activity,
   husky: Dog,
+  "nest-api": Server,
+  "nest-microservice": Network,
   no: CircleOff,
   none: CircleOff,
   "rate-limiting": Shield,
   rest: Code,
+  single: Folder,
   "todo-example": ListTodo,
   ultracite: Sparkles,
   universal: Monitor,
@@ -40,6 +45,14 @@ export const TechnologyIcon = ({
   section?: string;
   className?: string;
 }) => {
+  if (
+    value === "single" ||
+    value === "nest-api" ||
+    value === "nest-microservice"
+  ) {
+    const Icon = featureIcons[value];
+    return <Icon className={className} aria-hidden="true" />;
+  }
   if (value === "eslint-prettier-no-stylelint") {
     return (
       <span

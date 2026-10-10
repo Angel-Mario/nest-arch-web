@@ -31,7 +31,13 @@ export class HealthController {
       {{#if hasDatabase}}
       async () => {
         try {
-        {{#if hasMongodb}}
+        {{#if (and isPrisma8 hasMongodb)}}
+        {{#if hasTodoExample}}
+          await this.db.prisma.orm.todos.limit(1).first();
+        {{else}}
+          await this.db.prisma.connect();
+        {{/if}}
+        {{else if hasMongodb}}
           {{#if usePrisma}}
           await this.db.raw.mongo.$runCommandRaw({ ping: 1 });
           {{else if useTypeorm}}

@@ -25,7 +25,7 @@ export const previewMessages = {
     name: "Project name",
     nameError:
       "Use up to 64 lowercase letters, numbers and hyphens; start with a letter.",
-    note: "Postinstall/setup scripts aren't run.",
+    note: "Postinstall/setup scripts aren't run here, so the files they generate aren't shown either.",
     notice: "Generated files omitted",
     presets: "Starter previews",
     retry: "Try again",
@@ -58,7 +58,7 @@ export const previewMessages = {
     name: "Nombre del proyecto",
     nameError:
       "Usa hasta 64 letras minúsculas, números y guiones; empieza con una letra.",
-    note: "No se ejecutan scripts postinstall/setup.",
+    note: "Los scripts postinstall/setup no se ejecutan aquí, por lo que los archivos que generan tampoco se muestran.",
     notice: "Se omitieron archivos generados",
     presets: "Vistas previas de inicio",
     retry: "Reintentar",
@@ -91,7 +91,7 @@ export const previewMessages = {
     name: "Nome do projeto",
     nameError:
       "Use até 64 letras minúsculas, números e hífens; comece com uma letra.",
-    note: "Scripts postinstall/setup não são executados.",
+    note: "Os scripts postinstall/setup não são executados aqui, por isso os arquivos que geram também não são exibidos.",
     notice: "Arquivos gerados omitidos",
     presets: "Prévia de projetos iniciais",
     retry: "Tentar novamente",

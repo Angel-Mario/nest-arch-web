@@ -5,9 +5,11 @@ export abstract class BaseModel {
   @Field(() => ID)
   id: string;
 
+  {{#unless hasMongodb}}
   @Field()
   createdAt: Date;
 
   @Field()
   updatedAt: Date;
+  {{/unless}}
 }

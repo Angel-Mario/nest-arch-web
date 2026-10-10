@@ -48,10 +48,14 @@ import { RestAuthGuard } from "../../auth/guards/rest-auth.guard.js";
 import { TodoService } from "./todo.service.js";
 import { CreateTodoDto } from "./dto/create-todo.dto.js";
 import { UpdateTodoDto } from "./dto/update-todo.dto.js";
-{{#if isPrisma8}}
+{{#if (and isPrisma8 (eq auth "none"))}}
 import type { Models } from "../../prisma/contract.js";
 
+{{#if hasMongodb}}
+type Todo = Omit<Models.unbound_Todo, "_id"> & { id: string };
+{{else}}
 type Todo = Models.public_Todo;
+{{/if}}
 {{/if}}
 
 {{#if swagger}}

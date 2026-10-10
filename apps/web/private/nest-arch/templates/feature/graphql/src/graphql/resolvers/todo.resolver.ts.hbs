@@ -1,4 +1,4 @@
-{{#if (and usePrisma (eq auth "none"))}}
+{{#if (and (and usePrisma (eq auth "none")) (eq prismaVersion "7"))}}
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { DbService } from "../../database/db.service.js";
@@ -11,7 +11,7 @@ export class TodoResolver {
   constructor(private readonly db: DbService) {}
 
   @Query(() => [Todo])
-  todos() {
+  async todos() {
     return this.db.prisma.todo.findMany({ orderBy: { createdAt: "asc" }, take: 100 });
   }
 
@@ -81,7 +81,7 @@ export class TodoResolver {
   {{#if hasAuth}}
   @UseGuards(GqlAuthGuard)
   {{/if}}
-  todos({{#if useTypeorm}}info: GraphQLResolveInfo, {{/if}}{{#if hasAuth}}@UserEntity() user: { id: string }{{/if}}) {
+  async todos({{#if useTypeorm}}info: GraphQLResolveInfo, {{/if}}{{#if hasAuth}}@UserEntity() user: { id: string }{{/if}}) {
     {{#if useTypeorm}}
     const builder = new GraphRelationBuilder(this.db.typeorm);
     const relations = builder.buildForQuery(Todo, info, "todos");
@@ -91,10 +91,18 @@ export class TodoResolver {
     return this.db.typeorm.getRepository(TodoEntity).find({ relations });
     {{/if}}
     {{else if isPrisma8}}
+    {{#if hasMongodb}}
+    const todos: Todo[] = [];
+    for await (const { _id, ...todo } of this.db.prisma.orm.todos.limit(100).all()) {
+      todos.push({ ...todo, id: _id });
+    }
+    return todos;
+    {{else}}
     {{#if hasAuth}}
     return ((this.db.prisma.orm.public as any).Todo).where({ authorId: user.id }).all();
     {{else}}
     return ((this.db.prisma.orm.public as any).Todo).all();
+    {{/if}}
     {{/if}}
     {{else if usePrisma}}
     {{#if hasAuth}}
@@ -125,10 +133,15 @@ export class TodoResolver {
   ) {
     if (!input.title.trim()) throw new BadRequestException("Title must not be empty");
     {{#if isPrisma8}}
+    {{#if hasMongodb}}
+    const { _id, ...todo } = await this.db.prisma.orm.todos.create({ ...input, completed: input.completed ?? false });
+    return { ...todo, id: _id };
+    {{else}}
     {{#if hasAuth}}
     return ((this.db.prisma.orm.public as any).Todo).create({ ...input, authorId: user.id });
     {{else}}
     return ((this.db.prisma.orm.public as any).Todo).create(input);
+    {{/if}}
     {{/if}}
     {{else if usePrisma}}
     {{#if hasAuth}}
@@ -184,10 +197,17 @@ export class TodoResolver {
     const { id, ...data } = input;
     if (data.title !== undefined && !data.title.trim()) throw new BadRequestException("Title must not be empty");
     {{#if isPrisma8}}
+    {{#if hasMongodb}}
+    const todo = await this.db.prisma.orm.todos.where({ _id: id }).update(data);
+    if (!todo) throw new NotFoundException("Todo not found");
+    const { _id, ...fields } = todo;
+    return { ...fields, id: _id };
+    {{else}}
     {{#if hasAuth}}
     return ((this.db.prisma.orm.public as any).Todo).where({ authorId: user.id, id }).update(data);
     {{else}}
     return ((this.db.prisma.orm.public as any).Todo).where({ id }).update(data);
+    {{/if}}
     {{/if}}
     {{else if usePrisma}}
     {{#if hasAuth}}
@@ -238,10 +258,15 @@ export class TodoResolver {
     @Args("id") id: string
   ): Promise<boolean> {
     {{#if isPrisma8}}
+    {{#if hasMongodb}}
+    const todo = await this.db.prisma.orm.todos.where({ _id: id }).delete();
+    if (!todo) throw new NotFoundException("Todo not found");
+    {{else}}
     {{#if hasAuth}}
     await ((this.db.prisma.orm.public as any).Todo).where({ authorId: user.id, id }).delete();
     {{else}}
     await ((this.db.prisma.orm.public as any).Todo).where({ id }).delete();
+    {{/if}}
     {{/if}}
     return true;
     {{else if usePrisma}}

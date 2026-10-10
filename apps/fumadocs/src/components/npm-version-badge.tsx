@@ -22,12 +22,15 @@ export async function NpmVersionBadge({ locale }: { locale: string }) {
   const label = version ? translation.latest : translation.unavailable;
 
   return (
-    <span
+    <a
       aria-label={`${label}: ${version ?? documentedVersion}`}
-      className="nest-version-badge rounded-full border px-1.5 py-0.5 font-mono text-[0.625rem] font-normal"
+      className="nest-version-badge inline-flex items-center rounded-full border px-1.5 py-0.5 font-mono text-[0.625rem] leading-none font-normal"
+      href="https://www.npmjs.com/package/@nest-arch/tui"
+      rel="noopener noreferrer"
+      target="_blank"
       title={label}
     >
       {version ? "npm" : "docs"} v{version ?? documentedVersion}
-    </span>
+    </a>
   );
 }

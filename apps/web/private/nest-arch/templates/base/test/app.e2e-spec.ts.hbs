@@ -421,8 +421,8 @@ describe("AppController (e2e)", () => {
 {{#if (and hasHealthCheck hasDatabase (or usePrisma useTypeorm useDrizzle))}}
   it("reports database readiness failure with HTTP 503", async () => {
     const db = app.get(DbService);
-    const database = {{#if hasMongodb}}{{#if useTypeorm}}db.typeorm.getMongoRepository(Todo){{else}}db.raw.mongo{{/if}}{{else if isPrisma8}}db.prisma.orm.public.Todo{{else if usePrisma}}db.prisma{{else if useTypeorm}}db.typeorm{{else}}db.drizzle{{/if}};
-    const query = vi.spyOn(database, {{#if hasMongodb}}{{#if usePrisma}}"$runCommandRaw"{{else if useTypeorm}}"countDocuments"{{else}}"command"{{/if}}{{else if isPrisma8}}"all"{{else if usePrisma}}"$queryRaw"{{else if useTypeorm}}"query"{{else if hasSqlite}}"get"{{else}}"execute"{{/if}})
+    const database = {{#if hasMongodb}}{{#if isPrisma8}}db.prisma.orm.todos{{else if useTypeorm}}db.typeorm.getMongoRepository(Todo){{else}}db.raw.mongo{{/if}}{{else if isPrisma8}}db.prisma.orm.public.Todo{{else if usePrisma}}db.prisma{{else if useTypeorm}}db.typeorm{{else}}db.drizzle{{/if}};
+    const query = vi.spyOn(database, {{#if hasMongodb}}{{#if isPrisma8}}"limit"{{else if usePrisma}}"$runCommandRaw"{{else if useTypeorm}}"countDocuments"{{else}}"command"{{/if}}{{else if isPrisma8}}"all"{{else if usePrisma}}"$queryRaw"{{else if useTypeorm}}"query"{{else if hasSqlite}}"get"{{else}}"execute"{{/if}})
       .mockRejectedValue(new Error("scenario database outage"));
     try {
       const response = await request(getRequestTarget()).get("/health").expect(503);
@@ -577,7 +577,7 @@ describe("AppController (e2e)", () => {
     const session = await request(getRequestTarget(server)).get("/api/auth/get-session")
       .set("Cookie", cookies).expect(200);
     expect(session.body.user.email).toBe(email);
-{{#if (or usePrisma useDrizzle)}}
+{{#if (or (and usePrisma (not (and isPrisma8 hasMongodb))) useDrizzle)}}
     await request(getRequestTarget(server)).get("/auth-profile").expect(401);
     const protectedProfile = await request(getRequestTarget(server)).get("/auth-profile").set("Cookie", cookies).expect(200);
     expect(protectedProfile.body.email).toBe(email);
@@ -905,7 +905,7 @@ expect(revoked.body).toBeNull();
     expect(rotated.body.refreshToken).toBeTruthy();
   });
 {{/if}}
-{{#if (and hasMongodb (eq auth "none"))}}
+{{#if (and hasRest (and hasMongodb (eq auth "none")))}}
   it("rejects malformed and missing MongoDB identifiers", async () => {
     await request(getRequestTarget()).delete("/todos/invalid").expect(400);
     await request(getRequestTarget()).delete("/todos/000000000000000000000000").expect(404);

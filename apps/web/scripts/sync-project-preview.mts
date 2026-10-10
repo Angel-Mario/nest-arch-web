@@ -167,7 +167,7 @@ for (const [id, label, input] of [
   ],
   [
     "mongodb-prisma8",
-    "MongoDB + Prisma 8 (preview)",
+    "MongoDB + Prisma 8",
     { database: ["mongodb"], orm: ["prisma"], prismaVersion: "8" },
   ],
   [
@@ -202,7 +202,13 @@ for (const [id, label, input] of [
 }
 const manifest = {
   generatorVersion: tuiPackage.version,
-  options,
+  options: {
+    ...options,
+    prismaVersionOptions: options.prismaVersionOptions?.map((option) => ({
+      ...option,
+      description: option.description.replace("Prisma 8 (preview)", "Prisma 8"),
+    })),
+  },
   presets,
   version,
 };

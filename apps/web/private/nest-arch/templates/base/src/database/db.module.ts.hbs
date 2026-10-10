@@ -82,6 +82,10 @@ import { AppDataSource } from "./orm/typeorm/data-source.js";
 {{/if}}
 
 {{#if useRawSql}}
+  {{#if hasSqlserver}}
+import { RawSqlAdapter } from './adapters/sql/raw-sql.adapter.js';
+import sql from 'mssql';
+  {{/if}}
   {{#if (or hasPostgres hasMysql hasSqlite)}}
 import { RawSqlAdapter } from './adapters/sql/raw-sql.adapter.js';
     {{#if hasPostgres}}
@@ -231,6 +235,16 @@ export class DbModule {
     {{/if}}
 
     {{#if useRawSql}}
+      {{#if hasSqlserver}}
+    if (!options.sqlserver) {
+      throw new Error("SQL Server connection settings are required to initialize the SQL adapter");
+    }
+    providers.push({
+      provide: 'SQL_CLIENT',
+      useFactory: async () => new sql.ConnectionPool(options.sqlserver!).connect(),
+    });
+    providers.push({ provide: 'SQL_ADAPTER', useClass: RawSqlAdapter });
+      {{/if}}
       {{#if (or hasPostgres hasMysql hasSqlite)}}
         {{#if hasPostgres}}
     const pool = new Pool({

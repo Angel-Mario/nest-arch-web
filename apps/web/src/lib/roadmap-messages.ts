@@ -23,13 +23,6 @@ export interface RoadmapMessages {
       href?: string;
     }[];
   };
-  compatibility: {
-    heading: string;
-    description: string;
-    checked: string;
-    docs: string;
-    items: { title: string; description: string }[];
-  };
 }
 
 export const roadmapMessages: Record<Locale, RoadmapMessages> = {
@@ -54,25 +47,6 @@ export const roadmapMessages: Record<Locale, RoadmapMessages> = {
           description: "Planned after I find a job.",
           status: "Planned",
           title: "Open-source release",
-        },
-      ],
-    },
-    compatibility: {
-      checked: "Last checked",
-      description:
-        "These notes describe the builder integration. Available options depend on the selected database and generator profile.",
-      docs: "Prisma documentation",
-      heading: "Database compatibility",
-      items: [
-        {
-          description:
-            "Unavailable in the web builder. Choose native MongoDB or the Prisma 8 preview.",
-          title: "Prisma 7 + MongoDB",
-        },
-        {
-          description:
-            "Available for PostgreSQL and MongoDB in the builder. The MongoDB integration is a preview pending runtime validation.",
-          title: "Prisma 8",
         },
       ],
     },
@@ -173,25 +147,6 @@ export const roadmapMessages: Record<Locale, RoadmapMessages> = {
         },
       ],
     },
-    compatibility: {
-      checked: "Última verificación",
-      description:
-        "Estas notas describen la integración del builder. Las opciones disponibles dependen de la base de datos y del perfil del generador.",
-      docs: "Documentación de Prisma",
-      heading: "Compatibilidad de bases de datos",
-      items: [
-        {
-          description:
-            "No disponible en el builder web. Elige MongoDB nativo o la vista previa de Prisma 8.",
-          title: "Prisma 7 + MongoDB",
-        },
-        {
-          description:
-            "Disponible para PostgreSQL y MongoDB en el builder. La integración con MongoDB es una vista previa pendiente de validación en ejecución.",
-          title: "Prisma 8",
-        },
-      ],
-    },
     description:
       "Primero, aplicaciones independientes completas. Después, las bases para monorepos. Luego, herramientas para seguir ampliando tu proyecto tras su creación.",
     heading: "Hacia dónde va nest/arch.",
@@ -286,25 +241,6 @@ export const roadmapMessages: Record<Locale, RoadmapMessages> = {
           description: "Planejado para uma etapa futura do projeto.",
           status: "Planejado",
           title: "Lançamento como código aberto",
-        },
-      ],
-    },
-    compatibility: {
-      checked: "Última verificação",
-      description:
-        "Estas notas descrevem a integração do builder. As opções disponíveis dependem do banco de dados e do perfil do gerador.",
-      docs: "Documentação do Prisma",
-      heading: "Compatibilidade de bancos de dados",
-      items: [
-        {
-          description:
-            "Indisponível no builder web. Escolha MongoDB nativo ou a prévia do Prisma 8.",
-          title: "Prisma 7 + MongoDB",
-        },
-        {
-          description:
-            "Disponível para PostgreSQL e MongoDB no builder. A integração com MongoDB é uma prévia pendente de validação em execução.",
-          title: "Prisma 8",
         },
       ],
     },

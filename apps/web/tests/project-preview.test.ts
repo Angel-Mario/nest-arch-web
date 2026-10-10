@@ -8,6 +8,8 @@ import { test } from "node:test";
 import { setTimeout as delay } from "node:timers/promises";
 
 import { ProjectGenerator } from "../private/nest-arch/runtime.mjs";
+import { updateBuilderConfig } from "../src/lib/builder-config";
+import { buildProjectCommand } from "../src/lib/project-command";
 import { configFromWizard } from "../src/lib/project-preview/client";
 import {
   codeLines,
@@ -15,6 +17,7 @@ import {
 } from "../src/lib/project-preview/code-lines";
 import {
   canonicalConfig,
+  getSupportedPrismaVersions,
   normalizePreviewConfig,
   personalizePreview,
   PREVIEW_PROJECT_NAME,
@@ -335,6 +338,73 @@ test("Prisma versions retain wizard selections and use distinct preview identiti
   assert.equal(
     normalizePreviewConfig({ ...prisma8, orm: [] }).prismaVersion,
     undefined
+  );
+});
+
+test("switching databases preserves supported Prisma versions and replaces incompatible selections", () => {
+  const postgres = normalizePreviewConfig({
+    database: ["postgresql"],
+    orm: ["prisma"],
+    prismaVersion: "7",
+  });
+  const mongo = updateBuilderConfig(postgres, "database", ["mongodb"]);
+  assert.deepEqual(getSupportedPrismaVersions(mongo.database), ["6", "8"]);
+  assert.equal(mongo.prismaVersion, "6");
+  assert.equal(configFromWizard(mongo).prismaVersion, "6");
+  const mongo8 = updateBuilderConfig(mongo, "prismaVersion", ["8"]);
+  assert.equal(mongo8.prismaVersion, "8");
+  assert.notEqual(previewKey(mongo), previewKey(mongo8));
+  assert.equal(
+    updateBuilderConfig(mongo8, "database", ["postgresql"]).prismaVersion,
+    "8"
+  );
+  const postgres7 = updateBuilderConfig(mongo, "database", ["postgresql"]);
+  assert.deepEqual(getSupportedPrismaVersions(postgres7.database), ["7", "8"]);
+  assert.equal(postgres7.prismaVersion, "7");
+  assert.equal(
+    updateBuilderConfig(mongo8, "database", ["mysql"]).prismaVersion,
+    "7"
+  );
+  for (const config of [mongo, mongo8, postgres7]) {
+    const command = buildProjectCommand({
+      ...config,
+      initGit: "no",
+      installDependencies: "no",
+      projectName: "test-app",
+    });
+    assert.ok(command.includes(`--prisma-version ${config.prismaVersion}`));
+  }
+});
+
+test("MongoDB Prisma 6 previews contain the matching client and schema", async () => {
+  const config = normalizePreviewConfig({
+    database: ["mongodb"],
+    orm: ["prisma"],
+    prismaVersion: "6",
+  });
+  const preview = await generatePreview(
+    config,
+    manifest.version,
+    previewKey(config),
+    manifest.generatorVersion
+  );
+  const packageFile = preview.files.find(
+    (file) => file.path === "package.json"
+  );
+  assert.ok(packageFile);
+  const { dependencies } = JSON.parse(packageFile.content);
+  assert.match(dependencies["@prisma/client"], /6\./u);
+  assert.ok(
+    preview.files.some(
+      (file) =>
+        file.path.endsWith("schema.prisma") &&
+        file.content.includes('provider = "mongodb"')
+    )
+  );
+  assert.ok(
+    preview.files
+      .find((file) => file.path === "nest-arch.jsonc")
+      ?.content.includes('"prismaVersion": "6"')
   );
 });
 

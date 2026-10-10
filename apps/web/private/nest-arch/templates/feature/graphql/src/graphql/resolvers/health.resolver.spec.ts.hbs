@@ -1,0 +1,9 @@
+import { describe, expect, it } from "vitest";
+
+import { HealthResolver } from "./health.resolver.js";
+
+describe(HealthResolver, () => {
+  it("returns the GraphQL health message", () => {
+    expect(new HealthResolver().hello()).toBe("Hello GraphQL!");
+  });
+});

@@ -1,5 +1,9 @@
 {{#if isPrisma8}}
-import { Injectable } from "@nestjs/common";
+import { Injectable{{#if (and hasMongodb isPassportAuth)}}, OnModuleDestroy, OnModuleInit{{/if}} } from "@nestjs/common";
+{{#if (and hasMongodb isPassportAuth)}}
+import { MongoClient, type Db } from "mongodb";
+import { env } from "../config/env.js";
+{{/if}}
 {{#if isMonorepo}}
 import { db as prismaDb } from "../prisma/db.js";
 {{else}}
@@ -7,13 +11,44 @@ import { db as prismaDb } from "../prisma/db.js";
 {{/if}}
 
 @Injectable()
-export class DbService {
+export class DbService{{#if (and hasMongodb isPassportAuth)}} implements OnModuleInit, OnModuleDestroy{{/if}} {
+  {{#if (and hasMongodb isPassportAuth)}}
+  private readonly mongoClient = new MongoClient(env.MONGODB_URL);
+  private mongoDatabase: Db | undefined;
+
+  async onModuleInit(): Promise<void> {
+    await this.mongoClient.connect();
+    this.mongoDatabase = this.mongoClient.db();
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    await this.mongoClient.close();
+  }
+
+  private get connectedMongoDatabase(): Db {
+    if (!this.mongoDatabase) {
+      throw new Error("MongoDB connection is not initialized");
+    }
+    return this.mongoDatabase;
+  }
+  {{/if}}
+
   get prisma() {
     return prismaDb;
   }
 
   get raw() {
-    return { sql: prismaDb };
+    return {
+      {{#if hasMongodb}}
+      {{#if isPassportAuth}}
+      mongo: this.connectedMongoDatabase,
+      {{else}}
+      mongo: prismaDb,
+      {{/if}}
+      {{else}}
+      sql: prismaDb,
+      {{/if}}
+    };
   }
 }
 {{else}}

@@ -6,8 +6,6 @@ import Link from "next/link";
 
 import { useUi } from "@/components/locale-provider";
 
-const COMPATIBILITY_CHECKED = "2026-09-28";
-
 export const RoadmapContent = () => {
   const { t, locale } = useUi();
   const { roadmap } = t;
@@ -124,50 +122,6 @@ export const RoadmapContent = () => {
               </li>
             ))}
           </ul>
-        </section>
-
-        <section
-          aria-labelledby="compatibility-heading"
-          className="border-border bg-muted/20 rounded-2xl border p-6"
-        >
-          <h2 id="compatibility-heading" className="text-xl font-semibold">
-            {roadmap.compatibility.heading}
-          </h2>
-          <p className="text-muted-foreground mt-2 max-w-3xl text-sm leading-relaxed">
-            {roadmap.compatibility.description}
-          </p>
-          <dl className="mt-6 grid gap-6 md:grid-cols-2">
-            {roadmap.compatibility.items.map((item) => (
-              <div key={item.title}>
-                <dt className="font-mono text-sm font-semibold">
-                  {item.title}
-                </dt>
-                <dd className="text-muted-foreground mt-2 text-sm leading-relaxed">
-                  {item.description}
-                </dd>
-              </div>
-            ))}
-          </dl>
-          <div className="text-muted-foreground border-border mt-6 flex flex-wrap items-center justify-between gap-3 border-t pt-4 text-xs">
-            <p>
-              {roadmap.compatibility.checked}:{" "}
-              <time dateTime={COMPATIBILITY_CHECKED}>
-                {new Intl.DateTimeFormat(locale, {
-                  dateStyle: "long",
-                  timeZone: "UTC",
-                }).format(new Date(`${COMPATIBILITY_CHECKED}T00:00:00Z`))}
-              </time>
-            </p>
-            <a
-              href="https://www.prisma.io/docs/orm/supported-databases"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 underline underline-offset-4"
-            >
-              {roadmap.compatibility.docs}
-              <ArrowUpRight className="size-4" aria-hidden="true" />
-            </a>
-          </div>
         </section>
       </main>
     </div>
