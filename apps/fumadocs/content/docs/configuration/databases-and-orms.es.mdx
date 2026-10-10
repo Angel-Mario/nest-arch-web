@@ -8,3 +8,5 @@ La TUI lista PostgreSQL, MySQL, SQLite, SQL Server y MongoDB, además de Prisma,
 Selecciona como máximo una base de datos y un ORM. Un ORM requiere una base de datos. Después, puede que tengas que configurar `.env`, generar un cliente, aplicar un esquema o ejecutar migraciones. Sigue las instrucciones de tu proyecto.
 
 No deduzcas compatibilidad combinando las opciones de forma independiente. Comprueba la [matriz de perfiles](../reference/compatibility.mdx). Para bases de datos externas, inicia el servicio primero; SQLite necesita que su archivo esté en una ruta escribible.
+
+El builder web ofrece Prisma 7 u 8 para PostgreSQL. MongoDB permite acceso nativo o una vista previa de Prisma 8 pendiente de validación en ejecución; Prisma 7 no se ofrece para MongoDB. Las demás bases SQL mantienen Prisma 7. Los comandos incluyen `--prisma-version` cuando se elige Prisma. El snapshot web puede incluir cambios que la CLI publicada todavía no admite.

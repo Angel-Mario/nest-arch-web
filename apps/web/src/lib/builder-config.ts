@@ -33,7 +33,7 @@ export const updateBuilderConfig = (
     }
   }
   if (next.database.includes("mongodb")) {
-    next.orm = [];
+    next.orm = next.orm.filter((orm) => orm === "prisma");
   }
   if (next.formatter === "none") {
     next.addons = next.addons.filter((value) => value !== "ultracite");

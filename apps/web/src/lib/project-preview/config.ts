@@ -60,7 +60,7 @@ export const previewConfigSchema = z
       .pipe(z.array(z.enum(["prisma", "typeorm", "drizzle"])).max(1))
       .default([]),
     packageManager: z.enum(["pnpm", "npm", "yarn", "bun"]).default("pnpm"),
-    prismaVersion: z.literal("7").optional(),
+    prismaVersion: z.enum(["7", "8"]).optional(),
     projectType: z.literal("single").default("single"),
     ultraciteAgents: z
       .array(
@@ -93,12 +93,24 @@ export const previewConfigSchema = z
 
 export type PreviewConfig = z.output<typeof previewConfigSchema>;
 
+export const resolvePrismaVersion = (
+  database: readonly string[],
+  version?: "7" | "8" | null
+): "7" | "8" => {
+  if (database.includes("mongodb")) {
+    return "8";
+  }
+  return database.includes("postgresql") ? (version ?? "7") : "7";
+};
+
 export const normalizePreviewConfig = (input: unknown): PreviewConfig => {
   const parsed = previewConfigSchema.parse(input);
   const hasUltracite = parsed.addons.includes("ultracite");
   return {
     ...parsed,
-    prismaVersion: parsed.orm.includes("prisma") ? "7" : undefined,
+    prismaVersion: parsed.orm.includes("prisma")
+      ? resolvePrismaVersion(parsed.database, parsed.prismaVersion)
+      : undefined,
     ultraciteAgents: hasUltracite
       ? [...new Set(parsed.ultraciteAgents)].toSorted()
       : [],

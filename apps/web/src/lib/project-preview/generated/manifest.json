@@ -435,7 +435,7 @@
       "id": "rest",
       "key": "6bf11d286ad0fbd72be92164c709413bc9ec34ce28457421a871ef27e90a5808",
       "label": "NestJS REST",
-      "url": "/project-previews/0.5.1-5910dbff4c7634c38459/6bf11d286ad0fbd72be92164c709413bc9ec34ce28457421a871ef27e90a5808.json"
+      "url": "/project-previews/0.5.1-9753995e6e8b8416bd4f/6bf11d286ad0fbd72be92164c709413bc9ec34ce28457421a871ef27e90a5808.json"
     },
     {
       "config": {
@@ -466,7 +466,7 @@
       "id": "postgresql",
       "key": "c55b236121d5be0de18915cbaf25038f12a7957c90bd54a755d988732898abcd",
       "label": "PostgreSQL + Prisma",
-      "url": "/project-previews/0.5.1-5910dbff4c7634c38459/c55b236121d5be0de18915cbaf25038f12a7957c90bd54a755d988732898abcd.json"
+      "url": "/project-previews/0.5.1-9753995e6e8b8416bd4f/c55b236121d5be0de18915cbaf25038f12a7957c90bd54a755d988732898abcd.json"
     },
     {
       "config": {
@@ -497,7 +497,7 @@
       "id": "sqlserver",
       "key": "ed9e3bf44ee33e60855da0224ba01fa828aff6959d712a548edb34543a35c1c2",
       "label": "SQL Server + Prisma",
-      "url": "/project-previews/0.5.1-5910dbff4c7634c38459/ed9e3bf44ee33e60855da0224ba01fa828aff6959d712a548edb34543a35c1c2.json"
+      "url": "/project-previews/0.5.1-9753995e6e8b8416bd4f/ed9e3bf44ee33e60855da0224ba01fa828aff6959d712a548edb34543a35c1c2.json"
     },
     {
       "config": {
@@ -527,7 +527,7 @@
       "id": "sqlite",
       "key": "e2c49843018900f192dcfb2884552048e46c7fa1cf4fa17644e0ea83a23ffb4e",
       "label": "SQLite + Drizzle",
-      "url": "/project-previews/0.5.1-5910dbff4c7634c38459/e2c49843018900f192dcfb2884552048e46c7fa1cf4fa17644e0ea83a23ffb4e.json"
+      "url": "/project-previews/0.5.1-9753995e6e8b8416bd4f/e2c49843018900f192dcfb2884552048e46c7fa1cf4fa17644e0ea83a23ffb4e.json"
     },
     {
       "config": {
@@ -555,7 +555,69 @@
       "id": "mongodb",
       "key": "89d4e032cad8242d1c596198c70fda501e2bedf8047d8a0742c041cb704994ed",
       "label": "MongoDB",
-      "url": "/project-previews/0.5.1-5910dbff4c7634c38459/89d4e032cad8242d1c596198c70fda501e2bedf8047d8a0742c041cb704994ed.json"
+      "url": "/project-previews/0.5.1-9753995e6e8b8416bd4f/89d4e032cad8242d1c596198c70fda501e2bedf8047d8a0742c041cb704994ed.json"
+    },
+    {
+      "config": {
+        "addons": [],
+        "api": [
+          "rest"
+        ],
+        "architecture": "nest-api",
+        "auth": "none",
+        "database": [
+          "postgresql"
+        ],
+        "extras": [],
+        "formatter": "none",
+        "httpProvider": "express",
+        "microservices": [],
+        "orm": [
+          "prisma"
+        ],
+        "packageManager": "pnpm",
+        "prismaVersion": "8",
+        "projectType": "single",
+        "ultraciteAgents": [],
+        "ultraciteEditors": [],
+        "ultraciteHooks": [],
+        "ultraciteInstallSkill": "no"
+      },
+      "id": "postgresql-prisma8",
+      "key": "d640dd973aded802def29da1fb04ed707eef36d3e6457a43d9483c8083086f36",
+      "label": "PostgreSQL + Prisma 8",
+      "url": "/project-previews/0.5.1-9753995e6e8b8416bd4f/d640dd973aded802def29da1fb04ed707eef36d3e6457a43d9483c8083086f36.json"
+    },
+    {
+      "config": {
+        "addons": [],
+        "api": [
+          "rest"
+        ],
+        "architecture": "nest-api",
+        "auth": "none",
+        "database": [
+          "mongodb"
+        ],
+        "extras": [],
+        "formatter": "none",
+        "httpProvider": "express",
+        "microservices": [],
+        "orm": [
+          "prisma"
+        ],
+        "packageManager": "pnpm",
+        "prismaVersion": "8",
+        "projectType": "single",
+        "ultraciteAgents": [],
+        "ultraciteEditors": [],
+        "ultraciteHooks": [],
+        "ultraciteInstallSkill": "no"
+      },
+      "id": "mongodb-prisma8",
+      "key": "6a87d8172c4eb3053e707276196eb79c740555c762d30fe768eb9c4242559d92",
+      "label": "MongoDB + Prisma 8 (preview)",
+      "url": "/project-previews/0.5.1-9753995e6e8b8416bd4f/6a87d8172c4eb3053e707276196eb79c740555c762d30fe768eb9c4242559d92.json"
     },
     {
       "config": {
@@ -581,8 +643,8 @@
       "id": "redis",
       "key": "2826a6f35819a368bec65b0112a9a221988c643675c6af5097f2cba8ddacff12",
       "label": "Redis microservice",
-      "url": "/project-previews/0.5.1-5910dbff4c7634c38459/2826a6f35819a368bec65b0112a9a221988c643675c6af5097f2cba8ddacff12.json"
+      "url": "/project-previews/0.5.1-9753995e6e8b8416bd4f/2826a6f35819a368bec65b0112a9a221988c643675c6af5097f2cba8ddacff12.json"
     }
   ],
-  "version": "0.5.1-5910dbff4c7634c38459"
+  "version": "0.5.1-9753995e6e8b8416bd4f"
 }

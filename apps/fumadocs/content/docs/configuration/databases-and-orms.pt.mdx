@@ -8,3 +8,5 @@ A TUI lista PostgreSQL, MySQL, SQLite, SQL Server e MongoDB, além de Prisma, Ty
 Escolha no máximo um banco de dados e um ORM. Um ORM precisa de um banco. Depois, talvez seja necessário configurar `.env`, gerar um cliente, aplicar um esquema ou executar migrações. Siga as instruções do seu projeto.
 
 Não deduza compatibilidade combinando opções separadas. Confira a [matriz de perfis](../reference/compatibility.mdx). Inicie o serviço antes de usar um banco externo; o arquivo SQLite precisa estar em um caminho gravável.
+
+O builder web oferece Prisma 7 ou 8 para PostgreSQL. MongoDB permite acesso nativo ou uma prévia do Prisma 8 pendente de validação em execução; Prisma 7 não é oferecido para MongoDB. Os demais bancos SQL mantêm Prisma 7. Os comandos incluem `--prisma-version` ao escolher Prisma. O snapshot web pode incluir mudanças que a CLI publicada ainda não suporta.

@@ -10,7 +10,7 @@ Run `pnpm --filter web preview:sync` with `C:/VS/nest-arch` alongside this repos
 
 The identity includes the CLI version plus a SHA-256 digest of the core sources, shared sources, templates, dependency reference, option catalog, and preview adapter. Changing those inputs selects a new cache namespace even without changing the CLI's version. Do not modify a snapshot in place. Old versioned assets may be removed in a later release after their cache lifetime has elapsed.
 
-Six starter configurations are pregenerated during synchronization and served directly from `/project-previews/<version>/<hash>.json`. Visiting these presets does not invoke a generation function. Clicking Explore is the only action that fetches a preview. Opening files, searching, copying and renaming remain local. The browser also reuses successful responses and coalesces concurrent requests.
+Eight starter configurations are pregenerated during synchronization and served directly from `/project-previews/<version>/<hash>.json`. Visiting these presets does not invoke a generation function. Clicking Explore is the only action that fetches a preview. Opening files, searching, copying and renaming remain local. The browser also reuses successful responses and coalesces concurrent requests.
 
 Syntax highlighting runs in the browser using Shiki's JavaScript engine and a limited set of grammars. It follows the light/dark theme and falls back to plain text if highlighting fails. Line numbers are decorative and are excluded from copied source. Material Icon Theme SVGs are served locally, including its NestJS icon-pack colors. The source attribution and MIT license are in `public/material-icons`.
 

@@ -14,6 +14,8 @@ import { trackAnalyticsEvent } from "@/lib/analytics";
 import { useUi } from "@/components/locale-provider";
 import { ProjectCommand } from "@/components/project-command";
 import { buildProjectCommand } from "@/lib/project-command";
+import { builderMessages } from "@/lib/builder-messages";
+import { resolvePrismaVersion } from "@/lib/project-preview/config";
 import { previewMessages } from "@/lib/project-preview/messages";
 
 const ProjectExplorer = dynamic(() => import("@/components/project-explorer"), { ssr: false });
@@ -75,6 +77,7 @@ export type WizardStepId =
   | "architecture"
   | "database"
   | "orm"
+  | "prismaVersion"
   | "apiLayer"
   | "auth"
   | "extras"
@@ -98,6 +101,7 @@ export interface WizardOption<T extends string = string> {
 }
 
 export interface CreateProjectWizardState {
+  prismaVersion?: "7" | "8" | null;
   projectName: string;
   packageManager: PackageManager | null;
   formatter: FormatterOption | null;
@@ -522,6 +526,7 @@ const STEP_LABELS: Record<WizardStepId, string> = {
   installing: "Installing",
   microservices: "Microservices communication",
   orm: "ORM",
+  prismaVersion: "Prisma version",
   packageManager: "Package manager",
   projectName: "Project name",
   projectType: "Project type",
@@ -541,6 +546,7 @@ const WIZARD_STEP_ORDER: WizardStepId[] = [
   "architecture",
   "database",
   "orm",
+  "prismaVersion",
   "apiLayer",
   "auth",
   "extras",
@@ -606,6 +612,13 @@ function validateProjectName(name: string): string | null {
 function getVisibleSteps(state: CreateProjectWizardState): WizardStepId[] {
   return WIZARD_STEP_ORDER.filter((step) => {
     if (step === "projectType") return false;
+    if (
+      step === "prismaVersion" &&
+      (!state.orm.includes("prisma") ||
+        (!state.database.includes("postgresql") && !state.database.includes("mongodb")))
+    ) {
+      return false;
+    }
     if (step === "orm" && state.database.length === 0) {
       return false;
     }
@@ -823,7 +836,7 @@ export const InteractiveTerminalWizard = ({
           value: "none",
         };
         const ormOpts = state.database.includes("mongodb")
-          ? []
+          ? ORM_OPTIONS.filter((option) => option.value === "prisma")
           : ORM_OPTIONS;
         return {
           isMulti: false,
@@ -831,6 +844,15 @@ export const InteractiveTerminalWizard = ({
           prompt: "Select an ORM to include",
         };
       }
+      case "prismaVersion":
+        return {
+          isMulti: false,
+          options: [
+            ...(!state.database.includes("mongodb") ? [{ value: "7", label: "Prisma 7", description: "Classic Prisma ORM" }] : []),
+            { value: "8", label: "Prisma 8 (preview)", description: state.database.includes("mongodb") ? builderMessages[locale].prismaMongoPending : builderMessages[locale].prisma8Description },
+          ],
+          prompt: builderMessages[locale].prismaVersion,
+        };
       case "apiLayer": {
         const apiOpts =
           state.database.length === 0
@@ -918,7 +940,7 @@ export const InteractiveTerminalWizard = ({
       default:
         return null;
     }
-  }, [stepId, state]);
+  }, [locale, stepId, state]);
 
   // Reset focus index on step change
   React.useEffect(() => {
@@ -967,59 +989,67 @@ export const InteractiveTerminalWizard = ({
   // Single select choice confirm
   const handleSingleSelectConfirm = React.useCallback(
     (value: string) => {
-      setState((prev) => {
-        const next = { ...prev };
-        switch (stepId) {
-          case "packageManager":
-            next.packageManager = value as PackageManager;
-            break;
-          case "formatter":
-            next.formatter = value as FormatterOption;
-            if (value === "none") {
-              next.addons = next.addons.filter((a) => a !== "ultracite");
-            }
-            break;
-          case "httpProvider":
-            next.httpProvider = value as HttpProvider;
-            break;
-          case "projectType":
-            next.projectType = value as ProjectType;
-            if (value === "single" && next.architecture === "nest-gateway") {
-              next.architecture = "nest-api";
-            }
-            break;
-          case "architecture":
-            next.architecture = value as Architecture;
-            break;
-          case "database":
-            next.database = value === "none" ? [] : [value as Database];
-            if (value === "none") {
-              next.orm = [];
-            }
-            break;
-          case "orm":
-            next.orm = value === "none" ? [] : [value as Orm];
-            break;
-          case "auth":
-            next.auth = value as AuthOption;
-            break;
-          case "ultraciteInstallSkill":
-            next.ultraciteInstallSkill = value as UltraciteInstallSkill;
-            break;
-          case "initGit":
-            next.initGit = value as InitGitOption;
-            break;
-          case "installDependencies":
-            next.installDependencies = value as InstallDependencyOption;
-            break;
-          default:
-            break;
-        }
-        return next;
-      });
-      goToNextStep();
+      const next = { ...state };
+      switch (stepId) {
+        case "packageManager":
+          next.packageManager = value as PackageManager;
+          break;
+        case "formatter":
+          next.formatter = value as FormatterOption;
+          if (value === "none") {
+            next.addons = next.addons.filter((a) => a !== "ultracite");
+          }
+          break;
+        case "httpProvider":
+          next.httpProvider = value as HttpProvider;
+          break;
+        case "projectType":
+          next.projectType = value as ProjectType;
+          if (value === "single" && next.architecture === "nest-gateway") {
+            next.architecture = "nest-api";
+          }
+          break;
+        case "architecture":
+          next.architecture = value as Architecture;
+          break;
+        case "database":
+          next.database = value === "none" ? [] : [value as Database];
+          if (value === "none") {
+            next.orm = [];
+          }
+          break;
+        case "orm":
+          next.orm = value === "none" ? [] : [value as Orm];
+          break;
+        case "prismaVersion":
+          if (value === "7" || value === "8") next.prismaVersion = value;
+          break;
+        case "auth":
+          next.auth = value as AuthOption;
+          break;
+        case "ultraciteInstallSkill":
+          next.ultraciteInstallSkill = value as UltraciteInstallSkill;
+          break;
+        case "initGit":
+          next.initGit = value as InitGitOption;
+          break;
+        case "installDependencies":
+          next.installDependencies = value as InstallDependencyOption;
+          break;
+        default:
+          break;
+      }
+      if (next.database.includes("mongodb")) {
+        next.orm = next.orm.filter((orm) => orm === "prisma");
+      }
+      next.prismaVersion = next.orm.includes("prisma")
+        ? resolvePrismaVersion(next.database, next.prismaVersion)
+        : null;
+      setState(next);
+      const nextStep = getNextStepId(stepId, next);
+      if (nextStep) setStepId(nextStep);
     },
-    [stepId, goToNextStep]
+    [stepId, state]
   );
 
   // Multi select toggle
@@ -1242,6 +1272,7 @@ export const InteractiveTerminalWizard = ({
     }
     if (state.database.length > 0) parts.push(state.database.join(", "));
     if (state.orm.length > 0) parts.push(state.orm.join(", "));
+    if (state.orm.includes("prisma")) parts.push(`Prisma ${state.prismaVersion ?? "7"}`);
     if (state.api.length > 0) parts.push(state.api.join(", "));
     if (state.auth && state.auth !== "none") parts.push(state.auth);
     if (state.microservices.length > 0)
@@ -1373,6 +1404,8 @@ export const InteractiveTerminalWizard = ({
         return val === "none"
           ? state.orm.length === 0
           : state.orm.includes(val as Orm);
+      case "prismaVersion":
+        return state.prismaVersion === val;
       case "auth":
         return state.auth === val;
       case "ultraciteInstallSkill":
@@ -1432,6 +1465,9 @@ export const InteractiveTerminalWizard = ({
 
       {/* Terminal Inner Body */}
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[#0a0a0f]/95 p-4 font-mono text-xs leading-relaxed text-zinc-300 sm:p-5 sm:text-sm">
+        {state.database.includes("mongodb") && state.orm.includes("prisma") && (
+          <output className="mb-3 block text-xs text-amber-300">{builderMessages[locale].prismaMongoPending}</output>
+        )}
         {/* Context Bar & Header (Hidden during install / done) */}
         {stepId !== "installing" && stepId !== "done" && (
           <div className="mb-3 shrink-0 space-y-1.5 border-b border-white/10 pb-2.5">
@@ -1639,6 +1675,7 @@ export const InteractiveTerminalWizard = ({
                   <span className="text-[#e96142ff]">ORM: </span>
                   <span className="text-[#E8C468]">
                     {state.orm.length > 0 ? state.orm.join(", ") : "None"}
+                    {state.orm.includes("prisma") ? ` ${state.prismaVersion ?? "7"}` : ""}
                   </span>
                 </div>
                 <div>

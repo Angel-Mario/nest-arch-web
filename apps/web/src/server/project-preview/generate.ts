@@ -4,7 +4,7 @@ import nodePath from "node:path";
 
 import {
   ProjectGenerator,
-  getUnsupportedSelections,
+  validateProjectContext,
   options,
 } from "../../../private/nest-arch/runtime.mjs";
 import type {
@@ -28,6 +28,17 @@ export const previewContext = (config: PreviewConfig) => ({
   projectName: PREVIEW_PROJECT_NAME,
 });
 
+// Only the implemented MongoDB/Prisma 8 profile may preview before certification.
+// The generator still checks its exact shape and rejects invalid combinations.
+const pendingPreviewProfile = (
+  config: PreviewConfig
+): "prisma8-mongodb" | undefined =>
+  config.database.includes("mongodb") &&
+  config.orm.includes("prisma") &&
+  config.prismaVersion === "8"
+    ? "prisma8-mongodb"
+    : undefined;
+
 export const validatePreview = (config: PreviewConfig): void => {
   for (const [field, catalog] of [
     ["ultraciteAgents", "ultraciteAgentOptions"],
@@ -41,10 +52,18 @@ export const validatePreview = (config: PreviewConfig): void => {
       );
     }
   }
-  const issues = getUnsupportedSelections(previewContext(config));
-  if (issues.length > 0) {
+  try {
+    const candidate = pendingPreviewProfile(config);
+    validateProjectContext(
+      previewContext(config),
+      candidate,
+      candidate !== undefined
+    );
+  } catch (error) {
     throw new UnsupportedPreviewError(
-      issues.map(({ message }) => message).join("\n")
+      error instanceof Error
+        ? error.message
+        : "Unsupported preview configuration"
     );
   }
 };
@@ -94,6 +113,7 @@ export const generatePreview = async (
   }
   try {
     const generator = new ProjectGenerator(directory, {
+      candidateProfile: pendingPreviewProfile(config),
       generatorVersion,
       templatesDir,
     });

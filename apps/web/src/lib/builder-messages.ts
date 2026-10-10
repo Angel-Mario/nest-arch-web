@@ -39,11 +39,15 @@ export const builderMessages = {
     open: "Open builder",
     orm: "ORM",
     ormNativeMongo:
-      "This MongoDB preview uses the native driver. ORM integration is not available.",
+      "This MongoDB preview supports the native driver or Prisma 8.",
     ormRequiresDatabase: "Choose a database to enable ORM selection.",
     packageManager: "Package manager",
     presets: "Start from a template",
     preview: "Preview project",
+    prisma8Description: "Prisma 8 preview with contract-based schema.",
+    prismaMongoPending:
+      "MongoDB + Prisma 8 is available as a preview and is pending runtime validation. The published CLI may still reject this profile.",
+    prismaVersion: "Prisma version",
     projectType: "Project layout",
     requiresDatabase: "Select a database first",
     requiresFormatter: "Choose a formatter first",
@@ -116,12 +120,16 @@ export const builderMessages = {
     open: "Abrir builder",
     orm: "ORM",
     ormNativeMongo:
-      "Este preview de MongoDB usa el driver nativo. La integración con ORM no está disponible.",
+      "Esta vista previa de MongoDB permite el driver nativo o Prisma 8.",
     ormRequiresDatabase:
       "Selecciona una base de datos para habilitar las opciones de ORM.",
     packageManager: "Gestor de paquetes",
     presets: "Empieza con una plantilla",
     preview: "Previsualizar proyecto",
+    prisma8Description: "Prisma 8 en preview con esquema basado en contratos.",
+    prismaMongoPending:
+      "MongoDB + Prisma 8 está disponible como vista previa y sigue pendiente de validación en ejecución. La CLI publicada puede rechazar este perfil.",
+    prismaVersion: "Versión de Prisma",
     projectType: "Estructura del proyecto",
     requiresDatabase: "Selecciona una base de datos primero",
     requiresFormatter: "Elige un formatter primero",
@@ -191,12 +199,16 @@ export const builderMessages = {
     open: "Abrir builder",
     orm: "ORM",
     ormNativeMongo:
-      "Este preview do MongoDB usa o driver nativo. A integração com ORM não está disponível.",
+      "Esta prévia do MongoDB permite o driver nativo ou Prisma 8.",
     ormRequiresDatabase:
       "Selecione um banco de dados para habilitar as opções de ORM.",
     packageManager: "Gerenciador de pacotes",
     presets: "Comece com um template",
     preview: "Visualizar projeto",
+    prisma8Description: "Prisma 8 em prévia com esquema baseado em contratos.",
+    prismaMongoPending:
+      "MongoDB + Prisma 8 está disponível como prévia e aguarda validação em execução. A CLI publicada ainda pode rejeitar este perfil.",
+    prismaVersion: "Versão do Prisma",
     projectType: "Estrutura do projeto",
     requiresDatabase: "Selecione um banco de dados primeiro",
     requiresFormatter: "Escolha um formatter primeiro",

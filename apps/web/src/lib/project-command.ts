@@ -1,5 +1,7 @@
 import type { CreateProjectWizardState } from "@/app/_components/interactive-terminal-wizard";
 
+import { resolvePrismaVersion } from "./project-preview/config";
+
 type ProjectCommandState = Omit<
   CreateProjectWizardState,
   "ultraciteAgents" | "ultraciteEditors" | "ultraciteHooks"
@@ -39,6 +41,11 @@ export const buildProjectCommand = (state: ProjectCommandState): string => {
     `--install-dependencies ${state.installDependencies ?? "no"}`,
     state.initGit === "yes" ? "--git" : "--no-git"
   );
+  if (state.orm.includes("prisma")) {
+    parts.push(
+      `--prisma-version ${resolvePrismaVersion(state.database, state.prismaVersion)}`
+    );
+  }
   if (state.addons.includes("ultracite")) {
     for (const [flag, values] of [
       ["editors", state.ultraciteEditors],

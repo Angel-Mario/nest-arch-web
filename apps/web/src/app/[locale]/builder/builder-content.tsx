@@ -61,9 +61,7 @@ export const BuilderContent = () => {
   if (config.database.length === 0) {
     ormDisabledReason = t.ormRequiresDatabase;
   }
-  if (config.database.includes("mongodb")) {
-    ormDisabledReason = t.ormNativeMongo;
-  }
+
   const groups: {
     field: keyof PreviewConfig;
     options: BuilderOption[];
@@ -98,13 +96,20 @@ export const BuilderContent = () => {
     },
     {
       field: "orm",
-      notice: ormDisabledReason,
+      notice: config.database.includes("mongodb")
+        ? t.ormNativeMongo
+        : ormDisabledReason,
       options: [
         noneOption(t.withoutOrm, t.noOrm),
-        ...options.ormOptions.map((option) => ({
-          ...option,
-          disabledReason: ormDisabledReason,
-        })),
+        ...options.ormOptions
+          .filter(
+            (option) =>
+              !config.database.includes("mongodb") || option.value === "prisma"
+          )
+          .map((option) => ({
+            ...option,
+            disabledReason: ormDisabledReason,
+          })),
       ],
     },
     {
@@ -174,6 +179,22 @@ export const BuilderContent = () => {
       }),
     },
   ];
+  if (
+    config.orm.includes("prisma") &&
+    (config.database.includes("postgresql") ||
+      config.database.includes("mongodb"))
+  ) {
+    const ormIndex = groups.findIndex((group) => group.field === "orm");
+    groups.splice(ormIndex + 1, 0, {
+      field: "prismaVersion",
+      notice: config.database.includes("mongodb")
+        ? t.prismaMongoPending
+        : undefined,
+      options: options.prismaVersionOptions.filter(
+        (option) => !config.database.includes("mongodb") || option.value === "8"
+      ),
+    });
+  }
   {
     groups.splice(3, 0, {
       field: "microservices",
@@ -287,8 +308,8 @@ export const BuilderContent = () => {
           {t.configure}
         </p>
       </header>
-      <div className="grid lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(0,1fr)]">
-        <aside className="preview-scrollbar border-border bg-muted/15 border-b p-4 sm:p-6 lg:sticky lg:top-16 lg:max-h-[calc(100dvh-4rem)] lg:self-start lg:overflow-y-auto lg:border-r lg:border-b-0">
+      <div className="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(0,1fr)]">
+        <aside className="preview-scrollbar border-border bg-muted/15 min-w-0 border-b p-4 sm:p-6 lg:sticky lg:top-16 lg:max-h-[calc(100dvh-4rem)] lg:self-start lg:overflow-y-auto lg:border-r lg:border-b-0">
           <div className="flex flex-col gap-6">
             <FieldGroup>
               <Field data-invalid={!validName}>

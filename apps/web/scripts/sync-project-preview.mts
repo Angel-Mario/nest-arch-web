@@ -112,7 +112,7 @@ await build({
     },
   ],
   stdin: {
-    contents: `export { ProjectGenerator } from ${JSON.stringify(join(sourceRoot, "packages/core/src/generators/ProjectGenerator/ProjectGenerator.ts"))};\nexport { getUnsupportedSelections } from ${JSON.stringify(join(sourceRoot, "packages/core/src/supportPolicy.ts"))};\nexport * as options from ${JSON.stringify(constantsPath)};`,
+    contents: `export { ProjectGenerator } from ${JSON.stringify(join(sourceRoot, "packages/core/src/generators/ProjectGenerator/ProjectGenerator.ts"))};\nexport { getUnsupportedSelections, validateProjectContext } from ${JSON.stringify(join(sourceRoot, "packages/core/src/supportPolicy.ts"))};\nexport * as options from ${JSON.stringify(constantsPath)};`,
     resolveDir: sourceRoot,
   },
   target: "node22",
@@ -127,9 +127,10 @@ await writeFile(
   `import type { PreviewConfig } from "../../src/lib/project-preview/config";
 type Context = PreviewConfig & { projectName: string; description?: string; initGit: boolean; installDependencies: boolean };
 export declare class ProjectGenerator {
-  constructor(outputDir: string, options: { generatorVersion?: string; templatesDir: string });
+  constructor(outputDir: string, options: { generatorVersion?: string; templatesDir: string; candidateProfile?: "prisma8-mongodb" });
   generate(context: Context): Promise<{ success: boolean; error?: string; generatedFiles: string[] }>;
 }
+export declare function validateProjectContext(context: Context, candidate?: "prisma8-mongodb", certificationCandidate?: boolean): void;
 export declare function getUnsupportedSelections(context: Context): { code: string; kind: string; message: string }[];
 export declare const options: Record<string, { value: string; label: string; description: string }[]>;
 `
@@ -159,6 +160,16 @@ for (const [id, label, input] of [
   ],
   ["sqlite", "SQLite + Drizzle", { database: ["sqlite"], orm: ["drizzle"] }],
   ["mongodb", "MongoDB", { database: ["mongodb"] }],
+  [
+    "postgresql-prisma8",
+    "PostgreSQL + Prisma 8",
+    { database: ["postgresql"], orm: ["prisma"], prismaVersion: "8" },
+  ],
+  [
+    "mongodb-prisma8",
+    "MongoDB + Prisma 8 (preview)",
+    { database: ["mongodb"], orm: ["prisma"], prismaVersion: "8" },
+  ],
   [
     "redis",
     "Redis microservice",

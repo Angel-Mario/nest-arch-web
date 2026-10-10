@@ -18,7 +18,7 @@ Set `NEXT_PUBLIC_CONVEX_URL` in `apps/web/.env` to your Convex deployment URL. G
 
 The explorer opens from the hero section and the wizard summary. It supports file search, Material Icon Theme icons, syntax highlighting in light/dark themes, decorative line numbers, local project-name substitution and file copying.
 
-Six presets are pregenerated and served as static JSON. Custom configurations use the Node.js API at `/api/project-preview`, backed by a private snapshot in `private/nest-arch`. Generated files are public example output; source templates and engine code remain server-only.
+Eight presets are pregenerated and served as static JSON. Custom configurations use the Node.js API at `/api/project-preview`, backed by a private snapshot in `private/nest-arch`. Generated files are public example output; source templates and engine code remain server-only.
 
 | Environment | Custom preview storage |
 | --- | --- |

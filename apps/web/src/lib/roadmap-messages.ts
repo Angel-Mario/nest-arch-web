@@ -60,18 +60,18 @@ export const roadmapMessages: Record<Locale, RoadmapMessages> = {
     compatibility: {
       checked: "Last checked",
       description:
-        "These are upstream Prisma capabilities. Availability in nest/arch depends on generator integration and validation.",
+        "These notes describe the builder integration. Available options depend on the selected database and generator profile.",
       docs: "Prisma documentation",
       heading: "Database compatibility",
       items: [
         {
           description:
-            "Unsupported. MongoDB projects use Prisma 6 or migrate to Prisma 8.",
+            "Unavailable in the web builder. Choose native MongoDB or the Prisma 8 preview.",
           title: "Prisma 7 + MongoDB",
         },
         {
           description:
-            "PostgreSQL: release candidate. MongoDB: early access. SQLite: experimental. Other databases are planned upstream.",
+            "Available for PostgreSQL and MongoDB in the builder. The MongoDB integration is a preview pending runtime validation.",
           title: "Prisma 8",
         },
       ],
@@ -176,18 +176,18 @@ export const roadmapMessages: Record<Locale, RoadmapMessages> = {
     compatibility: {
       checked: "Última verificación",
       description:
-        "Estas son capacidades de Prisma. Su disponibilidad en nest/arch depende de la integración y validación del generador.",
+        "Estas notas describen la integración del builder. Las opciones disponibles dependen de la base de datos y del perfil del generador.",
       docs: "Documentación de Prisma",
       heading: "Compatibilidad de bases de datos",
       items: [
         {
           description:
-            "No compatible. Los proyectos MongoDB usan Prisma 6 o migran a Prisma 8.",
+            "No disponible en el builder web. Elige MongoDB nativo o la vista previa de Prisma 8.",
           title: "Prisma 7 + MongoDB",
         },
         {
           description:
-            "PostgreSQL: versión candidata. MongoDB: acceso anticipado. SQLite: experimental. Las demás bases de datos están previstas por Prisma.",
+            "Disponible para PostgreSQL y MongoDB en el builder. La integración con MongoDB es una vista previa pendiente de validación en ejecución.",
           title: "Prisma 8",
         },
       ],
@@ -292,18 +292,18 @@ export const roadmapMessages: Record<Locale, RoadmapMessages> = {
     compatibility: {
       checked: "Última verificação",
       description:
-        "Estas são capacidades do Prisma. A disponibilidade no nest/arch depende da integração e validação do gerador.",
+        "Estas notas descrevem a integração do builder. As opções disponíveis dependem do banco de dados e do perfil do gerador.",
       docs: "Documentação do Prisma",
       heading: "Compatibilidade de bancos de dados",
       items: [
         {
           description:
-            "Sem suporte. Projetos MongoDB usam Prisma 6 ou migram para o Prisma 8.",
+            "Indisponível no builder web. Escolha MongoDB nativo ou a prévia do Prisma 8.",
           title: "Prisma 7 + MongoDB",
         },
         {
           description:
-            "PostgreSQL: versão candidata. MongoDB: acesso antecipado. SQLite: experimental. Os demais bancos estão nos planos do Prisma.",
+            "Disponível para PostgreSQL e MongoDB no builder. A integração com MongoDB é uma prévia pendente de validação em execução.",
           title: "Prisma 8",
         },
       ],

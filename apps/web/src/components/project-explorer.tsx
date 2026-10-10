@@ -15,6 +15,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { useUi } from "@/components/locale-provider";
 import { PreviewCode } from "@/components/preview-code";
+import { builderMessages } from "@/lib/builder-messages";
 import {
   configFromWizard,
   fetchProjectPreview,
@@ -230,6 +231,12 @@ const ProjectExplorer = ({
               <Badge variant="outline">v{manifest.generatorVersion}</Badge>
             </div>
             <p className="text-muted-foreground text-xs">{t.description}</p>
+            {config?.database.includes("mongodb") &&
+              config.orm.includes("prisma") && (
+                <output className="mt-2 block text-xs text-amber-600 dark:text-amber-300">
+                  {builderMessages[locale].prismaMongoPending}
+                </output>
+              )}
           </div>
           <Button
             variant="ghost"

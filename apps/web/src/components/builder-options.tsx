@@ -55,7 +55,7 @@ const OptionCard = ({
   <FieldLabel
     htmlFor={id}
     className={cn(
-      "builder-option h-full cursor-pointer",
+      "builder-option h-full min-w-0 cursor-pointer",
       option.disabledReason && "cursor-not-allowed"
     )}
     data-selected={selected}
@@ -65,8 +65,8 @@ const OptionCard = ({
       data-disabled={Boolean(option.disabledReason)}
       className="min-h-24 gap-4 p-4!"
     >
-      <FieldContent>
-        <FieldTitle>
+      <FieldContent className="min-w-0 [overflow-wrap:anywhere]">
+        <FieldTitle className="max-w-full">
           {option.value !== "none" && option.value !== "no" && (
             <TechnologyIcon
               value={option.value}
@@ -141,9 +141,9 @@ export const BuilderOptions = ({
     <FieldSet
       id={id}
       aria-describedby={notice ? `${id}-notice` : undefined}
-      className="scroll-mt-36 gap-3 border-b pb-8 last:border-0"
+      className="min-w-0 scroll-mt-36 gap-3 border-b pb-8 last:border-0"
     >
-      <FieldLegend className="mb-4 flex w-full items-center justify-between gap-3">
+      <FieldLegend className="mb-4 flex w-full flex-wrap items-center justify-between gap-x-3 gap-y-1">
         <span className="font-mono tracking-wide uppercase">{title}</span>
         <span className="text-muted-foreground text-xs font-normal">
           {hint}

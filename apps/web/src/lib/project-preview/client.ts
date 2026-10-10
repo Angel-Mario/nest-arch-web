@@ -98,10 +98,7 @@ export const configFromWizard = (
     microservices: state.microservices ?? [],
     orm: state.orm ?? [],
     packageManager: state.packageManager ?? "pnpm",
-    prismaVersion:
-      Array.isArray(state.orm) && state.orm.includes("prisma")
-        ? "7"
-        : undefined,
+    prismaVersion: state.prismaVersion ?? undefined,
     projectType: state.projectType ?? "single",
     ultraciteAgents: state.ultraciteAgents ?? [],
     ultraciteEditors: state.ultraciteEditors ?? [],

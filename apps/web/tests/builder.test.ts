@@ -77,3 +77,43 @@ test("the command preserves installation preferences and Ultracite choices", () 
     )
   );
 });
+
+test("changing Prisma databases adjusts versions and removes unsupported MongoDB ORMs", () => {
+  const postgres = normalizePreviewConfig({
+    database: ["postgresql"],
+    orm: ["prisma"],
+    prismaVersion: "8",
+  });
+  const mysql = updateBuilderConfig(postgres, "database", ["mysql"]);
+  assert.equal(mysql.prismaVersion, "7");
+  const mongo = updateBuilderConfig(mysql, "database", ["mongodb"]);
+  assert.deepEqual(mongo.orm, ["prisma"]);
+  assert.equal(mongo.prismaVersion, "8");
+  assert.equal(
+    updateBuilderConfig(mongo, "orm", ["none"]).prismaVersion,
+    undefined
+  );
+  const drizzle = normalizePreviewConfig({
+    database: ["postgresql"],
+    orm: ["drizzle"],
+  });
+  assert.deepEqual(
+    updateBuilderConfig(drizzle, "database", ["mongodb"]).orm,
+    []
+  );
+  const command = buildProjectCommand({
+    ...mongo,
+    initGit: "no",
+    installDependencies: "no",
+    projectName: "mongo-api",
+  });
+  assert.ok(command.includes("--prisma-version 8"));
+  assert.ok(
+    buildProjectCommand({
+      ...mysql,
+      initGit: "no",
+      installDependencies: "no",
+      projectName: "sql-api",
+    }).includes("--prisma-version 7")
+  );
+});

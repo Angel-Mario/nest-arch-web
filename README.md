@@ -39,7 +39,7 @@ The site includes:
 - **Hero section** with a live `@nest-arch/tui` version badge (fetched from npm via Convex) and the `npx @nest-arch/tui@latest` install command
 - **Interactive terminal wizard** — a browser configuration flow for single apps, with keyboard and mouse controls
 - **Project file explorer** — real initial files generated from the private CLI snapshot, searchable tree, Material Icon Theme icons, browser-side syntax highlighting, line numbers and file copying
-- **Versioned preview cache** — six static presets, immutable HTTP caching and persistent Blob storage for custom selections; renaming and browsing files stay in the browser
+- **Versioned preview cache** — eight static presets, immutable HTTP caching and persistent Blob storage for custom selections; renaming and browsing files stay in the browser
 - **Workflow gallery** — a 5-step screenshot walkthrough (Start → Configure → Confirm → Generate → Done) with an expandable lightbox (zoom, thumbnails, keyboard navigation)
 - **Features grid** — the core value propositions of nest-arch
 - **Architecture explorer** — an interactive overview of application architectures; future categories do not imply current generator support
@@ -97,7 +97,7 @@ To run only the web app:
 pnpm run dev:web
 ```
 
-For custom previews on Vercel, connect a public Blob store and configure the server-only `BLOB_READ_WRITE_TOKEN`. Without it, the six static presets remain available and custom previews return 503. Local development uses a persistent disk cache. See [web setup](apps/web/README.md) and [preview architecture](apps/web/PROJECT-PREVIEW.md).
+For custom previews on Vercel, connect a public Blob store and configure the server-only `BLOB_READ_WRITE_TOKEN`. Without it, the eight static presets remain available and custom previews return 503. Local development uses a persistent disk cache. See [web setup](apps/web/README.md) and [preview architecture](apps/web/PROJECT-PREVIEW.md).
 
 ## Updating nest-arch after an npm release
 

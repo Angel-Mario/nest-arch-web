@@ -163,9 +163,10 @@ test("rejects monorepos, path injection, unknown selections and unsupported comp
   assert.throws(() => normalizePreviewConfig({ database: ["unknown"] }));
   assert.throws(
     () =>
-      validatePreview(
-        normalizePreviewConfig({ database: ["mongodb"], orm: ["prisma"] })
-      ),
+      validatePreview({
+        ...normalizePreviewConfig({ database: ["mongodb"], orm: ["prisma"] }),
+        prismaVersion: "7",
+      }),
     UnsupportedPreviewError
   );
   assert.throws(
@@ -320,4 +321,69 @@ test("ESLint and Prettier can be selected together and previewed", async () => {
   assert.ok(
     metadata?.content.includes('"formatter": "eslint-prettier-no-stylelint"')
   );
+});
+
+test("Prisma versions retain wizard selections and use distinct preview identities", () => {
+  const prisma7 = normalizePreviewConfig({
+    database: ["postgresql"],
+    orm: ["prisma"],
+    prismaVersion: "7",
+  });
+  const prisma8 = normalizePreviewConfig({ ...prisma7, prismaVersion: "8" });
+  assert.equal(configFromWizard(prisma8).prismaVersion, "8");
+  assert.notEqual(previewKey(prisma7), previewKey(prisma8));
+  assert.equal(
+    normalizePreviewConfig({ ...prisma8, orm: [] }).prismaVersion,
+    undefined
+  );
+});
+
+test("pending MongoDB Prisma 8 preview rejects authentication and unsupported transports", () => {
+  const mongo = normalizePreviewConfig({
+    database: ["mongodb"],
+    orm: ["prisma"],
+    prismaVersion: "8",
+  });
+  assert.doesNotThrow(() => validatePreview(mongo));
+  assert.throws(
+    () => validatePreview({ ...mongo, auth: "passport" }),
+    UnsupportedPreviewError
+  );
+  assert.throws(
+    () => validatePreview({ ...mongo, httpProvider: "fastify" }),
+    UnsupportedPreviewError
+  );
+  assert.throws(
+    () =>
+      validatePreview({
+        ...mongo,
+        architecture: "nest-microservice",
+        microservices: ["redis"],
+      }),
+    UnsupportedPreviewError
+  );
+});
+
+test("Prisma 8 starter previews contain database-specific runtimes and contract files", async () => {
+  // oxlint-disable no-await-in-loop
+  for (const [id, runtime] of [
+    ["postgresql-prisma8", "@prisma/orm-postgres"],
+    ["mongodb-prisma8", "@prisma/orm-mongo"],
+  ]) {
+    const preset = manifest.presets.find((entry) => entry.id === id);
+    assert.ok(preset);
+    const preview: ProjectPreview = JSON.parse(
+      await readFile(join(process.cwd(), "public", preset.url), "utf-8")
+    );
+    const packageFile = preview.files.find(
+      (file) => file.path === "package.json"
+    );
+    assert.ok(packageFile);
+    assert.ok(JSON.parse(packageFile.content).dependencies[runtime]);
+    assert.ok(
+      preview.files.some((file) => file.path === "src/prisma/contract.prisma")
+    );
+    assert.equal(preset.config.prismaVersion, "8");
+  }
+  // oxlint-enable no-await-in-loop
 });
