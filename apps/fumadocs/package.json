@@ -6,7 +6,7 @@
     "build": "next build",
     "dev": "next dev --port=4000",
     "start": "next start",
-    "check-types": "fumadocs-mdx source.config.ts && next typegen && tsc --noEmit",
+    "check-types": "next typegen && fumadocs-mdx source.config.ts && tsc --noEmit",
     "types:check": "pnpm run check-types",
     "postinstall": "fumadocs-mdx",
     "lint": "oxlint"

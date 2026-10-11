@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   sync:
-    if: github.event.repository.private && vars.NEST_ARCH_PREVIEW_AUTO_SYNC == 'true'
+    if: github.event_name == 'workflow_dispatch' || vars.NEST_ARCH_PREVIEW_AUTO_SYNC == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:

@@ -3,7 +3,7 @@ title: Crear proyectos headless
 description: Genera sin preguntas, usa configuración JSONC y reproduce proyectos desde la CLI.
 ---
 
-Desde `@nest-arch/tui` **0.5.1**, puedes generar proyectos sin abrir el asistente interactivo. Pasa un nombre de proyecto o `--config`; no necesitas una terminal interactiva. Ejecutar sin argumentos o con `--ui` abre el asistente.
+Con `@nest-arch/tui` **1.0.0**, puedes generar proyectos sin abrir el asistente interactivo. Pasa un nombre de proyecto o `--config`; no necesitas una terminal interactiva. Ejecutar sin argumentos o con `--ui` abre el asistente.
 
 ## Generar desde la terminal
 
@@ -59,7 +59,7 @@ Consulta la [referencia de la CLI](../reference/cli.mdx) para los flags disponib
 Cada proyecto generado incluye `nest-arch.jsonc` con las selecciones y `reproducibleCommand`, que fija la versión de la CLI. Para recrearlo en otra carpeta:
 
 ```sh
-pnpm dlx @nest-arch/tui@0.5.1 --config ./previous-project/nest-arch.jsonc --output-dir ./recreated-project --install-dependencies no --no-git
+pnpm dlx @nest-arch/tui@1.0.0 --config ./previous-project/nest-arch.jsonc --output-dir ./recreated-project --install-dependencies no --no-git
 ```
 
 Usa la versión registrada en el archivo para conservar las opciones y plantillas originales. `--config` lee los campos; no ejecuta `reproducibleCommand`, ni selecciona automáticamente la versión del campo `version`. Los metadatos antiguos se aceptan aunque el comando registrado mencione `create-nest-arch`.

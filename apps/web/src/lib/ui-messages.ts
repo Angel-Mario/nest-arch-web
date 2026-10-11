@@ -142,7 +142,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       toggleTheme: "Toggle theme",
     },
     hero: {
-      badge: "v1.0.0 · available",
+      badge: "· stable · available",
       description:
         "A guided terminal flow for choosing the runtime, data layer and tools for a standalone NestJS project. Review the generated files before you create it.",
       downloads: "downloads",
@@ -279,7 +279,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       toggleTheme: "Cambiar tema",
     },
     hero: {
-      badge: "v1.0.0 · disponible",
+      badge: "· estable · disponible",
       description:
         "Un flujo guiado en terminal para elegir el runtime, la capa de datos y las herramientas de una aplicación NestJS independiente. Revisa los archivos antes de generarla.",
       downloads: "descargas",
@@ -416,7 +416,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       toggleTheme: "Alternar tema",
     },
     hero: {
-      badge: "v1.0.0 · disponível",
+      badge: "· estável · disponível",
       description:
         "Um fluxo guiado no terminal para escolher o runtime, a camada de dados e as ferramentas para uma aplicação NestJS independente. Revise os arquivos antes de gerar o projeto.",
       downloads: "downloads",
