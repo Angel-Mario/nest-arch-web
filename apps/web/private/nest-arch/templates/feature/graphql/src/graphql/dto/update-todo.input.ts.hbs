@@ -1,8 +1,38 @@
-import { Field, ID, InputType, PartialType } from "@nestjs/graphql";
+{{#if (includes addons "nestjs-zod")}}
+import { createZodDto } from "nestjs-zod";
+import { z } from "zod";
+{{/if}}
+import { Field, ID, InputType{{#unless (includes addons "nestjs-zod")}}, PartialType{{/unless}} } from "@nestjs/graphql";
+{{#unless (includes addons "nestjs-zod")}}
 import { CreateTodoInput } from "./create-todo.input.js";
+{{/unless}}
 
+{{#if (includes addons "nestjs-zod")}}
+const UpdateTodoSchema = z.object({
+  id: z.string(),
+  title: z.string().trim().min(1).optional(),
+  description: z.string().optional(),
+  completed: z.boolean().optional(),
+});
+
+@InputType()
+export class UpdateTodoInput extends createZodDto(UpdateTodoSchema) {
+  @Field(() => ID)
+  id!: string;
+
+  @Field({ nullable: true })
+  title?: string;
+
+  @Field({ nullable: true })
+  description?: string;
+
+  @Field({ nullable: true })
+  completed?: boolean;
+}
+{{else}}
 @InputType()
 export class UpdateTodoInput extends PartialType(CreateTodoInput) {
   @Field(() => ID)
   id: string;
 }
+{{/if}}

@@ -1,14 +1,21 @@
+import { Controller, Get{{#if hasMessageTransport}}, Logger, Param{{/if}}{{#if isNatsPassport}}, Req, UseGuards{{/if}} } from "@nestjs/common";
+{{#if hasMessageTransport}}
+import { EventPattern, MessagePattern{{#if isNatsPassport}}, Payload{{/if}} } from "@nestjs/microservices";
+{{/if}}
 {{#if (includes microservices "grpc")}}
-import { Controller, Get } from "@nestjs/common";
 import { GrpcMethod } from "@nestjs/microservices";
-{{else}}
-import { Controller, Get, Logger, Param } from "@nestjs/common";
-import { EventPattern, MessagePattern } from "@nestjs/microservices";
 {{/if}}
 
 import { AppService } from "./app.service.js";
+{{#if isNatsPassport}}
+import { NatsJwtGuard } from "./nats-jwt.guard.js";
+import { AuthenticatedPayload, CurrentNatsUser, type NatsAuthenticatedUser } from "./nats-authentication.js";
+{{/if}}
+{{#if isNatsPassport}}
+import { RestAuthGuard } from "./auth/guards/rest-auth.guard.js";
+{{/if}}
 
-{{#unless (includes microservices "grpc")}}
+{{#if hasMessageTransport}}
 interface AuditEvent {
   id: string;
   payload: Record<string, unknown>;
@@ -30,37 +37,68 @@ const isAuditEvent = (value: unknown): value is AuditEvent => {
     !Array.isArray(candidate.payload)
   );
 };
-{{/unless}}
+{{#if isNatsPassport}}
+const isNatsAuthenticatedUser = (value: unknown): value is NatsAuthenticatedUser =>
+  typeof value === "object" &&
+  value !== null &&
+  "id" in value &&
+  typeof value.id === "string" &&
+  "email" in value &&
+  typeof value.email === "string";
+{{/if}}
+{{/if}}
 
 @Controller()
 export class AppController {
-  {{#unless (includes microservices "grpc")}}
+  {{#if hasMessageTransport}}
   private readonly logger = new Logger(AppController.name);
-  {{/unless}}
+  {{/if}}
 
   constructor(private readonly appService: AppService) {}
 
   {{#if (and hasDatabase hasTodoExample)}}
   {{#if (includes microservices "grpc")}}
   @GrpcMethod("AppService", "CreateTodo")
-  async createTodo(data: { title: string }): Promise<{ json: string }> {
+  async createTodoGrpc(data: { title: string }): Promise<{ json: string }> {
     return { json: JSON.stringify(await this.appService.createTodo(data)) };
   }
 
   @GrpcMethod("AppService", "ListTodos")
-  async listTodos(): Promise<{ json: string }> {
+  async listTodosGrpc(): Promise<{ json: string }> {
     return { json: JSON.stringify(await this.appService.findTodos()) };
   }
-  {{else}}
+  {{/if}}
+  {{#if hasMessageTransport}}
+{{#if isNatsPassport}}
+  @MessagePattern("auth.identity")
+  @UseGuards(NatsJwtGuard)
+  getNatsIdentity(@CurrentNatsUser() user: NatsAuthenticatedUser): NatsAuthenticatedUser {
+    return user;
+  }
+  {{/if}}
   @MessagePattern("todo.create")
-  createTodo(data: { title: string }) {
+  {{#if isNatsPassport}}
+  @UseGuards(NatsJwtGuard)
+  createTodoMessage(@AuthenticatedPayload() data: { title: string }, @CurrentNatsUser() user: NatsAuthenticatedUser) {
+    return this.appService.createTodo(data, user.id);
+  }
+  {{else}}
+  createTodoMessage(data: { title: string }) {
     return this.appService.createTodo(data);
   }
+  {{/if}}
 
   @MessagePattern("todo.list")
-  listTodos() {
+  {{#if isNatsPassport}}
+  @UseGuards(NatsJwtGuard)
+  listTodosMessage(@CurrentNatsUser() user: NatsAuthenticatedUser) {
+    return this.appService.findTodos(user.id);
+  }
+  {{else}}
+  listTodosMessage() {
     return this.appService.findTodos();
   }
+  {{/if}}
   {{/if}}
   {{/if}}
 
@@ -69,15 +107,35 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  {{#unless (includes microservices "grpc")}}
+  {{#if hasMessageTransport}}
   @Get("events/:id")
+  {{#if isNatsPassport}}
+  @UseGuards(RestAuthGuard)
+  {{/if}}
   getAuditEvent(
-    @Param("id") id: string
-  ): { id: string; payload: Record<string, unknown>; source: string } | null {
+    @Param("id") id: string{{#if isNatsPassport}}, @Req() request: { user: { id: string } }{{/if}}
+  ): { id: string; payload: Record<string, unknown>; source: string{{#if isNatsPassport}}; principalId: string{{/if}} } | null {
+    {{#if isNatsPassport}}
+    return this.appService.getAuditEvent(id, request.user.id);
+    {{else}}
     return this.appService.getAuditEvent(id);
+    {{/if}}
   }
 
   @EventPattern("audit")
+  {{#if isNatsPassport}}
+  @UseGuards(NatsJwtGuard)
+  handleAuditEvent(@AuthenticatedPayload() data: unknown, @CurrentNatsUser() user: unknown): void {
+    if (!isNatsAuthenticatedUser(user)) {
+      throw new Error("Authenticated NATS user is unavailable");
+    }
+    if (!isAuditEvent(data)) {
+      this.logger.warn("Discarded malformed audit event payload");
+      return;
+    }
+    this.appService.recordAuditEvent({ ...data, principalId: user.id });
+  }
+  {{else}}
   handleAuditEvent(data: unknown): void {
     if (!isAuditEvent(data)) {
       this.logger.warn("Discarded malformed audit event payload");
@@ -85,28 +143,34 @@ export class AppController {
     }
     this.appService.recordAuditEvent(data);
   }
-  {{/unless}}
+  {{/if}}
 
-  {{#if (includes microservices "grpc")}}
-  @GrpcMethod("AppService", "Ping")
-  handleGrpcPing(): { message: string } {
-    return { message: this.appService.handlePing() };
-  }
-  @GrpcMethod("AppService", "Log")
-  handleGrpcLog(data: { id: string; source: string; payload: string }): { id: string; source: string; payload: string } {
-    return data;
-  }
-  {{else}}
   @MessagePattern("ping")
-  handlePing(): string {
+  {{#if isNatsPassport}}
+  @UseGuards(NatsJwtGuard)
+  {{/if}}
+  handlePingMessage(): string {
     return this.appService.handlePing();
+  }
+
+  @MessagePattern("log")
+  {{#if isNatsPassport}}
+  @UseGuards(NatsJwtGuard)
+  {{/if}}
+  handleLogMessage(data: Record<string, unknown>): { received: Record<string, unknown> } {
+    return this.appService.handleLog(data);
   }
   {{/if}}
 
-  {{#unless (includes microservices "grpc")}}
-  @MessagePattern("log")
-  handleLog(data: Record<string, unknown>): { received: Record<string, unknown> } {
-    return this.appService.handleLog(data);
+  {{#if (includes microservices "grpc")}}
+  @GrpcMethod("AppService", "Ping")
+  handlePingGrpc(): { message: string } {
+    return { message: this.appService.handlePing() };
   }
-  {{/unless}}
+
+  @GrpcMethod("AppService", "Log")
+  handleLogGrpc(data: { id: string; source: string; payload: string }): { id: string; source: string; payload: string } {
+    return data;
+  }
+  {{/if}}
 }

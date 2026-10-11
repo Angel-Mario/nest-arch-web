@@ -28,7 +28,7 @@ A guided terminal flow for choosing the runtime, data layer, and tooling for you
 - Standalone applications and microservices, with PostgreSQL, MySQL, SQLite, MongoDB and SQL Server selections validated against the generator's support policy
 - Monorepos and shared packages planned for version 2
 
-> **Status:** pre-alpha for NestJS 12.
+> **Version:** 1.0.0 · supports NestJS 12.
 
 ## What is this repository?
 
@@ -71,6 +71,16 @@ The site includes:
 ```bash
 pnpm install
 ```
+
+### Public repository links
+
+Links to the private Nest Arch repository, Changelog and documentation source are hidden by default. When the repository becomes public, set the following variable for both `apps/web` and `apps/fumadocs` (in their local environment files or Vercel project settings):
+
+```dotenv
+NEXT_PUBLIC_NEST_ARCH_REPOSITORY_PUBLIC=true
+```
+
+Restart development servers or rebuild and redeploy both apps after changing it. Leave the variable unset or set it to `false` to hide the links.
 
 ### Configure Convex
 

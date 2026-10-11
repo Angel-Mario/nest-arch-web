@@ -1,5 +1,5 @@
 const nestFile =
-  /\.(?:controller|service|module|guard|interceptor|decorator|filter|middleware|pipe|gateway|resolver|entity)\.ts$/u;
+  /\.(?:controller|service|module|guard|interceptor|decorator|filter|middleware|pipe|gateway|resolver)\.ts$/u;
 const testFile = /\.(?:spec|test|e2e-spec)\.[cm]?[jt]s$/u;
 
 const namedIcons: Record<string, string> = {
@@ -59,7 +59,7 @@ export const fileIcon = (path: string): string => {
   }
   if (nestFile.test(name)) {
     const kind = name.split(".").at(-2);
-    return kind === "dto" || kind === "entity" ? "nest" : `nest-${kind}`;
+    return `nest-${kind}`;
   }
   if (name.startsWith("vitest.config")) {
     return "vitest";

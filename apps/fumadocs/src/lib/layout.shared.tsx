@@ -2,7 +2,7 @@ import { uiTranslations } from "fumadocs-ui/i18n";
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 
 import { i18n } from "./i18n";
-import { appName, gitConfig } from "./shared";
+import { appName, gitConfig, isRepositoryPublic } from "./shared";
 
 export const translations = i18n
   .translations()
@@ -24,6 +24,8 @@ export function baseOptions(locale: string): BaseLayoutProps {
       hideLocale: i18n.hideLocale,
       languages: i18n.languages,
     },
-    githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
+    githubUrl: isRepositoryPublic
+      ? `https://github.com/${gitConfig.user}/${gitConfig.repo}`
+      : undefined,
   };
 }

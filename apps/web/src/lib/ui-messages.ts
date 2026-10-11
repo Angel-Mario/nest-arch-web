@@ -120,7 +120,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       builtWith: "Built with",
       copyright: "© 2026 Nest Arch. MIT License.",
       description:
-        "The modern CLI and TUI generator for configuring NestJS applications and microservices. Currently in pre-alpha.",
+        "The modern CLI and TUI generator for configuring NestJS applications and microservices. Version 1.0.0.",
       forDevelopers: "for developers.",
       product: "Product",
       readyWhenYouAre: "Ready when you are",
@@ -142,7 +142,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       toggleTheme: "Toggle theme",
     },
     hero: {
-      badge: "pre-alpha · available",
+      badge: "v1.0.0 · available",
       description:
         "A guided terminal flow for choosing the runtime, data layer and tools for a standalone NestJS project. Review the generated files before you create it.",
       downloads: "downloads",
@@ -173,7 +173,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       tryLiveDemo: "Try Live Demo",
     },
     metaDescription:
-      "CLI and interactive TUI for configuring NestJS applications and microservices. Currently in pre-alpha.",
+      "CLI and interactive TUI for configuring NestJS applications and microservices. Version 1.0.0.",
     roadmap: roadmapMessages.en,
     workflow: {
       description:
@@ -257,7 +257,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       builtWith: "Hecho con",
       copyright: "© 2026 Nest Arch. Licencia MIT.",
       description:
-        "El moderno CLI y generador TUI para configurar aplicaciones y microservicios NestJS. Actualmente en pre-alpha.",
+        "El moderno CLI y generador TUI para configurar aplicaciones y microservicios NestJS. Versión 1.0.0.",
       forDevelopers: "para desarrolladores.",
       product: "Producto",
       readyWhenYouAre: "Listo cuando tú lo estés",
@@ -279,7 +279,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       toggleTheme: "Cambiar tema",
     },
     hero: {
-      badge: "pre-alpha · disponible",
+      badge: "v1.0.0 · disponible",
       description:
         "Un flujo guiado en terminal para elegir el runtime, la capa de datos y las herramientas de una aplicación NestJS independiente. Revisa los archivos antes de generarla.",
       downloads: "descargas",
@@ -310,7 +310,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       tryLiveDemo: "Probar demo en vivo",
     },
     metaDescription:
-      "CLI y generador TUI interactivo para configurar aplicaciones y microservicios NestJS. Actualmente en pre-alpha.",
+      "CLI y generador TUI interactivo para configurar aplicaciones y microservicios NestJS. Versión 1.0.0.",
     roadmap: roadmapMessages.es,
     workflow: {
       description:
@@ -394,7 +394,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       builtWith: "Feito com",
       copyright: "© 2026 Nest Arch. Licença MIT.",
       description:
-        "CLI e gerador TUI interativo para configurar aplicações e microsserviços NestJS. Atualmente em pré-alpha.",
+        "CLI e gerador TUI interativo para configurar aplicações e microsserviços NestJS. Versão 1.0.0.",
       forDevelopers: "para desenvolvedores.",
       product: "Produto",
       readyWhenYouAre: "Pronto quando você estiver",
@@ -416,7 +416,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       toggleTheme: "Alternar tema",
     },
     hero: {
-      badge: "pre-alpha · disponível",
+      badge: "v1.0.0 · disponível",
       description:
         "Um fluxo guiado no terminal para escolher o runtime, a camada de dados e as ferramentas para uma aplicação NestJS independente. Revise os arquivos antes de gerar o projeto.",
       downloads: "downloads",
@@ -447,7 +447,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       tryLiveDemo: "Experimentar demo ao vivo",
     },
     metaDescription:
-      "CLI e gerador TUI interativo para configurar aplicações e microsserviços NestJS. Atualmente em pré-alpha.",
+      "CLI e gerador TUI interativo para configurar aplicações e microsserviços NestJS. Versão 1.0.0.",
     roadmap: roadmapMessages.pt,
     workflow: {
       description:

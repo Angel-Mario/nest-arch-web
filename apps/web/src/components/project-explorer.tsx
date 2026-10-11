@@ -42,7 +42,11 @@ interface FileTreeProps {
   expandFolders?: boolean;
 }
 
-const COLLAPSED_FOLDERS = new Set(["src/database/adapters/", "test/"]);
+const COLLAPSED_FOLDERS = new Set([
+  "src/auth/",
+  "src/database/adapters/",
+  "test/",
+]);
 
 const FileTree = ({
   files,
@@ -137,6 +141,8 @@ const ProjectExplorer = ({
   const { locale } = useUi();
   const t = previewMessages[locale];
   const dialog = useRef<HTMLDialogElement>(null);
+  const searchInput = useRef<HTMLInputElement>(null);
+  const searchToggle = useRef<HTMLButtonElement>(null);
   const [name, setName] = useState(projectName);
   const [config, setConfig] = useState<PreviewConfig | null>(() => {
     try {
@@ -160,8 +166,14 @@ const ProjectExplorer = ({
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState("package.json");
   const [search, setSearch] = useState("");
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [copiedPath, setCopiedPath] = useState<string | null>(null);
   const [copyError, setCopyError] = useState(false);
+  useEffect(() => {
+    if (mobileSearchOpen) {
+      searchInput.current?.focus();
+    }
+  }, [mobileSearchOpen]);
   useEffect(() => {
     const element = dialog.current;
     element?.showModal();
@@ -228,6 +240,11 @@ const ProjectExplorer = ({
       setCopyError(true);
     }
   };
+  const closeMobileSearch = () => {
+    setMobileSearchOpen(false);
+    setSearch("");
+    searchToggle.current?.focus();
+  };
   return (
     <dialog
       ref={dialog}
@@ -256,12 +273,15 @@ const ProjectExplorer = ({
             <X />
           </Button>
         </header>
-        <div className="border-border flex shrink-0 flex-col gap-3 border-b p-4 sm:flex-row sm:items-end">
+        <div className="border-border flex shrink-0 items-start gap-2 border-b p-4 sm:gap-3">
           <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-            <Label htmlFor="preview-project-name">{t.name}</Label>
+            <Label htmlFor="preview-project-name" className="h-4">
+              {t.name}
+            </Label>
             <InputGroup>
               <InputGroupInput
                 id="preview-project-name"
+                className="text-base sm:text-xs"
                 value={name}
                 maxLength={64}
                 aria-invalid={!validName}
@@ -278,18 +298,54 @@ const ProjectExplorer = ({
               </p>
             )}
           </div>
-          <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-            <Label htmlFor="preview-file-search">{t.search}</Label>
+          <div
+            id="preview-file-search-field"
+            className={`${mobileSearchOpen ? "flex" : "hidden"} min-w-0 flex-1 flex-col gap-1.5 sm:flex`}
+          >
+            <Label htmlFor="preview-file-search" className="h-4">
+              <span className="sr-only sm:not-sr-only">{t.search}</span>
+            </Label>
             <InputGroup>
               <InputGroupAddon>
                 <Search />
               </InputGroupAddon>
               <InputGroupInput
+                ref={searchInput}
                 id="preview-file-search"
+                className="text-base sm:text-xs"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape" && mobileSearchOpen) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    closeMobileSearch();
+                  }
+                }}
               />
             </InputGroup>
+          </div>
+          <div className="flex shrink-0 flex-col gap-1.5 sm:hidden">
+            <span aria-hidden="true" className="h-4" />
+            <Button
+              ref={searchToggle}
+              type="button"
+              variant="outline"
+              size="icon"
+              className="size-8 cursor-pointer"
+              aria-label={mobileSearchOpen ? t.closeSearch : t.search}
+              aria-expanded={mobileSearchOpen}
+              aria-controls="preview-file-search-field"
+              onClick={() => {
+                if (mobileSearchOpen) {
+                  closeMobileSearch();
+                } else {
+                  setMobileSearchOpen(true);
+                }
+              }}
+            >
+              {mobileSearchOpen ? <X /> : <Search />}
+            </Button>
           </div>
         </div>
         <div
@@ -428,7 +484,7 @@ const ProjectExplorer = ({
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <div
               role="note"
-              className="text-muted-foreground flex min-w-0 flex-1 items-start gap-2 text-xs"
+              className="text-muted-foreground hidden min-w-0 flex-1 items-start gap-2 text-xs sm:flex"
             >
               <TriangleAlert
                 aria-hidden="true"

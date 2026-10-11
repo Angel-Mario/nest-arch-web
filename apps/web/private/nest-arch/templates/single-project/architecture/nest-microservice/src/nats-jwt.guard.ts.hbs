@@ -1,0 +1,78 @@
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+} from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { NatsContext, RpcException } from "@nestjs/microservices";
+
+import { AuthService } from "./auth/auth.service.js";
+import { env } from "./config/env.js";
+import { setNatsAuthenticatedUser } from "./nats-authentication.js";
+
+interface AuthenticatedEnvelope {
+  authorization: string;
+  payload?: unknown;
+}
+
+const isAuthenticatedEnvelope = (value: unknown): value is AuthenticatedEnvelope =>
+  typeof value === "object" && value !== null && "authorization" in value &&
+  typeof value.authorization === "string";
+
+@Injectable()
+export class NatsJwtGuard implements CanActivate {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly jwtService: JwtService
+  ) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const rpcContext = context.switchToRpc().getContext<NatsContext>();
+    const data: unknown = context.switchToRpc().getData();
+    const authorization = rpcContext.getHeaders()?.get("authorization");
+    const header = Array.isArray(authorization) ? authorization[0] : authorization;
+    const envelopeAuthorization = isAuthenticatedEnvelope(data)
+      ? data.authorization
+      : undefined;
+    const credential = envelopeAuthorization ?? header;
+    const match = typeof credential === "string"
+      ? /^Bearer\s+(\S+)$/iu.exec(credential)
+      : null;
+    if (!match?.[1]) {
+      throw this.unauthorized();
+    }
+
+    let userId: string;
+    try {
+      const payload = await this.jwtService.verifyAsync<{ userId?: unknown }>(
+        match[1],
+        {
+          algorithms: ["HS256"],
+          audience: env.JWT_AUDIENCE,
+          issuer: env.JWT_ISSUER,
+        }
+      );
+      if (typeof payload.userId !== "string" || payload.userId.length === 0) {
+        throw this.unauthorized();
+      }
+      userId = payload.userId;
+    } catch (error) {
+      if (error instanceof RpcException) {
+        throw error;
+      }
+      throw this.unauthorized();
+    }
+
+    const user = await this.authService.validateUser(userId);
+    if (!user || typeof user.id !== "string" || typeof user.email !== "string") {
+      throw this.unauthorized();
+    }
+
+    setNatsAuthenticatedUser(rpcContext, { email: user.email, id: user.id });
+    return true;
+  }
+
+  private unauthorized(): RpcException {
+    return new RpcException({ code: "UNAUTHENTICATED", message: "Unauthorized" });
+  }
+}

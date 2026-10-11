@@ -3,7 +3,13 @@ import type { MetadataRoute } from "next";
 import { locales } from "@/lib/i18n";
 
 const SITE_URL = "https://nest-arch.vercel.app";
-const PAGE_PATHS = ["", "/builder", "/roadmap", "/privacy"] as const;
+const PAGE_PATHS = [
+  "",
+  "/builder",
+  "/roadmap",
+  "/privacy",
+  "/resources",
+] as const;
 
 const sitemap = (): MetadataRoute.Sitemap =>
   PAGE_PATHS.flatMap((path) => {

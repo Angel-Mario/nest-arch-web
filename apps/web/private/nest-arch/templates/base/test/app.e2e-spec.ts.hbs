@@ -647,6 +647,9 @@ expect(revoked.body).toBeNull();
     expect(updated.body.data.updateTodo.completed).toBe(true);
     const invalid = await execute('mutation { createTodo(input: { title: " " }) { id } }');
     expect(invalid.body.errors).toBeTruthy();
+{{#if (includes addons "nestjs-zod")}}
+    expect(invalid.body.errors?.[0]?.message).toBe("Validation failed");
+{{/if}}
     const deleted = await execute('mutation($id: String!) { deleteTodo(id: $id) }', { id });
     expect(deleted.body.data.deleteTodo).toBe(true);
     const missing = await execute('mutation($id: String!) { deleteTodo(id: $id) }', { id });
@@ -691,6 +694,14 @@ expect(revoked.body).toBeNull();
     expect(anonymous.body.errors).toBeTruthy();
     const firstUser = await register("graphql-owner-one");
     const secondUser = await register("graphql-owner-two");
+{{#if (includes addons "nestjs-zod")}}
+    const invalid = await execute(
+      'mutation($input: CreateTodoInput!) { createTodo(input: $input) { id } }',
+      { input: { title: " " } },
+      firstUser
+    );
+    expect(invalid.body.errors?.[0]?.message).toBe("Validation failed");
+{{/if}}
     const created = await execute(
       'mutation($input: CreateTodoInput!) { createTodo(input: $input) { id title } }',
       { input: { title: "Private GraphQL todo" } },

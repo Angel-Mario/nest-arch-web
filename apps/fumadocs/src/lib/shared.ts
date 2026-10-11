@@ -2,6 +2,8 @@ import documentedRelease from "./documented-release.json";
 
 export const appName = "Nest Arch";
 export const documentedVersion = documentedRelease.version;
+export const isRepositoryPublic =
+  process.env.NEXT_PUBLIC_NEST_ARCH_REPOSITORY_PUBLIC === "true";
 export const appDescription =
   "Crea una base clara para tu siguiente aplicación NestJS.";
 export const appBasePath = "/docs";

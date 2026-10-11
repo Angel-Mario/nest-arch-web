@@ -8,6 +8,8 @@ import { AnalyticsPreferences } from "@/components/analytics-preferences";
 import { useUi } from "@/components/locale-provider";
 import { trackAnalyticsEvent } from "@/lib/analytics";
 import { getDocumentationUrl } from "@/lib/documentation";
+import { isRepositoryPublic } from "@/lib/repository-visibility";
+import { resourceMessages } from "@/lib/resource-messages";
 
 import nestArchLogo from "../../public/photos/logo.png";
 
@@ -37,10 +39,15 @@ const Footer = () => {
 
   const RESOURCE_LINKS = [
     { href: getDocumentationUrl(locale), label: t.header.nav.documentation },
-    {
-      href: "https://github.com/Angel-Mario/nest-arch/tags",
-      label: "Changelog",
-    },
+    { href: `/${locale}/resources`, label: resourceMessages[locale].title },
+    ...(isRepositoryPublic
+      ? [
+          {
+            href: "https://github.com/Angel-Mario/nest-arch/tags",
+            label: "Changelog",
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -93,23 +100,25 @@ const Footer = () => {
                 />
                 <span>@nest-arch/tui</span>
               </Link>
-              <Link
-                href="https://github.com/Angel-Mario/nest-arch"
-                onClick={() =>
-                  trackAnalyticsEvent({
-                    destination: "github",
-                    locale,
-                    name: "cta_click",
-                    placement: "footer",
-                  })
-                }
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border-border bg-background text-muted-foreground hover:text-foreground flex size-8 items-center justify-center rounded-lg border transition-colors hover:border-red-500/50"
-                aria-label="GitHub"
-              >
-                <GithubIcon className="size-4" />
-              </Link>
+              {isRepositoryPublic && (
+                <Link
+                  href="https://github.com/Angel-Mario/nest-arch"
+                  onClick={() =>
+                    trackAnalyticsEvent({
+                      destination: "github",
+                      locale,
+                      name: "cta_click",
+                      placement: "footer",
+                    })
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border-border bg-background text-muted-foreground hover:text-foreground flex size-8 items-center justify-center rounded-lg border transition-colors hover:border-red-500/50"
+                  aria-label="GitHub"
+                >
+                  <GithubIcon className="size-4" />
+                </Link>
+              )}
             </div>
           </div>
 

@@ -1,0 +1,43 @@
+import { createParamDecorator, type ExecutionContext } from "@nestjs/common";
+import { NatsContext } from "@nestjs/microservices";
+
+export interface NatsAuthenticatedUser {
+  id: string;
+  email: string;
+}
+
+interface AuthenticatedEnvelope {
+  authorization: string;
+  payload?: unknown;
+}
+
+const isAuthenticatedEnvelope = (value: unknown): value is AuthenticatedEnvelope =>
+  typeof value === "object" && value !== null && "authorization" in value &&
+  typeof value.authorization === "string";
+
+const authenticatedUsers = new WeakMap<NatsContext, NatsAuthenticatedUser>();
+
+export function setNatsAuthenticatedUser(
+  context: NatsContext,
+  user: NatsAuthenticatedUser
+): void {
+  authenticatedUsers.set(context, user);
+}
+
+export const CurrentNatsUser = createParamDecorator(
+  (_data: unknown, context: ExecutionContext): NatsAuthenticatedUser => {
+    const rpcContext = context.switchToRpc().getContext<NatsContext>();
+    const user = authenticatedUsers.get(rpcContext);
+    if (!user) {
+      throw new Error("NATS user is unavailable outside authenticated handlers");
+    }
+    return user;
+  }
+);
+
+export const AuthenticatedPayload = createParamDecorator(
+  (_data: unknown, context: ExecutionContext): unknown => {
+    const data: unknown = context.switchToRpc().getData();
+    return isAuthenticatedEnvelope(data) ? data.payload : data;
+  }
+);

@@ -17,6 +17,9 @@ export const env = createEnv({
       .string()
       .regex(/^GTM-[A-Z0-9]+$/u)
       .optional(),
+    NEXT_PUBLIC_NEST_ARCH_REPOSITORY_PUBLIC: z
+      .enum(["true", "false"])
+      .optional(),
   },
   emptyStringAsUndefined: true,
   runtimeEnv: {
@@ -24,6 +27,8 @@ export const env = createEnv({
     NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
     NEXT_PUBLIC_GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
     NEXT_PUBLIC_GTM_ID: process.env.NEXT_PUBLIC_GTM_ID,
+    NEXT_PUBLIC_NEST_ARCH_REPOSITORY_PUBLIC:
+      process.env.NEXT_PUBLIC_NEST_ARCH_REPOSITORY_PUBLIC,
   },
   server: {
     GOOGLE_SITE_VERIFICATION: z.string().min(1).optional(),

@@ -6,39 +6,45 @@ import { TodoService } from "./api/todo/todo.service.js";
 
 @Injectable()
 export class AppService {
-  {{#unless (includes microservices "grpc")}}
+  {{#if hasMessageTransport}}
   private readonly auditEvents = new Map<
     string,
-    { id: string; payload: Record<string, unknown>; source: string }
+    { id: string; payload: Record<string, unknown>; source: string{{#if isNatsPassport}}; principalId: string{{/if}} }
   >();
 
   recordAuditEvent(event: {
     id: string;
     payload: Record<string, unknown>;
     source: string;
+    {{#if isNatsPassport}}principalId: string;{{/if}}
   }): void {
     this.auditEvents.set(event.id, event);
   }
 
   getAuditEvent(
-    id: string
-  ): { id: string; payload: Record<string, unknown>; source: string } | null {
-    return this.auditEvents.get(id) ?? null;
+    id: string{{#if isNatsPassport}}, ownerId: string{{/if}}
+  ): { id: string; payload: Record<string, unknown>; source: string{{#if isNatsPassport}}; principalId: string{{/if}} } | null {
+    const event = this.auditEvents.get(id);
+    {{#if isNatsPassport}}
+    return event?.principalId === ownerId ? event : null;
+    {{else}}
+    return event ?? null;
+    {{/if}}
   }
 
-  {{/unless}}
+  {{/if}}
   {{#if (and hasDatabase hasTodoExample)}}
   constructor(private readonly todos: TodoService) {}
 
-  createTodo(data: { title: string }) {
+  createTodo(data: { title: string }{{#if isNatsPassport}}, ownerId: string{{/if}}) {
     if (typeof data?.title !== "string" || data.title.trim().length === 0) {
       throw new RpcException({ code: 3, message: "A non-empty title is required" });
     }
-    return this.todos.create({ completed: false, title: data.title });
+    return this.todos.create({ completed: false, title: data.title }{{#if isNatsPassport}}, ownerId{{/if}});
   }
 
-  findTodos() {
-    return this.todos.findAll();
+  findTodos({{#if isNatsPassport}}ownerId: string{{/if}}) {
+    return this.todos.findAll({{#if isNatsPassport}}ownerId{{/if}});
   }
 
   {{/if}}

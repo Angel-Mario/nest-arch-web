@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { documentedVersion, gitConfig } from "@/lib/shared";
+import { documentedVersion, gitConfig, isRepositoryPublic } from "@/lib/shared";
 
 export function ReviewedReleaseLink({
   children,
@@ -9,6 +9,8 @@ export function ReviewedReleaseLink({
   children: ReactNode;
   kind: "source" | "validation";
 }) {
+  if (!isRepositoryPublic) return <>{children}</>;
+
   const tag = encodeURIComponent(`@nest-arch/tui@${documentedVersion}`);
   const path =
     kind === "validation" ? `blob/${tag}/scripts/README.md` : `tree/${tag}`;

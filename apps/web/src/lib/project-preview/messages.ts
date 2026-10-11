@@ -1,6 +1,7 @@
 export const previewMessages = {
   en: {
     close: "Close project explorer",
+    closeSearch: "Close file search",
     configure: "Return to configuration",
     copied: "Copied",
     copy: "Copy file",
@@ -34,6 +35,7 @@ export const previewMessages = {
   },
   es: {
     close: "Cerrar explorador del proyecto",
+    closeSearch: "Cerrar búsqueda de archivos",
     configure: "Volver a la configuración",
     copied: "Copiado",
     copy: "Copiar archivo",
@@ -67,6 +69,7 @@ export const previewMessages = {
   },
   pt: {
     close: "Fechar explorador do projeto",
+    closeSearch: "Fechar busca de arquivos",
     configure: "Voltar à configuração",
     copied: "Copiado",
     copy: "Copiar arquivo",

@@ -22,6 +22,7 @@ import { useUi } from "@/components/locale-provider";
 import { LocaleSelect } from "@/components/locale-select";
 import { builderMessages } from "@/lib/builder-messages";
 import { getDocumentationUrl } from "@/lib/documentation";
+import { isRepositoryPublic } from "@/lib/repository-visibility";
 
 import nestArchLogo from "../../public/photos/logo.png";
 import { ModeToggle } from "./mode-toggle";
@@ -249,15 +250,17 @@ const Header = () => {
             />
             <span className="">v{packageVersion?.version || "..."}</span>
           </Link>
-          <Link
-            href="https://github.com/Angel-Mario/nest-arch"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub"
-            className="hidden h-8 w-8 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-black/5 hover:text-zinc-900 sm:flex dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white"
-          >
-            <GithubIcon className="h-4 w-4" />
-          </Link>
+          {isRepositoryPublic && (
+            <Link
+              href="https://github.com/Angel-Mario/nest-arch"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub"
+              className="hidden h-8 w-8 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-black/5 hover:text-zinc-900 sm:flex dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white"
+            >
+              <GithubIcon className="h-4 w-4" />
+            </Link>
+          )}
           <ModeToggle />
         </div>
       </div>

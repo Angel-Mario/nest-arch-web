@@ -1,5 +1,28 @@
+{{#if (includes addons "nestjs-zod")}}
+import { createZodDto } from "nestjs-zod";
+import { z } from "zod";
+{{/if}}
 import { Field, InputType } from "@nestjs/graphql";
 
+{{#if (includes addons "nestjs-zod")}}
+const CreateTodoSchema = z.object({
+  title: z.string().trim().min(1),
+  description: z.string().optional(),
+  completed: z.boolean().default(false),
+});
+
+@InputType()
+export class CreateTodoInput extends createZodDto(CreateTodoSchema) {
+  @Field()
+  title!: string;
+
+  @Field({ nullable: true })
+  description?: string;
+
+  @Field({ defaultValue: false })
+  completed!: boolean;
+}
+{{else}}
 @InputType()
 export class CreateTodoInput {
   @Field()
@@ -11,3 +34,4 @@ export class CreateTodoInput {
   @Field({ defaultValue: false })
   completed: boolean;
 }
+{{/if}}

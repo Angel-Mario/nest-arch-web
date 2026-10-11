@@ -12,7 +12,7 @@ import { notFound } from "next/navigation";
 
 import { getMDXComponents } from "@/components/mdx";
 import { ReviewedVersionNote } from "@/components/reviewed-version-note";
-import { gitConfig } from "@/lib/shared";
+import { gitConfig, isRepositoryPublic } from "@/lib/shared";
 import { getPageImageUrl, getPageMarkdownUrl, source } from "@/lib/source";
 
 export default async function Page(props: PageProps<"/[lang]/[[...slug]]">) {
@@ -34,7 +34,11 @@ export default async function Page(props: PageProps<"/[lang]/[[...slug]]">) {
         <MarkdownCopyButton markdownUrl={markdownUrl} />
         <ViewOptionsPopover
           markdownUrl={markdownUrl}
-          githubUrl={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/apps/fumadocs/content/docs/${page.path}`}
+          githubUrl={
+            isRepositoryPublic
+              ? `https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/apps/fumadocs/content/docs/${page.path}`
+              : undefined
+          }
         />
       </div>
       <DocsBody>

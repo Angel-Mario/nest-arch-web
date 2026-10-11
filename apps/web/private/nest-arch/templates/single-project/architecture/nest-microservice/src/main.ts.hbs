@@ -46,38 +46,59 @@ async function bootstrap() {
   {{/if}}
   app.enableShutdownHooks();
 
+  {{#if (includes microservices "grpc")}}
   app.connectMicroservice<MicroserviceOptions>({
     options: {
-      {{#if (includes microservices "kafka")}}
-      client: { brokers: [env.KAFKA_BROKER ?? "127.0.0.1:9092"] },
-      {{/if}}
-      {{#if (includes microservices "grpc")}}
       package: "app",
       protoPath: fileURLToPath(new URL("proto/app.proto", import.meta.url)),
       url: env.GRPC_URL ?? "0.0.0.0:5000",
-      {{/if}}
-      {{#if (includes microservices "rabbitmq")}}
+    },
+    transport: Transport.GRPC,
+  });
+  {{/if}}
+  {{#if (includes microservices "kafka")}}
+  app.connectMicroservice<MicroserviceOptions>({
+    options: { client: { brokers: [env.KAFKA_BROKER ?? "127.0.0.1:9092"] } },
+    transport: Transport.KAFKA,
+  });
+  {{/if}}
+  {{#if (includes microservices "mqtt")}}
+  app.connectMicroservice<MicroserviceOptions>({
+    options: { url: env.MQTT_URL ?? "mqtt://127.0.0.1:1883" },
+    transport: Transport.MQTT,
+  });
+  {{/if}}
+  {{#if (includes microservices "nats")}}
+  app.connectMicroservice<MicroserviceOptions>({
+    options: { servers: [env.NATS_URL ?? "nats://127.0.0.1:4222"] },
+    transport: Transport.NATS,
+  });
+  {{/if}}
+  {{#if (includes microservices "rabbitmq")}}
+  app.connectMicroservice<MicroserviceOptions>({
+    options: {
       queue: "ping",
       queueOptions: { durable: false },
       urls: [env.RABBITMQ_URL ?? "amqp://127.0.0.1:5672"],
-      {{/if}}
-      {{#if (includes microservices "redis")}}
+    },
+    transport: Transport.RMQ,
+  });
+  {{/if}}
+  {{#if (includes microservices "redis")}}
+  app.connectMicroservice<MicroserviceOptions>({
+    options: {
       host: new URL(env.REDIS_URL).hostname,
       port: Number(new URL(env.REDIS_URL).port || 6379),
-      {{/if}}
-      {{#if (includes microservices "nats")}}
-      servers: [env.NATS_URL ?? "nats://127.0.0.1:4222"],
-      {{/if}}
-      {{#if (includes microservices "mqtt")}}
-      url: env.MQTT_URL ?? "mqtt://127.0.0.1:1883",
-      {{/if}}
-      {{#unless (or (includes microservices "redis") (includes microservices "mqtt") (includes microservices "nats") (includes microservices "rabbitmq") (includes microservices "kafka") (includes microservices "grpc"))}}
-      host: "0.0.0.0",
-      port: env.MICROSERVICE_PORT,
-      {{/unless}}
     },
-    transport: {{#if (includes microservices "redis")}}Transport.REDIS{{else if (includes microservices "mqtt")}}Transport.MQTT{{else if (includes microservices "nats")}}Transport.NATS{{else if (includes microservices "rabbitmq")}}Transport.RMQ{{else if (includes microservices "kafka")}}Transport.KAFKA{{else if (includes microservices "grpc")}}Transport.GRPC{{else}}Transport.TCP{{/if}},
+    transport: Transport.REDIS,
   });
+  {{/if}}
+  {{#unless microservices}}
+  app.connectMicroservice<MicroserviceOptions>({
+    options: { host: "0.0.0.0", port: env.MICROSERVICE_PORT },
+    transport: Transport.TCP,
+  });
+  {{/unless}}
 
   {{#if swagger}}
   if (env.NODE_ENV === "development") {

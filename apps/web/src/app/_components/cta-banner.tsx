@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { useUi } from "@/components/locale-provider";
 import { trackAnalyticsEvent } from "@/lib/analytics";
+import { isRepositoryPublic } from "@/lib/repository-visibility";
 
 const GithubIcon = ({ className }: { className?: string }) => (
   <svg
@@ -54,23 +55,25 @@ export const CtaBanner = () => {
           <span>&gt;_ Get Started Now</span>
         </Link>
 
-        <Link
-          href="https://github.com/Angel-Mario/nest-arch"
-          onClick={() =>
-            trackAnalyticsEvent({
-              destination: "github",
-              locale,
-              name: "cta_click",
-              placement: "banner",
-            })
-          }
-          target="_blank"
-          rel="noopener noreferrer"
-          className="border-border bg-background text-foreground flex w-full items-center justify-center gap-2 rounded-md border px-5 py-3 font-mono text-sm font-medium transition-colors hover:border-red-500/50 sm:w-auto"
-        >
-          <GithubIcon className="h-4 w-4" />
-          <span>Star on GitHub</span>
-        </Link>
+        {isRepositoryPublic && (
+          <Link
+            href="https://github.com/Angel-Mario/nest-arch"
+            onClick={() =>
+              trackAnalyticsEvent({
+                destination: "github",
+                locale,
+                name: "cta_click",
+                placement: "banner",
+              })
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+            className="border-border bg-background text-foreground flex w-full items-center justify-center gap-2 rounded-md border px-5 py-3 font-mono text-sm font-medium transition-colors hover:border-red-500/50 sm:w-auto"
+          >
+            <GithubIcon className="h-4 w-4" />
+            <span>Star on GitHub</span>
+          </Link>
+        )}
       </div>
     </section>
   );
