@@ -173,7 +173,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       tryLiveDemo: "Try Live Demo",
     },
     metaDescription:
-      "CLI and interactive TUI for configuring NestJS applications and microservices. Version 1.0.0.",
+      "Configure a NestJS project with Nest Arch, an interactive CLI and terminal UI for choosing your runtime, database, API, authentication, and developer tools before generating your application.",
     roadmap: roadmapMessages.en,
     workflow: {
       description:
@@ -310,7 +310,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       tryLiveDemo: "Probar demo en vivo",
     },
     metaDescription:
-      "CLI y generador TUI interactivo para configurar aplicaciones y microservicios NestJS. Versión 1.0.0.",
+      "Configura un proyecto NestJS con Nest Arch, un CLI y una interfaz interactiva de terminal para elegir el runtime, la base de datos, la API, la autenticación y las herramientas antes de generar tu aplicación.",
     roadmap: roadmapMessages.es,
     workflow: {
       description:
@@ -447,7 +447,7 @@ export const uiMessages: Record<Locale, UiMessages> = {
       tryLiveDemo: "Experimentar demo ao vivo",
     },
     metaDescription:
-      "CLI e gerador TUI interativo para configurar aplicações e microsserviços NestJS. Versão 1.0.0.",
+      "Configure um projeto NestJS com o Nest Arch, um CLI e uma interface interativa de terminal para escolher runtime, banco de dados, API, autenticação e ferramentas antes de gerar sua aplicação.",
     roadmap: roadmapMessages.pt,
     workflow: {
       description:

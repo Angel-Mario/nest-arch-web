@@ -26,6 +26,14 @@ export const generateMetadata = async ({
     description,
     openGraph: {
       description,
+      images: [
+        {
+          alt: "Nest Arch logo",
+          height: 600,
+          url: "/photos/logo.png",
+          width: 600,
+        },
+      ],
       locale: LOCALE_MAP[locale],
       siteName: "Nest Arch",
       title,
@@ -36,6 +44,7 @@ export const generateMetadata = async ({
     twitter: {
       card: "summary_large_image",
       description,
+      images: ["/photos/logo.png"],
       title,
     },
   };

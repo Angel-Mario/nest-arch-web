@@ -22,8 +22,28 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   description:
-    "CLI and interactive TUI for configuring NestJS applications and microservices. Version 1.0.0.",
+    "Configure a NestJS project with Nest Arch, an interactive CLI and terminal UI for choosing your runtime, database, API, authentication, and developer tools before generating your application.",
+  metadataBase: new URL("https://nest-arch.vercel.app"),
+  openGraph: {
+    description:
+      "Configure a NestJS project with Nest Arch, an interactive CLI and terminal UI for choosing your runtime, database, API, authentication, and developer tools before generating your application.",
+    images: [
+      {
+        alt: "Nest Arch logo",
+        height: 600,
+        url: "/photos/logo.png",
+        width: 600,
+      },
+    ],
+    siteName: "Nest Arch",
+    title: "Nest Arch — Scaffold Smarter. Ship Faster.",
+    type: "website",
+  },
   title: "Nest Arch — Scaffold Smarter. Ship Faster.",
+  twitter: {
+    card: "summary_large_image",
+    images: ["/photos/logo.png"],
+  },
   verification: {
     google: env.GOOGLE_SITE_VERIFICATION,
   },
